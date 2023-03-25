@@ -4,3 +4,5 @@ include 'module.auth-service'
 include 'module.plant-service'
 include 'module.user-service'
 include 'module.webapi'
+include 'module.frontend-service'
+
