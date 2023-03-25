@@ -1,0 +1,39 @@
+body {
+    background-color: #ECECEC;
+    color: #2E5046;
+}
+.auth__main__container{
+    position: relative;
+    top: 50%;
+    left: 50px;
+    transform: translateY(-50%);
+}
+.auth__container {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+.auth__form{
+    /*box-sizing: border-box;*/
+    /*display: flex;*/
+    /*flex-direction: column;*/
+}
+.auth__label {
+    width: auto;
+    font-size: 16px;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: #2E5046;
+    /*text-align: center;*/
+}
+
+.auth__input {
+    width: 100%;
+}
+
+.auth__bottom__container {
+    padding: 5px 0;
+    display: flex;
+    justify-content: space-evenly;
+}
