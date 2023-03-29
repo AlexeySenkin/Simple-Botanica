@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html ng-app="Simple-Botanica-app" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular-route.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-animate/1.8.3/angular-animate.js"
+            integrity="sha512-yDoMcZl9LGGR5U/gkySLy1mEGb9pJrA2FhUIzpcSGNTXVx1iQ3JZZv+Q5ihOul7DEDosNP1hl4D71cqyzyXVjA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-touch/1.8.3/angular-touch.js"
+            integrity="sha512-xKA7j41lCpsk/yzGeRkHUrhoAmuk+itJVQEofzsE15NeF3G77FaORcDg/3ZZs+WOWycYvJgTOxftQ1+5E4epHA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.6/ui-bootstrap-tpls.js"
+            integrity="sha512-Re9KhAaoh5qo/Cm/wtExVs7ETTKTx/81aXPHko2nWlUvTzELYhTwpp/DwUu+z8ul+DjtbJdPcmxEYwKewzG62w=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.11/ngStorage.min.js"
+            integrity="sha512-/uxeq6VcJ+do+PtGgWZwRL/Z63r53cK6yek3NzvQwce6aCeheKRD59IuRsEFuNU8b0B/lZ6fUx1fncf0wMIm5Q=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="BotanicaStyle.css" rel="stylesheet">
+    <link href="Auth/AuthFormStylesheet.css" rel="stylesheet">
+
+    <title>Simple Botanica 1.0</title>
+</head>
+<body>
+<div class="top__container head__block" ng-controller="SimpleBotanica-controller">
+    <div class="top__container head__container">
+        <!--        меню        -->
+        <header class="main__menu">
+            <div>
+                <a class="menu__item__button text" href="index.html">
+                    Главная
+                </a>
+            </div>
+            <div >
+                <a class="menu__item__button text" ng-click="openAuthForm()" ng-show="!isUserLoggedIn()">
+                    Войти
+                </a>
+            </div>
+        </header>
+        <div class="about__block">
+            <h2 class="header__text">SIMPLE BOTANICA</h2>
+            <p class="text text_center"> Добро пожаловать в сервис по уходу за растениями.
+                С нами ваши растения будут здоровы</p>
+        </div>
+    </div>
+</div>
+
+<ng-View></ng-View>
+
+<footer class="top__container footer__container">
+    <p class="text">Это подвал</p>
+    <hr>
+    <p class="text">
+        Photo by <a
+            href="https://unsplash.com/@anniespratt?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Annie
+        Spratt</a> on <a
+            href="https://unsplash.com/photos/ydMKxprm9xw?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+        <a href="https://www.freepik.com/free-vector/botany-card_4258344.htm#query=plants%20background&position=44&from_view=search&track=ais">Image
+            by rawpixel.com</a> on Freepik
+    </p>
+</footer>
+
+<script src="index.js"></script>
+<script src="PlantsCardsList/plants.js"></script>
+<script src="Auth/AuthFormController.js"></script>
+
+</body>
+
+</html>

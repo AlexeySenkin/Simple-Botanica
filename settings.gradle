@@ -1,0 +1,9 @@
+rootProject.name = 'Simple-Botanica'
+
+include 'module.auth-service'
+include 'module.plant-service'
+include 'module.user-service'
+include 'module.webapi'
+include 'module.frontend-service'
+include 'module.db-service'
+
