@@ -6,7 +6,7 @@
     function config($routeProvider) {
         $routeProvider
             // .when('/', {templateUrl: 'index.html', controller: 'SimpleBotanica-controller'})
-            .when('/', {templateUrl: 'PlantsCardsList/plants.html', controller: 'plants-controller'})
+            .when('/', {templateUrl: 'Plants/plants.html', controller: 'plants-controller'})
             // .when()
             .otherwise({redirectTo: '/'})
     }
@@ -30,19 +30,24 @@ var botanicaApp = angular.module('Simple-Botanica-app');
 botanicaApp.factory('plantListFactory', function () {
 
 })
-
+// признак открытия списка растений
 botanicaApp.value('botanicaConfig', {
     plantListCallPlace: 1
 });
 
+botanicaApp.constant('api_version',{
+    api_v: ''
+});
+
 botanicaApp
-    .controller('SimpleBotanica-controller', function ($http, $rootScope, $scope, $localStorage, $location, botanicaConfig, $uibModal) {
+    .controller('SimpleBotanica-controller', function ($http, $rootScope, $scope, $localStorage, $location,
+                                                       botanicaConfig, $uibModal, api_version ) {
         botanicaConfig.plantListCallPlace = 2;
         $scope.cp = botanicaConfig.plantListCallPlace;
 
+
         $scope.openAuthForm = function () {
             var modalInstance = $uibModal.open({
-                // windowClass: 'auth__main__container',
                 animation: true,
                 templateUrl: 'Auth/AuthForm.html',
                 controller: 'authFormController',

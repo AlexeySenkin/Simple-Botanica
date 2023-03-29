@@ -29,7 +29,10 @@ a:hover{
     color: var(--main-light-color);
 
 }
-
+.flex__container{
+    display: flex;
+    justify-content: space-between;
+}
 .top__container {
     max-width: 1140px;
     margin: 0 auto;
@@ -59,14 +62,6 @@ a:hover{
     text-align: center;
 }
 
-.plant__name__header{
-    width: auto;
-    font-size: 18px;
-    font-weight: 400;
-    letter-spacing: 0.05em;
-    color: #2E5046;
-    text-align: center;
-}
 
 .head__container {
     display: flex;
@@ -115,34 +110,6 @@ a:hover{
     padding-top: 20px;
     flex-grow: 1;
 }
-.plantrepresentation__container{
-    padding: 20px;
-}
-.plantcards__container{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding: 20px 0 40px 0;
-    /*padding-bottom: 40px;*/
-}
-
-.plant__card{
-    border-radius: 10px;
-    padding: 5px;
-    margin-bottom: 10px;
-    align-content: center;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    background-color: rgba(46, 80, 70, 10%);
-}
-
-.plant__photo{
-    width: 200px;
-    border-radius: 10px 10px 0 0;
-    margin-bottom: 10px;
-    align-self: center;
-}
 
 .page__input{
     appearance: none;
@@ -175,4 +142,9 @@ a:hover{
     color: #ECECEC;
 }
 
+.overlay__element{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
 

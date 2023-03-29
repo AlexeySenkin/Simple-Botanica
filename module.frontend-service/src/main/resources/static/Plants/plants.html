@@ -1,0 +1,36 @@
+<div>
+    <div class="top__container plantrepresentation__container">
+
+        <form class="form__search">
+            <div class="flex__container">
+                <div>
+                    <input class="page__input text" type="text" name="search" id="search-input"
+                           ng-model="plantNameFilter">
+                    <button class="page__button text" ng-click="getPlants()">Найти</button>
+                </div>
+                <div>
+                    <button class="page__button text" ng-show="isAdmin()" ng-click="addNewPlant()">Новое</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="top__container plantcards__container">
+            <div class="plant__card" ng-repeat="plant in plantsList">
+                <div class="relative__container">
+                    <img class="overlay__element" src="img/delete.png" ng-show="isAdmin()">
+                    <img class="plant__photo" ng-src="{{plant.photo}}" alt="{{plant.name}}" src="">
+                </div>
+                <h4 class="plant__name__header">{{plant.name}}</h4>
+                <p class="text text_center">
+                    Описание
+                </p>
+                <a class="page__button text text_center" href="#" ng-click="showPlantDetails(plant.id)">Подробнее</a>
+                <div class="admin__container" ng-show="isAdmin()">
+                    <a class="page__button text text_center" href="#" ng-click="showPlantDetails(plant.id)">Удалить</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--    пагинация   -->
+</div>

@@ -1,0 +1,47 @@
+
+.plantrepresentation__container{
+    padding: 20px;
+}
+.plantcards__container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 20px 0 40px 0;
+    /*padding-bottom: 40px;*/
+}
+
+.plant__card{
+    border-radius: 10px;
+    padding: 5px;
+    margin-bottom: 10px;
+    align-content: center;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(46, 80, 70, 10%);
+}
+.plant__name__header{
+    width: auto;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    color: #2E5046;
+    text-align: center;
+}
+
+.plant__photo{
+    width: 200px;
+    border-radius: 10px 10px 0 0;
+    margin-bottom: 10px;
+    align-self: center;
+}
+
+.relative__container{
+    position: relative;
+}
+
+.admin__container{
+    width: 100%;
+    margin-top: 3px;
+    display: grid;
+}
