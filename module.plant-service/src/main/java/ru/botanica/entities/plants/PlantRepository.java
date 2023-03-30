@@ -10,12 +10,12 @@ import org.springframework.stereotype.Repository;
 public interface PlantRepository extends JpaRepository<Plant, Long> {
     @Query(
             value = """
-                        select * from plants p
+                        select p from Plant p
                         where (:name is null or p.name like :name)
 """, countQuery = """
-                        select * from plants p
+                        select p from Plant p
                         where (:name is null or p.name like :name)
-""", nativeQuery = true
+"""
     )
     Page<Plant> findAllByNameContains(String name, Pageable pageable);
 }
