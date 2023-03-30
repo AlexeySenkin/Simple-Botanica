@@ -10,12 +10,14 @@ import org.springframework.stereotype.Repository;
 public interface PlantRepository extends JpaRepository<Plant, Long> {
     @Query(
             value = """
-                        select p from Plant p
+                        select p.*, pp.file_path from plants p
+                        inner join plant_photos pp on p.plant_id = pp.plant_id
                         where (:name is null or p.name like :name)
 """, countQuery = """
-                        select p from Plant p
+                        select p.*, pp.file_path from plants p
+                        inner join plant_photos pp on p.plant_id = pp.plant_id
                         where (:name is null or p.name like :name)
-"""
+""", nativeQuery = true
     )
     Page<Plant> findAllByNameContains(String name, Pageable pageable);
 }

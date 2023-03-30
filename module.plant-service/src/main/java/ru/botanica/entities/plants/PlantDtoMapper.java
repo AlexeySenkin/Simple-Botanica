@@ -13,6 +13,7 @@ public class PlantDtoMapper {
         plant.setDescription(plantDto.getDescription());
         plant.setShortDescription(plantDto.getShortDescription());
         plant.setActive(plantDto.isActive());
+        plant.setFilePath(plantDto.getFilePath());
         return plant;
     }
 
@@ -25,6 +26,16 @@ public class PlantDtoMapper {
         plantDto.setDescription(plant.getDescription());
         plantDto.setShortDescription(plant.getShortDescription());
         plantDto.setActive(plant.isActive());
+        plantDto.setFilePath(plant.getFilePath());
+        return plantDto;
+    }
+
+    public PlantDto mapWithIdNameShortDescAndFilePath(Plant plant) {
+        PlantDto plantDto = new PlantDto();
+        plantDto.setId(plant.getId());
+        plantDto.setName(plant.getName());
+        plantDto.setShortDescription(plant.getShortDescription());
+        plantDto.setFilePath(plant.getFilePath());
         return plantDto;
     }
 }

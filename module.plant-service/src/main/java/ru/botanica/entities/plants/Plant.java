@@ -38,6 +38,8 @@ public class Plant {
     @Column(nullable = false, name = "is_active")
     private boolean isActive;
 
+    private String filePath;
+
     public Plant() {
     }
 
@@ -50,7 +52,8 @@ public class Plant {
                 ", genus='" + genus + '\'' +
                 ", description='" + description + '\'' +
                 ", shortDescription='" + shortDescription + '\'' +
-                ", isActive=" + isActive +
+                ", isActive=" + isActive + '\'' +
+                ", filePath=" + filePath +
                 '}';
     }
 }

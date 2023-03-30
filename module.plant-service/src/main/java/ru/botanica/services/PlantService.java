@@ -20,10 +20,10 @@ public class PlantService {
 //          TODO: придумать костыль получше
 //        Костыль, но он улучшает поиск, добавляя все возможные варианты даже если название введено не полностью
         if (title == null) {
-            return plantRepository.findAllByNameContains(title, pageable).map(plantDtoMapper::map);
+            return plantRepository.findAllByNameContains(title, pageable).map(plantDtoMapper::mapWithIdNameShortDescAndFilePath);
         } else {
             String resultTitle = "%" + title + "%";
-            return plantRepository.findAllByNameContains(resultTitle, pageable).map(plantDtoMapper::map);
+            return plantRepository.findAllByNameContains(resultTitle, pageable).map(plantDtoMapper::mapWithIdNameShortDescAndFilePath);
         }
     }
 }

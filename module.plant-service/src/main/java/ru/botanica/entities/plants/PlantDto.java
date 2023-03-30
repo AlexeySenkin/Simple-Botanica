@@ -18,6 +18,8 @@ public class PlantDto {
     private String shortDescription;
     private boolean isActive;
 
+    private String filePath;
+
     public PlantDto() {
     }
 
