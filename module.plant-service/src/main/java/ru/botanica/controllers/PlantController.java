@@ -25,7 +25,6 @@ public class PlantController {
     @GetMapping()
     public Page<PlantDto> findAllByFilters(@RequestParam(required = false, defaultValue = "1")Optional<Integer> page,
                                            @RequestParam(required = false) String title) {
-//
         int currentPage = page.orElse(1) - 1;
         int sizeValue = PAGE_SIZE;
         return plantService.findAll(title, PageRequest.of(currentPage, sizeValue));
