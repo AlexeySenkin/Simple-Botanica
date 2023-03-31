@@ -15,7 +15,7 @@
         </form>
 
         <div class="top__container plantcards__container">
-            <div class="plant__card" ng-repeat="plant in plantsList">
+            <div class="plant__card" ng-repeat="plant in plantsPage">
                 <div class="relative__container">
                     <img class="overlay__element" src="img/delete.png" ng-show="isAdmin()">
                     <img class="plant__photo" ng-src="{{plant.photo}}" alt="{{plant.name}}" src="">
