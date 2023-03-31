@@ -1,6 +1,10 @@
 :root{
     --main-dark-color: #2E5046;
     --main-light-color: #ECECEC;
+    --main-dark-color-opacity-10: #2E504610;
+    --main-dark-color-opacity-40: #2E504640;
+    --main-dark-color-opacity-80: #2E504680;
+    --main-dark-color-opacity-90: #2E504690;
 }
 * {
     margin: 0;
@@ -43,9 +47,8 @@ a:hover{
     font-style: normal;
     font-size: 16px;
     line-height: 26px;
-    color: var(--main-dark-color);
+    color: var(--main-dark-color-opacity-90);
     letter-spacing: 0.05em;
-    opacity: 0.8;
     font-weight: 300;
 }
 .text_center{
@@ -73,7 +76,7 @@ a:hover{
 .footer__container {
     display: flex;
     flex-direction: column;
-    background-color: rgba(46, 80, 70, 0.4);
+    background-color: var(--main-dark-color-opacity-40);
     padding: 10px 0 10px 0;
 }
 
@@ -87,8 +90,8 @@ a:hover{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: rgba(46, 80, 70, 0.4);
-    /*background-color: var(--main-dark-color);*/
+    /*background-color: rgba(46, 80, 70, 0.4);*/
+    background-color: var(--main-dark-color-opacity-40);
     padding: 5px 30px;
     line-height: 3;
 }
@@ -101,7 +104,7 @@ a:hover{
     padding: 4px 16px;
     border: none;
     border-radius: 10px;
-    background-color: rgba(46, 80, 70, 0.4);
+    background-color: var(--main-dark-color-opacity-40);
     color: var(--main-light-color);
 }
 
@@ -114,9 +117,8 @@ a:hover{
 .page__input{
     appearance: none;
     border-radius: 10px;
-    background: #ECECEC;
-    border: 1px solid #2E5046;
-    /*height: 30px;*/
+    background: var(--main-light-color);
+    border: 1px solid var(--main-dark-color);
     width: 300px;
     padding: 3px;
 }
@@ -125,7 +127,7 @@ a:hover{
     /*border: 1px solid green;*/
     box-shadow: none;
     outline: none;
-    background: rgba(46, 80, 70, 30%);
+    background-color: var(--main-dark-color-opacity-40);
 }
 
 .page__button{
@@ -134,12 +136,13 @@ a:hover{
     border-radius: 10px;
     min-width: 100px;
     padding: 3px 16px;
-    background: rgba(46, 80, 70, 30%);
+    background-color: var(--main-dark-color-opacity-40);
 }
 
 .page__button:hover{
-    background: rgba(46, 80, 70, 80%);
-    color: #ECECEC;
+    background-color: var(--main-dark-color-opacity-80);
+    /*background: rgba(46, 80, 70, 80%);*/
+    color: var(--main-light-color);
 }
 
 .overlay__element{

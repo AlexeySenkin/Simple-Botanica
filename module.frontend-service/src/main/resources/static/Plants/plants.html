@@ -17,7 +17,7 @@
         <div class="top__container plantcards__container">
             <div class="plant__card" ng-repeat="plant in plantsPage">
                 <div class="relative__container">
-                    <img class="overlay__element" src="img/delete.png" ng-show="isAdmin()">
+<!--                    <img class="overlay__element" src="img/delete.png" ng-show="isAdmin()">-->
                     <img class="plant__photo" ng-src="{{plant.photo}}" alt="{{plant.name}}" src="">
                 </div>
                 <h4 class="plant__name__header">{{plant.name}}</h4>
@@ -30,6 +30,12 @@
 
                 </div>
             </div>
+        </div>
+
+        <div class="pagination__container">
+            <!--            pagination-->
+            <ul uib-pagination total-items="totalItems" ng-model="currentPage" max-size="maxPages"
+                class="" boundary-links="true" num-pages="numPages"></ul>
         </div>
     </div>
     <!--    пагинация   -->
