@@ -1,5 +1,5 @@
 angular.module('Simple-Botanica-app')
-    .controller('plants-controller', function ($http, $rootScope, $scope, botanicaConfig, api_version, paginatonFactory) {
+    .controller('plants-controller', function ($http, $rootScope, $scope, botanicaConfig, api_version) {
         const plantsPath = 'localhost:3010/api/' + api_version.api_v + 'plants'
         $scope.plantListCallPlace = botanicaConfig.plantListCallPlace;
 
