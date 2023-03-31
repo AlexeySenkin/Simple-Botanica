@@ -1,5 +1,5 @@
 angular.module('Simple-Botanica-app')
-    .controller('plants-controller', function ($http, $rootScope, $scope, botanicaConfig, api_version) {
+    .controller('plants-controller', function ($http, $rootScope, $scope, botanicaConfig, api_version, roleCheckFactory) {
         const plantsPath = 'localhost:3010/api/' + api_version.api_v + 'plants'
         $scope.plantListCallPlace = botanicaConfig.plantListCallPlace;
 
@@ -38,15 +38,18 @@ angular.module('Simple-Botanica-app')
         $scope.showPlantDetails = function (plantId) {
             $http.get(plantsPath + '/' + plantId).then(function successCallback(response) {
                     $scope.plant = response.data;
+                    location.assign('#!/plantinfo');
                 },
                 function errorCallback(reason) {
 
                 });
-            alert(plantId);
+            location.assign('#!/plantinfo');
+            alert(location.toString());
         }
 
-        $scope.isAdmin = function () {
+        $scope.isAdmin = function() {
             return true;
+            // roleCheckFactory.isAdmin();
         }
         $scope.getPlants();
 

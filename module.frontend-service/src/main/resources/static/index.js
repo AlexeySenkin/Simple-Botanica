@@ -7,7 +7,7 @@
         $routeProvider
             // .when('/', {templateUrl: 'index.html', controller: 'SimpleBotanica-controller'})
             .when('/', {templateUrl: 'Plants/plants.html', controller: 'plants-controller'})
-            // .when()
+            .when('/plantinfo',{templateUrl: 'PlantCard/PlantCard.html', controller:'plant-card-controller'})
             .otherwise({redirectTo: '/'})
     }
 
@@ -30,7 +30,7 @@ var botanicaApp = angular.module('Simple-Botanica-app');
 botanicaApp.factory('plantListFactory', function () {
 
 })
-// признак открытия списка растений
+// признак места открытия списка растений
 botanicaApp.value('botanicaConfig', {
     plantListCallPlace: 1
 });
@@ -39,41 +39,26 @@ botanicaApp.constant('api_version',{
     api_v: ''
 });
 
-// botanicaApp.factory('paginatonFactory', function (){
-//     let paginatonFactoryObj = {};
-//     paginatonFactoryObj.generateRangeForPagination = function(currentPageNumber, visibleElementsCount, lastPageNumber) {
-//         let offset = Math.floor(visibleElementsCount / 2);
-//
-//         visibleElementsCount = visibleElementsCount > lastPageNumber + 1 ? lastPageNumber + 1 : visibleElementsCount;
-//
-//         let max = currentPageNumber + offset >= lastPageNumber ? lastPageNumber + 1 : currentPageNumber + offset + 1;
-//
-//         let min = currentPageNumber - offset <= 0 ? 1 : currentPageNumber - offset + 1;
-//
-//         if (max - min < visibleElementsCount - 1) {
-//             if (min > 1) {
-//                 min = max - visibleElementsCount + 1;
-//             }
-//         }
-//
-//         let pagesArray = new Array(visibleElementsCount).fill(1);
-//
-//         for (let i = 0; i < visibleElementsCount; i++) {
-//             pagesArray[i] = min + i;
-//         }
-//         return pagesArray;
-//     };
-//     return paginatonFactoryObj;
-// })
+botanicaApp.factory('roleCheckFactory', function ($localStorage){
+    let roleCheckFactoryObj = {};
+    roleCheckFactoryObj.isAdmin = function (){
+        return !!(($localStorage.botanicaWebUser) && ($localStorage.botanicaWebUser.role === 'admin'));
+    };
+    roleCheckFactoryObj.isAuthorized = function (){
+        return !!($localStorage.botanicaWebUser);
+    };
+    return roleCheckFactoryObj;
+})
+
 botanicaApp
     .controller('SimpleBotanica-controller', function ($http, $rootScope, $scope, $localStorage, $location,
-                                                       botanicaConfig, $uibModal, api_version ) {
+                                                       botanicaConfig, $uibModal, api_version, roleCheckFactory) {
         botanicaConfig.plantListCallPlace = 2;
         $scope.cp = botanicaConfig.plantListCallPlace;
 
 
         $scope.openAuthForm = function () {
-            var modalInstance = $uibModal.open({
+            let modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'Auth/AuthForm.html',
                 controller: 'authFormController',
@@ -91,12 +76,8 @@ botanicaApp
                 })
         };
 
-        $scope.isUserLoggedIn = function (){
-            if ($localStorage.botanicaWebUser) {
-            return true;
-            } else {
-                return false;
-            }
-        }
+        $scope.isUserLoggedIn = function() {
+            return roleCheckFactory.isAuthorized();
+        };
 
     })
