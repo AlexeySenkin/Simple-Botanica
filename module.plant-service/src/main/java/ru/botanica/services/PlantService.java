@@ -22,10 +22,6 @@ public class PlantService {
     private void init() {
         int bdSize = (int) plantRepository.count();
         findAll(null, PageRequest.of(0, bdSize + 1));
-        for (int i = 1; i <= bdSize; i++) {
-            plantDtoMap.getPlant((long) i);
-            System.out.println(plantDtoMap.getPlant((long) i));
-        }
     }
 
     public Page<PlantDto> findAll(String title, Pageable pageable) {

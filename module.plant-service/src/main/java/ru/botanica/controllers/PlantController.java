@@ -1,6 +1,5 @@
 package ru.botanica.controllers;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,8 +21,7 @@ public class PlantController {
     private final int PAGE_SIZE = 10;
 
     @GetMapping()
-    public Page<PlantDto> findAllByFilters(@RequestParam(required = false, defaultValue = "1")int page,
-                                           @RequestParam(required = false) String title) {
+    public Page<PlantDto> findAllByFilters(@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false) String title) {
         int currentPage = page - 1;
         int sizeValue = PAGE_SIZE;
         return plantService.findAll(title, PageRequest.of(currentPage, sizeValue));
