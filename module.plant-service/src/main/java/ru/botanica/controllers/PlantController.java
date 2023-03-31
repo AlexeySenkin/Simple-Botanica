@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.botanica.entities.plants.PlantDto;
 import ru.botanica.services.PlantService;
 
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/plants")
@@ -23,9 +22,9 @@ public class PlantController {
     private final int PAGE_SIZE = 10;
 
     @GetMapping()
-    public Page<PlantDto> findAllByFilters(@RequestParam(required = false, defaultValue = "1")Optional<Integer> page,
+    public Page<PlantDto> findAllByFilters(@RequestParam(required = false, defaultValue = "1")int page,
                                            @RequestParam(required = false) String title) {
-        int currentPage = page.orElse(1) - 1;
+        int currentPage = page - 1;
         int sizeValue = PAGE_SIZE;
         return plantService.findAll(title, PageRequest.of(currentPage, sizeValue));
     }

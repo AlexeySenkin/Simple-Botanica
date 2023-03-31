@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.botanica.entities.plants.*;
 
@@ -17,13 +18,16 @@ public class PlantService {
 
 
     public Page<PlantDto> findAll(String title, Pageable pageable) {
-//          TODO: придумать костыль получше
-//        Костыль, но он улучшает поиск, добавляя все возможные варианты даже если название введено не полностью
-        if (title == null) {
-            return plantRepository.findAllByNameContains(title, pageable).map(plantDtoMapper::mapWithIdNameShortDescAndFilePath);
-        } else {
-            String resultTitle = "%" + title + "%";
-            return plantRepository.findAllByNameContains(resultTitle, pageable).map(plantDtoMapper::mapWithIdNameShortDescAndFilePath);
+        Specification<Plant> specification = createSpecificationsWithFilter(title);
+        Page<Plant> plantPage = plantRepository.findAll(specification, pageable);
+        return plantPage.map(plantDtoMapper::mapToDtoWithIdNameShortDescAndFilePath);
+    }
+
+    private Specification<Plant> createSpecificationsWithFilter(String title) {
+        Specification<Plant> specification = Specification.where(null);
+        if (title != null) {
+            specification = specification.and(PlantSpecifications.nameLike(title));
         }
+        return specification;
     }
 }

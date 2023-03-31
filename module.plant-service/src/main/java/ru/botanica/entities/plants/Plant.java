@@ -3,13 +3,8 @@ package ru.botanica.entities.plants;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import ru.botanica.entities.photos.PlantPhoto;
 
-// TODO: После привязки к БД, скрипт инициализации БД начал выдавать две ошибки о том, что не может изменить данную таблицу, а именно:
-//  Error executing DDL "drop table if exists plants" via JDBC Statement и
-//  Error executing DDL "create table plants (plant_id bigint not null auto_increment, description varchar(255) not null, family varchar(128) not null,
-//  genus varchar(128) not null, is_active bit not null, name varchar(128) not null, short_description varchar(128) not null,
-//  primary key (plant_id)) engine=InnoDB" via JDBC Statement . Нагуглить решение или исправить сам не смог.
-//  Не смотря на ошибки, работоспособность сохраняется
 @Entity
 @Getter
 @Setter
@@ -38,7 +33,9 @@ public class Plant {
     @Column(nullable = false, name = "is_active")
     private boolean isActive;
 
-    private String filePath;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "plant_id")
+    private PlantPhoto photo;
 
     public Plant() {
     }
@@ -53,7 +50,7 @@ public class Plant {
                 ", description='" + description + '\'' +
                 ", shortDescription='" + shortDescription + '\'' +
                 ", isActive=" + isActive + '\'' +
-                ", filePath=" + filePath +
+                ", filePath=" + photo.getFilePath() +
                 '}';
     }
 }
