@@ -4,8 +4,8 @@ import org.springframework.stereotype.Component;
 import ru.botanica.entities.photos.PlantPhoto;
 
 @Component
-public class PlantDtoMapper {
-    public Plant mapToEntity(PlantDto plantDto) {
+public final class PlantDtoMapper {
+    public static Plant mapToEntity(PlantDto plantDto) {
         Plant plant = new Plant();
         plant.setId(plantDto.getId());
         plant.setName(plantDto.getName());
@@ -19,7 +19,7 @@ public class PlantDtoMapper {
         return plant;
     }
 
-    public PlantDto mapToDto(Plant plant) {
+    public static PlantDto mapToDto(Plant plant) {
         PlantDto plantDto = new PlantDto();
         plantDto.setId(plant.getId());
         plantDto.setName(plant.getName());
@@ -32,7 +32,7 @@ public class PlantDtoMapper {
         return plantDto;
     }
 
-    public PlantDto mapToDtoWithIdNameShortDescAndFilePath(Plant plant) {
+    public static PlantDto mapToDtoWithIdNameShortDescAndFilePath(Plant plant) {
         PlantDto plantDto = new PlantDto();
         plantDto.setId(plant.getId());
         plantDto.setName(plant.getName());
