@@ -1,6 +1,10 @@
 :root{
     --main-dark-color: #2E5046;
     --main-light-color: #ECECEC;
+    --main-dark-color-opacity-10: #2E504610;
+    --main-dark-color-opacity-40: #2E504640;
+    --main-dark-color-opacity-80: #2E504680;
+    --main-dark-color-opacity-90: #2E504690;
 }
 * {
     margin: 0;
@@ -11,8 +15,6 @@ body {
     font-family: Roboto, sans-serif;
     font-style: normal;
     height: 100%;
-    /*background-color: var(--main-light-color);*/
-    /*color: var(--main-dark-color);*/
     background-color: var(--main-light-color);
     color: var(--main-dark-color);
 }
@@ -29,7 +31,10 @@ a:hover{
     color: var(--main-light-color);
 
 }
-
+.flex__container{
+    display: flex;
+    justify-content: space-between;
+}
 .top__container {
     max-width: 1140px;
     margin: 0 auto;
@@ -40,13 +45,13 @@ a:hover{
     font-style: normal;
     font-size: 16px;
     line-height: 26px;
-    color: var(--main-dark-color);
+    color: var(--main-dark-color-opacity-90);
     letter-spacing: 0.05em;
-    opacity: 0.8;
     font-weight: 300;
 }
 .text_center{
     text-align: center;
+    text-wrap: normal;
 }
 
 .header__text {
@@ -59,14 +64,6 @@ a:hover{
     text-align: center;
 }
 
-.plant__name__header{
-    width: auto;
-    font-size: 18px;
-    font-weight: 400;
-    letter-spacing: 0.05em;
-    color: #2E5046;
-    text-align: center;
-}
 
 .head__container {
     display: flex;
@@ -78,7 +75,7 @@ a:hover{
 .footer__container {
     display: flex;
     flex-direction: column;
-    background-color: rgba(46, 80, 70, 0.4);
+    background-color: var(--main-dark-color-opacity-40);
     padding: 10px 0 10px 0;
 }
 
@@ -92,8 +89,8 @@ a:hover{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: rgba(46, 80, 70, 0.4);
-    /*background-color: var(--main-dark-color);*/
+    /*background-color: rgba(46, 80, 70, 0.4);*/
+    background-color: var(--main-dark-color-opacity-40);
     padding: 5px 30px;
     line-height: 3;
 }
@@ -106,7 +103,7 @@ a:hover{
     padding: 4px 16px;
     border: none;
     border-radius: 10px;
-    background-color: rgba(46, 80, 70, 0.4);
+    background-color: var(--main-dark-color-opacity-40);
     color: var(--main-light-color);
 }
 
@@ -115,41 +112,12 @@ a:hover{
     padding-top: 20px;
     flex-grow: 1;
 }
-.plantrepresentation__container{
-    padding: 20px;
-}
-.plantcards__container{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding: 20px 0 40px 0;
-    /*padding-bottom: 40px;*/
-}
-
-.plant__card{
-    border-radius: 10px;
-    padding: 5px;
-    margin-bottom: 10px;
-    align-content: center;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    background-color: rgba(46, 80, 70, 10%);
-}
-
-.plant__photo{
-    width: 200px;
-    border-radius: 10px 10px 0 0;
-    margin-bottom: 10px;
-    align-self: center;
-}
 
 .page__input{
     appearance: none;
     border-radius: 10px;
-    background: #ECECEC;
-    border: 1px solid #2E5046;
-    /*height: 30px;*/
+    background: var(--main-light-color);
+    border: 1px solid var(--main-dark-color);
     width: 300px;
     padding: 3px;
 }
@@ -158,7 +126,7 @@ a:hover{
     /*border: 1px solid green;*/
     box-shadow: none;
     outline: none;
-    background: rgba(46, 80, 70, 30%);
+    background-color: var(--main-dark-color-opacity-40);
 }
 
 .page__button{
@@ -167,12 +135,27 @@ a:hover{
     border-radius: 10px;
     min-width: 100px;
     padding: 3px 16px;
-    background: rgba(46, 80, 70, 30%);
+    background-color: var(--main-dark-color-opacity-40);
 }
 
 .page__button:hover{
-    background: rgba(46, 80, 70, 80%);
-    color: #ECECEC;
+    background-color: var(--main-dark-color-opacity-80);
+    /*background: rgba(46, 80, 70, 80%);*/
+    color: var(--main-light-color);
 }
 
+.overlay__element{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
 
+.mb-5{
+    margin-bottom: 5px;
+}
+
+.button__grid{
+    display: grid;
+    grid-gap: 2px;
+    grid-row: 25;
+}
