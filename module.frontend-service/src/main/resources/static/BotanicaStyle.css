@@ -15,8 +15,6 @@ body {
     font-family: Roboto, sans-serif;
     font-style: normal;
     height: 100%;
-    /*background-color: var(--main-light-color);*/
-    /*color: var(--main-dark-color);*/
     background-color: var(--main-light-color);
     color: var(--main-dark-color);
 }
@@ -53,6 +51,7 @@ a:hover{
 }
 .text_center{
     text-align: center;
+    text-wrap: normal;
 }
 
 .header__text {
@@ -151,3 +150,12 @@ a:hover{
     right: 5px;
 }
 
+.mb-5{
+    margin-bottom: 5px;
+}
+
+.button__grid{
+    display: grid;
+    grid-gap: 2px;
+    grid-row: 25;
+}

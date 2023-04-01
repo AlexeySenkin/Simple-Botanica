@@ -1,7 +1,8 @@
 angular.module('Simple-Botanica-app')
-    .controller('plants-controller', function ($http, $rootScope, $scope, botanicaConfig, api_version, roleCheckFactory) {
-        const plantsPath = 'localhost:3010/api/' + api_version.api_v + 'plants'
-        $scope.plantListCallPlace = botanicaConfig.plantListCallPlace;
+    .controller('plants-controller', function ($http, $rootScope, $scope, roleCheckFactory,
+                                               settings, plantInfo, calls) {
+        const plantsPath = settings.plants_path;
+        $scope.plantListCallPlace = calls.plantListCallPlace;
 
         let plantsArray = [{photo: 'img/db/Philodendron.jpg', name: 'Филодендрон', id: 1}
             , {photo: 'img/db/Scindapsus.jpg', name: 'Сциндапсус', id: 2}
@@ -14,18 +15,18 @@ angular.module('Simple-Botanica-app')
 
 
         $scope.getPlants = function () {
+            calls.plantCardCallPace = 1;
             $http.get(plantsPath, {
                 params: {
                     name: $scope.plantNameFilter,
-                    page: $scope.page
+                    page: $scope.currentPage
                 }
             }).then(function successCallback(response) {
                     $scope.plantsPage = response.data.content;
-                    $scope.pageNumbersArray = paginatonFactory.generateRangeForPagination(response.data.number,
-                        8, response.data.totalPages - 1);
+                    $scope.imgPath = settings.img_directory;
                     $scope.totalPages = response.data.totalPages;
-                    $scope.currentPage = response.data.number;
-                    $scope.totalItems = response.data.totalElements;
+                    $scope.currentPage = response.data.number + 1;
+                    $scope.totalItems = response.data.size;
                 },
                 function errorCallback(reason) {
                     $scope.plantsPage = plantsArray;
@@ -37,17 +38,15 @@ angular.module('Simple-Botanica-app')
 
         $scope.showPlantDetails = function (plantId) {
             $http.get(plantsPath + '/' + plantId).then(function successCallback(response) {
-                    $scope.plant = response.data;
+                    plantInfo.plantObject = response.data;
                     location.assign('#!/plantinfo');
                 },
                 function errorCallback(reason) {
-
                 });
             location.assign('#!/plantinfo');
-            alert(location.toString());
         }
 
-        $scope.isAdmin = function() {
+        $scope.isAdmin = function () {
             return true;
             // roleCheckFactory.isAdmin();
         }

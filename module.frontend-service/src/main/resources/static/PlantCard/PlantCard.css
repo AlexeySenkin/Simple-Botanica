@@ -1,0 +1,12 @@
+.plant__info__card__container{
+    padding: 10px;
+    /*background: url(../img/plant_card_img.png) no-repeat right bottom;*/
+    border: 1px solid red;
+}
+.info__container{
+    padding: 10px;
+}
+.right__container{
+    display: flex;
+    flex-direction: column;
+}
