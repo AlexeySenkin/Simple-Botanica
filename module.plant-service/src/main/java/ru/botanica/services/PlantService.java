@@ -13,14 +13,11 @@ import ru.botanica.entities.plants.*;
 @Slf4j
 public class PlantService {
     private final PlantRepository plantRepository;
-    private final PlantDtoMapper plantDtoMapper;
-    private final PlantDtoMap plantDtoMap;
-
 
     public Page<PlantDto> findAll(String title, Pageable pageable) {
         Specification<Plant> specification = createSpecificationsWithFilter(title);
         Page<Plant> plantPage = plantRepository.findAll(specification, pageable);
-        return plantPage.map(plantDtoMapper::mapToDtoWithIdNameShortDescAndFilePath);
+        return plantPage.map(PlantDtoMapper::mapToDtoWithIdNameShortDescAndFilePath);
     }
 
     private Specification<Plant> createSpecificationsWithFilter(String title) {
@@ -30,4 +27,16 @@ public class PlantService {
         }
         return specification;
     }
+
+    /**
+     * Возвращает растение по идентификатору
+     *
+     * @param id Идентификатор
+     * @return Растение
+     */
+    public PlantDto findById(long id) {
+        Plant plant = plantRepository.findById(id).orElseThrow();
+        return PlantDtoMapper.mapToDto(plant);
+    }
+
 }
