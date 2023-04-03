@@ -27,12 +27,6 @@
 })();
 var botanicaApp = angular.module('Simple-Botanica-app');
 
-// признак места открытия списка растений
-botanicaApp.value('calls', {
-    plantListCallPlace: 0,
-    plantCardCallPace: 0
-});
-
 botanicaApp.value('plantInfo', {
     plantObject: {}
 })
@@ -40,9 +34,15 @@ botanicaApp.value('plantInfo', {
 botanicaApp.constant('settings', {
     entry_point: 'http://localhost:9890/botanica/',
     // пока нет шлюза для доступа через единую точку тут будут лежать адреса сервисов
-    plants_path: 'http://localhost:8189/botanica/api/plants',
+    plants_path: 'http://localhost:8189/botanica/api/',
     api_v: '',
-    img_directory: 'img/db/'
+    // директория хранения картинок растений
+    img_directory: 'img/db/',
+    // кнопки ухода
+    actionButtons: [{id: 1, img: 'img/wc.png'},
+        {id: 2, img: 'img/sp.png'},
+        {id: 2, img: 'img/scissors.png'},
+        {id: 2, img: 'img/fertilizer.png'}]
 })
 
 botanicaApp.factory('roleCheckFactory', function ($localStorage) {
