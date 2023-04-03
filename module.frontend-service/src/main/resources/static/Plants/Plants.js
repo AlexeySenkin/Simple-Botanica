@@ -1,8 +1,7 @@
 angular.module('Simple-Botanica-app')
-    .controller('plants-controller', function ($http, $rootScope, $scope, roleCheckFactory,
-                                               settings, plantInfo, calls) {
+    .controller('plants-controller', function ($http, $rootScope, $scope, $localStorage,
+                                               roleCheckFactory, settings, plantInfo) {
         const plantsPath = settings.plants_path;
-        $scope.plantListCallPlace = calls.plantListCallPlace;
 
         let plantsArray = [{photo: 'img/db/Philodendron.jpg', name: 'Филодендрон', id: 1}
             , {photo: 'img/db/Scindapsus.jpg', name: 'Сциндапсус', id: 2}
@@ -15,8 +14,8 @@ angular.module('Simple-Botanica-app')
 
 
         $scope.getPlants = function () {
-            calls.plantCardCallPace = 1;
-            $http.get(plantsPath, {
+            $localStorage.plantCardCallPlace = 1;
+            $http.get(plantsPath + 'plants', {
                 params: {
                     name: $scope.plantNameFilter,
                     page: $scope.currentPage
@@ -37,8 +36,8 @@ angular.module('Simple-Botanica-app')
         }
 
         $scope.showPlantDetails = function (plantId) {
-            $http.get(plantsPath + '/' + plantId).then(function successCallback(response) {
-                    plantInfo.plantObject = response.data;
+            $http.get(plantsPath + 'plant/' + plantId).then(function successCallback(response) {
+                    $localStorage.plantInfo = response.data;
                     location.assign('#!/plantinfo');
                 },
                 function errorCallback(reason) {

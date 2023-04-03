@@ -1,12 +1,44 @@
-.plant__info__card__container{
+.plant__info__card__container {
     padding: 10px;
     /*background: url(../img/plant_card_img.png) no-repeat right bottom;*/
+    background: url(../img/wc.png) no-repeat right bottom;
     border: 1px solid red;
 }
-.info__container{
+
+.info__container {
     padding: 10px;
 }
-.right__container{
+
+.right__container {
     display: flex;
     flex-direction: column;
+}
+
+.care__actions__container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.care__button {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    max-width: 40px;
+    max-height: 40px;
+    margin: 5px;
+    padding: 0;
+    /*display: inline-block;*/
+    border: none;
+    background: var(--main-dark-color-opacity-40);
+}
+.bi__care__icon{
+    width: 35px;
+    height: 35px;
+    alignment: center;
+}
+.bi__watering__button {
+    background: url(//img/wc.png);
+    /*center center no-repeat;*/
+    background-size: auto;
 }

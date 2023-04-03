@@ -3,13 +3,18 @@
         <div class=" flex__container plant__info__card__container">
             <div class="right__container">
                 <img class="plant__photo" ng-src="{{imgPath}}{{plant.photo}}" alt="{{plant.name}}" src="">
-                <!--                <div class="button__grid">-->
-                <a class="page__button mb-5 text text_center" href="" ng-click="" ng-show="callPlace===1">Добавить к
-                    себе</a>
-                <div class="care__actions__container">
-                    <!--                    <button><i ></button>-->
+                <button class="page__button mb-5 text text_center" ng-click="addPlantToUsersList()"
+                        ng-show="callPlace===1">
+                    Добавить к себе
+                </button>
+                <div class="care__actions__container" ng-show="callPlace===2">
+                    <div ng-repeat="bt in actionButtons">
+                        <button class="care__button text">
+                            <img class="bi__care__icon" ng-src="{{bt.img}}" ng-click="careAction(bt.id)" alt="2"
+                                 src=""/>
+                        </button>
+                    </div>
                 </div>
-                <!--                </div>-->
             </div>
             <div class="info__container">
                 <h4 class="plant__name__header">{{plant.name}}</h4>
