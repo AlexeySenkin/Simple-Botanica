@@ -42,7 +42,6 @@ angular.module('Simple-Botanica-app')
                 },
                 function errorCallback(reason) {
                 });
-            location.assign('#!/plantinfo');
         }
 
         $scope.isAdmin = function () {

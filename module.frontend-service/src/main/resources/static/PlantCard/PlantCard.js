@@ -4,9 +4,9 @@ angular.module('Simple-Botanica-app')
         $scope.plant = {
             id: 3,
             name: 'Спатифилум',
-            photo: 'Spatifilum.jpg',
+            filePath: 'Spatifilum.jpg',
             family: 'Ароидные',
-            genius: 'Спатифилум',
+            genus: 'Спатифилум',
             description: 'Температура воздуха\n' +
                 'Оптимальная температура для выращивания Spathiphyllum — 18-25 °C. В летнее время года температура воздуха в помещении не должна подниматься выше 25 °C. Зимой правила ухода за спатифиллумом допускают понижение до 16 °C. Если содержать растение спатифиллум при температуре ниже 14 °C, оно заболеет и может даже погибнуть. При температуре в помещении ниже отметки 18 °C цветок растет и развивается медленнее.\n' +
                 '\n' +
@@ -34,7 +34,7 @@ angular.module('Simple-Botanica-app')
         // признак откуда была открыта карточка растения
         $scope.callPlace = $localStorage.plantCardCallPlace;
         //растение
-        // $scope.plant = $localStorage.plantInfo;
+        $scope.plant = $localStorage.plantInfo;
 
         $scope.actionButtons = settings.actionButtons;
         $scope.imgPath = settings.img_directory;
