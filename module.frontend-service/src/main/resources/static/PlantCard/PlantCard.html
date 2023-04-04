@@ -2,24 +2,25 @@
     <div class="top__container">
         <div class=" flex__container plant__info__card__container">
             <div class="right__container">
-                <img class="plant__photo" ng-src="{{imgPath}}{{plant.filePath}}" alt="{{plant.name}}" src="">
+                <img class="plant__photo plant__card__photo" ng-src="{{imgPath}}{{plant.filePath}}" alt="{{plant.name}}" src="">
                 <button class="page__button mb-5 text text_center" ng-click="addPlantToUsersList()"
                         ng-show="callPlace===1">
                     Добавить к себе
                 </button>
                 <div class="care__actions__container" ng-show="callPlace===2">
                     <div ng-repeat="bt in actionButtons">
-                        <button class="care__button text">
+                        <button class="care__button text" >
                             <img class="bi__care__icon" ng-src="{{bt.img}}" ng-click="careAction(bt.id)" alt="2"
                                  src=""/>
                         </button>
+
                     </div>
                 </div>
             </div>
             <div class="info__container">
                 <h4 class="plant__name__header">{{plant.name}}</h4>
-                <h5 class="text"> {{plant.family}}</h5>
-                <h5 class="text"> {{plant.genus}}</h5>
+                <h5 class="text"> Семейство: {{plant.family}}</h5>
+                <h5 class="text"> Род: {{plant.genus}}</h5>
                 <p class="text"> {{plant.description}}</p>
             </div>
         </div>

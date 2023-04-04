@@ -39,10 +39,11 @@ botanicaApp.constant('settings', {
     // директория хранения картинок растений
     img_directory: 'img/db/',
     // кнопки ухода
-    actionButtons: [{id: 1, img: 'img/wc.png'},
-        {id: 2, img: 'img/sp.png'},
-        {id: 2, img: 'img/scissors.png'},
-        {id: 2, img: 'img/fertilizer.png'}]
+    actionButtons: [{id: 1, img: 'img/watering_can.png', hint: 'Полить'},
+        {id: 2, img: 'img/sprayer.png', hint: 'Опрыскать'},
+        {id: 3, img: 'img/fertilizer.png', hint: 'Удобрить'},
+        {id: 4, img: 'img/shears.png', hint: 'Обрезать'},
+        {id: 5, img: 'img/re-potting.png', hint: 'Пересадить'}]
 })
 
 botanicaApp.factory('roleCheckFactory', function ($localStorage) {

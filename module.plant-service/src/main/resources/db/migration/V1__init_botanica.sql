@@ -1,3 +1,4 @@
+
 DROP TABLE IF EXISTS `care`;
 CREATE TABLE `care` (
                         `care_id` int NOT NULL AUTO_INCREMENT,

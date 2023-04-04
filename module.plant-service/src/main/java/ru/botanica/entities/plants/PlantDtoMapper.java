@@ -28,7 +28,10 @@ public final class PlantDtoMapper {
         plantDto.setDescription(plant.getDescription());
         plantDto.setShortDescription(plant.getShortDescription());
         plantDto.setActive(plant.isActive());
-        plantDto.setFilePath(plant.getPhoto().getFilePath());
+        //Эта строка исправляет ошибку, если нет записи для растения в таблице фотографий
+        if (plant.getPhoto() != null) {
+            plantDto.setFilePath(plant.getPhoto().getFilePath());
+        }
         return plantDto;
     }
 
@@ -37,7 +40,10 @@ public final class PlantDtoMapper {
         plantDto.setId(plant.getId());
         plantDto.setName(plant.getName());
         plantDto.setShortDescription(plant.getShortDescription());
-        plantDto.setFilePath(plant.getPhoto().getFilePath());
+        //Эта строка исправляет ошибку, если нет записи для растения в таблице фотографий
+        if (plant.getPhoto() != null) {
+            plantDto.setFilePath(plant.getPhoto().getFilePath());
+        }
         return plantDto;
     }
 }

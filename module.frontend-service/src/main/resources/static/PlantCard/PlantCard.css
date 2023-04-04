@@ -1,8 +1,6 @@
 .plant__info__card__container {
     padding: 10px;
     /*background: url(../img/plant_card_img.png) no-repeat right bottom;*/
-    background: url(../img/wc.png) no-repeat right bottom;
-    border: 1px solid red;
 }
 
 .info__container {
@@ -17,7 +15,8 @@
 .care__actions__container {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .care__button {
@@ -33,8 +32,8 @@
     background: var(--main-dark-color-opacity-40);
 }
 .bi__care__icon{
-    width: 35px;
-    height: 35px;
+    width: 30px;
+    height: 30px;
     alignment: center;
 }
 .bi__watering__button {
@@ -42,3 +41,8 @@
     /*center center no-repeat;*/
     background-size: auto;
 }
+
+.plant__card__photo{
+    width: auto;
+}
+

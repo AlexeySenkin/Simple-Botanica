@@ -3,21 +3,11 @@ angular.module('Simple-Botanica-app')
                                                roleCheckFactory, settings, plantInfo) {
         const plantsPath = settings.plants_path;
 
-        let plantsArray = [{photo: 'img/db/Philodendron.jpg', name: 'Филодендрон', id: 1}
-            , {photo: 'img/db/Scindapsus.jpg', name: 'Сциндапсус', id: 2}
-            , {photo: 'img/db/Spatifilum.jpg', name: 'Спатифилум', id: 3}
-            , {photo: 'img/db/Alocasia.jpg', name: 'Алоказия', id: 4}
-            , {photo: 'img/db/Spatifilum.jpg', name: 'Спатифилум', id: 5}
-            , {photo: 'img/db/Scindapsus.jpg', name: 'Сциндапсус', id: 6}
-            , {photo: 'img/db/Spatifilum.jpg', name: 'Спатифилум', id: 7}
-            , {photo: 'img/db/Spatifilum.jpg', name: 'Спатифилум', id: 8}]
-
-
         $scope.getPlants = function () {
             $localStorage.plantCardCallPlace = 1;
             $http.get(plantsPath + 'plants', {
                 params: {
-                    name: $scope.plantNameFilter,
+                    title: $scope.plantNameFilter,
                     page: $scope.currentPage
                 }
             }).then(function successCallback(response) {
@@ -25,13 +15,13 @@ angular.module('Simple-Botanica-app')
                     $scope.imgPath = settings.img_directory;
                     $scope.totalPages = response.data.totalPages;
                     $scope.currentPage = response.data.number + 1;
-                    $scope.totalItems = response.data.size;
+                    $scope.totalItems = response.data.totalElements + 1;
+                    $scope.maxPages = 6;
+                    // $scope.totalItems = 11;
                 },
                 function errorCallback(reason) {
-                    $scope.plantsPage = plantsArray;
-                    $scope.totalPages = 4;
-                    $scope.currentPage = 2;
-                    $scope.totalItems = 30;
+                    console.log('Ошибка: '+ reason.data.status + ' с текстом: ' +reason.data.error);
+
                 })
         }
 
@@ -48,6 +38,12 @@ angular.module('Simple-Botanica-app')
             return true;
             // roleCheckFactory.isAdmin();
         }
+
+
+        $scope.testButton = function(){
+            alert($scope.plantNameFilter);
+        }
+
         $scope.getPlants();
 
     })

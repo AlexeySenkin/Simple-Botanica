@@ -33,7 +33,7 @@ public class Plant {
     @Column(nullable = false, name = "is_active")
     private boolean isActive;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "plant_id")
     private PlantPhoto photo;
 
@@ -50,7 +50,8 @@ public class Plant {
                 ", description='" + description + '\'' +
                 ", shortDescription='" + shortDescription + '\'' +
                 ", isActive=" + isActive + '\'' +
-                ", filePath=" + photo.getFilePath() +
+//  ToDo: здесь так же надо решить случай, если нет записи в таблице plant_photo для растения
+//                ", filePath=" + photo.getFilePath() +
                 '}';
     }
 }
