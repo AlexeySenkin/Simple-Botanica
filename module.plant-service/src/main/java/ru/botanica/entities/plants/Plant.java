@@ -50,7 +50,7 @@ public class Plant {
                 ", description='" + description + '\'' +
                 ", shortDescription='" + shortDescription + '\'' +
                 ", isActive=" + isActive + '\'' +
-                ", filePath=" + photo.getFilePath() +
+                ", filePath=" + (photo == null? null : photo.getFilePath()) +
                 '}';
     }
 }

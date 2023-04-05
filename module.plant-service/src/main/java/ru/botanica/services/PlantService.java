@@ -14,12 +14,25 @@ import ru.botanica.entities.plants.*;
 public class PlantService {
     private final PlantRepository plantRepository;
 
+    /**
+     * Возвращает список растений, учитывающий заданные для поиска параметры
+     *
+     * @param title Название
+     * @param pageable Страница(номер страницы, размер страницы)
+     * @return Список растений
+     */
     public Page<PlantDto> findAll(String title, Pageable pageable) {
         Specification<Plant> specification = createSpecificationsWithFilter(title);
         Page<Plant> plantPage = plantRepository.findAll(specification, pageable);
         return plantPage.map(PlantDtoMapper::mapToDtoWithIdNameShortDescAndFilePath);
     }
 
+    /**
+     * Составляет список, собирающий все параметры, задаваемые при запросе списка растений
+     *
+     * @param title Название
+     * @return Список параметров для запроса
+     */
     private Specification<Plant> createSpecificationsWithFilter(String title) {
         Specification<Plant> specification = Specification.where(null);
         if (title != null) {

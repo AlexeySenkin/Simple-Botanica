@@ -16,6 +16,13 @@ public class PlantController {
     private final PlantService plantService;
     private final int PAGE_SIZE = 10;
 
+    /**
+     * Возвращает список растений, учитывающий заданные для поиска параметры
+     *
+     * @param page Номер страницы
+     * @param title Название
+     * @return Список растений
+     */
     @GetMapping("/plants")
     public Page<PlantDto> findAllByFilters(@RequestParam(required = false, defaultValue = "1") int page,
                                            @RequestParam(required = false) String title) {
