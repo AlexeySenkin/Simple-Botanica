@@ -15,7 +15,7 @@ public class Plant {
     @Column(name = "plant_id")
     private Long id;
 
-    @Column(nullable = false, length = 128, name = "name")
+    @Column(nullable = false, length = 128, name = "name", unique = true)
     private String name;
 
     @Column(nullable = false, length = 128, name = "family")

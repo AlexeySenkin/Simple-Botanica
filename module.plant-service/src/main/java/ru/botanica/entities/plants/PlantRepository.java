@@ -8,6 +8,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @Repository
 public interface PlantRepository extends JpaRepository<Plant, Long>, JpaSpecificationExecutor<Plant> {
     @Transactional
@@ -19,4 +20,20 @@ public interface PlantRepository extends JpaRepository<Plant, Long>, JpaSpecific
     void updateById(@NonNull String name, @NonNull String family,
                     @NonNull String genus, @NonNull String description,
                     @NonNull String shortDescription, @NonNull boolean isActive, @NonNull Long id);
+
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true, value = """
+            insert into plants (name, family, genus, description, short_description, is_active)
+            values (:name, :family, :genus, :description, :shortDescription, :isActive)
+            """)
+    void insertProduct(@NonNull String name, @NonNull String family,
+                    @NonNull String genus, @NonNull String description,
+                    @NonNull String shortDescription, @NonNull boolean isActive);
+
+
+    boolean existsByName(String name);
+
+    @Query("select p.id from Plant p where p.name like ?1")
+    Long findIdByName(String name);
 }

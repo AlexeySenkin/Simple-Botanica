@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import ru.botanica.entities.photos.PlantPhotoRepository;
 import ru.botanica.entities.plants.*;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -55,15 +57,15 @@ public class PlantService {
     }
 
     /**
-     * Обновляет значения растения {plant_id, name, short_description, description, file_path}
+     * Обновляет значения растения
      *
-     * @param plantId                Идентификатор
-     * @param name              Название
-     * @param family            Семья
-     * @param genus             Род
+     * @param plantId          Идентификатор
+     * @param name             Название
+     * @param family           Семья
+     * @param genus            Род
      * @param shortDescription Краткое описание
-     * @param description       Полное описание
-     * @param file_path         Путь к фото
+     * @param description      Полное описание
+     * @param file_path        Путь к фото
      * @param isActive         Флаг активного растения
      * @return Идентификатор
      */
@@ -85,4 +87,48 @@ public class PlantService {
         return plantId;
     }
 
+    /**
+     * Добавляет растения с данными значениями, добавляет фото, если есть,
+     * и возвращает идентификатор созданного растения
+     *
+     * @param name             Название
+     * @param family           Семья
+     * @param genus            Род
+     * @param shortDescription Краткое описание
+     * @param description      Полное описание
+     * @param file_path        Путь к фото
+     * @param isActive         Флаг активного растения
+     * @return Идентификатор
+     */
+
+//    TODO: наша БД пропускает название как неуникальное значение. Т.е. условных растений с именем Test у нас может быть целая база.
+//     Искать вообще по всем полям ничем не помогает: остальные поля изначально могут совпадать, потому два растения с одинаковым именем
+//     будут находится и в данном случае. Этот момент надо поправить в скрипте.
+//     Так же пока нет обработки ошибок вынужден прокидывать id'шник уже существующего растения и логировать внесение ошибочны данных
+
+//     Поиск нового растения в нашем случае подходит только по имени, т.к. в один момент могут создавать сразу несколько растений и
+//     не факт, что id растения в таком случае будет последним. Если команда посчитает это не критичным, переделаю на поиск по
+//     последнему id из списка. Тогда можно оставить name не уникальным, но на мой взгляд, это будет ошибкой
+    public Long addProduct(String name, String family, String genus,
+                           String shortDescription, String description, String file_path, boolean isActive) {
+        if (!checkOnExisting(name)) {
+            plantRepository.insertProduct(name, family, genus, description, shortDescription, isActive);
+            Long id = plantRepository.findIdByName(name);
+            photoRepository.insertById(file_path, id);
+            return id;
+        } else {
+            log.error("Растение с именем " + name + " уже существует");
+            return plantRepository.findIdByName(name);
+        }
+    }
+
+    /**
+     * Находит, если в базе растение с указанным названием
+     *
+     * @param name Название
+     * @return boolean-значение
+     */
+    public boolean checkOnExisting(String name) {
+        return plantRepository.existsByName(name);
+    }
 }
