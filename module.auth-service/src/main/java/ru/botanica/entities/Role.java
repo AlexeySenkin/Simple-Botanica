@@ -1,11 +1,14 @@
 package ru.botanica.entities;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "roles")
 public class Role {
     @Id
@@ -19,4 +22,12 @@ public class Role {
     @Column(name = "is_active")
     private boolean isActive;
 
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", isActive=" + isActive +
+                '}';
+    }
 }
