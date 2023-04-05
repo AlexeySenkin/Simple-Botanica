@@ -131,4 +131,8 @@ public class PlantService {
     public boolean checkOnExisting(String name) {
         return plantRepository.existsByName(name);
     }
+
+    public void deletePlantById(long id) {
+        plantRepository.deleteById(id);
+    }
 }

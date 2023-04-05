@@ -1,6 +1,5 @@
 package ru.botanica.controllers;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,15 +16,6 @@ public class PlantController {
     private final PlantService plantService;
     private final int PAGE_SIZE = 10;
 
-    //    Временный метод для тестов на месте
-    @PostConstruct
-    public void init() {
-//        Отработало верно: растение добавлено
-//        System.out.println(addPlant("Test", "English", "Genus", "Short",
-//                "Long", null, true));
-//        Нашел ошибку с записью одинаковых растений. Обработки на нашей стороне еще нет, потому возвращаю id уже существующего растения
-//        System.out.println(addPlant("Test2", "English", "Genus", "Short", "Long", null, true));
-    }
 
     /**
      * Возвращает список растений, учитывающий заданные для поиска параметры
@@ -92,5 +82,10 @@ public class PlantController {
                          @RequestParam String description, @RequestParam(required = false, name = "file_path") String filePath,
                          @RequestParam boolean isActive) {
         return plantService.addProduct(name, family, genus, shortDescription, description, filePath, isActive);
+    }
+
+    @DeleteMapping("plant/{id}")
+    public void deletePlant(@PathVariable long id) {
+        plantService.deletePlantById(id);
     }
 }
