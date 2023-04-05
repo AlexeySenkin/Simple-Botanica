@@ -84,6 +84,11 @@ public class PlantController {
         return plantService.addProduct(name, family, genus, shortDescription, description, filePath, isActive);
     }
 
+    /**
+     * Удаляет растение по идентификатору
+     *
+     * @param id Идентификатор
+     */
     @DeleteMapping("plant/{id}")
     public void deletePlant(@PathVariable long id) {
         plantService.deletePlantById(id);

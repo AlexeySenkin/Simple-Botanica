@@ -132,6 +132,11 @@ public class PlantService {
         return plantRepository.existsByName(name);
     }
 
+    /**
+     * Удаляет растение по идентификатору
+     *
+     * @param id Идентификатор
+     */
     public void deletePlantById(long id) {
         plantRepository.deleteById(id);
     }
