@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.botanica.entities.photos.PlantPhotoRepository;
 import ru.botanica.entities.plants.*;
 
 @Service
@@ -13,11 +14,12 @@ import ru.botanica.entities.plants.*;
 @Slf4j
 public class PlantService {
     private final PlantRepository plantRepository;
+    private final PlantPhotoRepository photoRepository;
 
     /**
      * Возвращает список растений, учитывающий заданные для поиска параметры
      *
-     * @param title Название
+     * @param title    Название
      * @param pageable Страница(номер страницы, размер страницы)
      * @return Список растений
      */
@@ -50,6 +52,37 @@ public class PlantService {
     public PlantDto findById(long id) {
         Plant plant = plantRepository.findById(id).orElseThrow();
         return PlantDtoMapper.mapToDto(plant);
+    }
+
+    /**
+     * Обновляет значения растения {plant_id, name, short_description, description, file_path}
+     *
+     * @param plantId                Идентификатор
+     * @param name              Название
+     * @param family            Семья
+     * @param genus             Род
+     * @param shortDescription Краткое описание
+     * @param description       Полное описание
+     * @param file_path         Путь к фото
+     * @param isActive         Флаг активного растения
+     * @return Идентификатор
+     */
+    public Long updateByID(long plantId, String name, String family, String genus,
+                           String shortDescription, String description, String file_path, boolean isActive) {
+        /**
+         * Часть, обновляющая данные растения
+         */
+        plantRepository.updateById(name, family, genus, description, shortDescription, isActive, plantId);
+
+        /**
+         * Часть, добавляющая фотографию к растению, если поля не существует и обновляющая оное в обратном случае
+         */
+        if (photoRepository.existsById(plantId)) {
+            photoRepository.updateById(file_path, plantId);
+        } else {
+            photoRepository.insertById(file_path, plantId);
+        }
+        return plantId;
     }
 
 }
