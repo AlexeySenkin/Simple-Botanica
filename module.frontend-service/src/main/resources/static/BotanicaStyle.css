@@ -64,7 +64,6 @@ a:hover{
     text-align: center;
 }
 
-
 .head__container {
     display: flex;
     flex-direction: column;
@@ -76,7 +75,7 @@ a:hover{
     display: flex;
     flex-direction: column;
     background-color: var(--main-dark-color-opacity-40);
-    padding: 10px 0 10px 0;
+    padding: 10px;
 }
 
 .head__block {
@@ -154,8 +153,16 @@ a:hover{
     margin-bottom: 5px;
 }
 
+.m-0 {
+    margin: 0;
+}
+
 .button__grid{
     display: grid;
     grid-gap: 2px;
     grid-row: 25;
+}
+
+.footer__list{
+    list-style-position: inside;
 }

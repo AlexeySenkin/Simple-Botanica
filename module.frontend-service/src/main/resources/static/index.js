@@ -7,7 +7,8 @@
         $routeProvider
             // .when('/', {templateUrl: 'index.html', controller: 'SimpleBotanica-controller'})
             .when('/', {templateUrl: 'Plants/Plants.html', controller: 'plants-controller'})
-            .when('/plantinfo', {templateUrl: 'PlantCard/PlantCard.html', controller: 'plant-card-controller'})
+            .when('/plant-info', {templateUrl: 'PlantCard/PlantCard.html', controller: 'plant-card-controller'})
+            .when('/user-profile', {templateUrl: 'User/UserProfile.html', controller: 'plant-card-controller'})
             .otherwise({redirectTo: '/'})
     }
 
@@ -32,17 +33,18 @@ botanicaApp.value('plantInfo', {
 })
 
 botanicaApp.constant('settings', {
-    entry_point: 'http://localhost:9890/botanica/',
+    ENTRY_POINT: 'http://localhost:9890/botanica/',
     // пока нет шлюза для доступа через единую точку тут будут лежать адреса сервисов
-    plants_path: 'http://localhost:8189/botanica/api/',
-    api_v: '',
+    PLANTS_PATH: 'http://localhost:8189/botanica/api/',
+    API_V: '',
     // директория хранения картинок растений
-    img_directory: 'img/db/',
+    IMG_DIRECTORY: 'img/db/',
     // кнопки ухода
-    actionButtons: [{id: 1, img: 'img/wc.png'},
-        {id: 2, img: 'img/sp.png'},
-        {id: 2, img: 'img/scissors.png'},
-        {id: 2, img: 'img/fertilizer.png'}]
+    ACTION_BUTTONS: [{id: 1, img: 'img/watering_can.png', hint: 'Полить'},
+        {id: 2, img: 'img/sprayer.png', hint: 'Опрыскать'},
+        {id: 3, img: 'img/fertilizer.png', hint: 'Удобрить'},
+        {id: 4, img: 'img/shears.png', hint: 'Обрезать'},
+        {id: 5, img: 'img/re-potting.png', hint: 'Пересадить'}]
 })
 
 botanicaApp.factory('roleCheckFactory', function ($localStorage) {

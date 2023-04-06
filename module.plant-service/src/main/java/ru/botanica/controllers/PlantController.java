@@ -14,7 +14,7 @@ import ru.botanica.services.PlantService;
 @Slf4j
 public class PlantController {
     private final PlantService plantService;
-    private final int PAGE_SIZE = 10;
+    private final int PAGE_SIZE = 7;
 
     @GetMapping("/plants")
     public Page<PlantDto> findAllByFilters(@RequestParam(required = false, defaultValue = "1") int page,
