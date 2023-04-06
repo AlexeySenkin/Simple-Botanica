@@ -24,7 +24,7 @@ public class Plant {
     @Column(nullable = false, length = 128, name = "genus")
     private String genus;
 
-    @Column(nullable = false, name = "description")
+    @Column(nullable = false, length = 1024, name = "description")
     private String description;
 
     @Column(nullable = false, length = 128, name = "short_description")
