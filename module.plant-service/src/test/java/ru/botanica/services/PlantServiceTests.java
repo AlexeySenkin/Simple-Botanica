@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.botanica.entities.photos.PlantPhoto;
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {PlantService.class})
 @ExtendWith(MockitoExtension.class)
+
 public class PlantServiceTests {
 
     @MockBean
@@ -28,6 +30,7 @@ public class PlantServiceTests {
     private PlantPhotoRepository photoRepository;
     @Autowired
     private PlantService plantService;
+
 
     /**
      * Тест возвращения растения по идентификатору

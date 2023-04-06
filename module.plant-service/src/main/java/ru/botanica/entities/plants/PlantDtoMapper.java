@@ -14,6 +14,7 @@ public final class PlantDtoMapper {
         plant.setDescription(plantDto.getDescription());
         plant.setShortDescription(plantDto.getShortDescription());
         plant.setActive(plantDto.isActive());
+//        TODO: проверить на ошибки в более готовой версии
         plant.setPhoto(new PlantPhoto(plantDto.getFilePath(), plantDto.getId()));
         return plant;
     }

@@ -33,7 +33,7 @@ public class Plant {
     @Column(nullable = false, name = "is_active")
     private boolean isActive;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "plant_id")
     private PlantPhoto photo;
 
