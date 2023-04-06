@@ -32,7 +32,7 @@
     <link href="Auth/AuthFormStylesheet.css" rel="stylesheet">
     <link href="Plants/Plants.css" rel="stylesheet">
     <link href="PlantCard/PlantCard.css" rel="stylesheet">
-
+    <link href="User/UserProfile.css" rel="stylesheet">
     <title>Simple Botanica 1.0</title>
 </head>
 <body>
@@ -46,6 +46,9 @@
                 </a>
             </div>
             <div>
+                <a class="menu__item__button text" href="#!/user-profile">
+                    пользователь
+                </a>
                 <a class="menu__item__button text" ng-click="openAuthForm()" ng-show="!isUserLoggedIn()">
                     Войти
                 </a>
@@ -88,6 +91,7 @@
 <script src="Plants/Plants.js"></script>
 <script src="Auth/AuthFormController.js"></script>
 <script src="PlantCard/PlantCard.js"></script>
+<script src="User/UserProfile.js"></script>
 </body>
 
 </html>

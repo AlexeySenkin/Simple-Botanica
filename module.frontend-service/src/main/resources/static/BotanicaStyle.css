@@ -64,7 +64,6 @@ a:hover{
     text-align: center;
 }
 
-
 .head__container {
     display: flex;
     flex-direction: column;
@@ -76,7 +75,7 @@ a:hover{
     display: flex;
     flex-direction: column;
     background-color: var(--main-dark-color-opacity-40);
-    padding: 10px 0 10px 0;
+    padding: 10px;
 }
 
 .head__block {

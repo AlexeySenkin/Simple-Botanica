@@ -8,8 +8,8 @@ angular.module('Simple-Botanica-app')
         //растение
         $scope.plant = $localStorage.plantInfo;
 
-        $scope.actionButtons = settings.actionButtons;
-        $scope.imgPath = settings.img_directory;
+        $scope.actionButtons = settings.ACTION_BUTTONS;
+        $scope.imgPath = settings.IMG_DIRECTORY;
 
         $scope.isAdmin = function () {
             return roleCheckFactory.isAdmin();
@@ -30,5 +30,9 @@ angular.module('Simple-Botanica-app')
                     break;
                 }
             }
-        }
+        };
+
+        $scope.addPlantToUserList = function (plantId){
+
+        };
     })
