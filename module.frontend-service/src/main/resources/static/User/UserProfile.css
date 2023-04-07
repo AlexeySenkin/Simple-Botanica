@@ -1,5 +1,6 @@
 .user__container {
     padding: 10px;
+    background: var(--main-dark-color-opacity-10);
 }
 .user__info__labels{
     width: auto;
@@ -14,18 +15,14 @@
     padding: 5px;
 }
 .user__photo__container{
-    /*flex-grow: 1;*/
     max-width: 300px;
     padding: 5px;
     display: flex;
     flex-direction: column;
-    background: var(--main-dark-color-opacity-40);
 }
 .user__photo{
     width: content-box;
-    max-height: 150px;
     border-radius: 10px 0;
-    /*max-block-size: 100px;*/
 }
 .user__buttons__container{
     display: flex;

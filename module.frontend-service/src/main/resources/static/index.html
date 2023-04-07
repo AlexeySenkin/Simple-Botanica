@@ -46,8 +46,11 @@
                 </a>
             </div>
             <div>
-                <a class="menu__item__button text" href="#!/user-profile">
-                    пользователь
+                <a class="menu__item__button text" href="#!/user-profile" ng-show="isUserLoggedIn()">
+                    Профиль
+                </a>
+                <a class="menu__item__button text" ng-click="logOut()" ng-show="isUserLoggedIn()">
+                    Выйти
                 </a>
                 <a class="menu__item__button text" ng-click="openAuthForm()" ng-show="!isUserLoggedIn()">
                     Войти

@@ -1,23 +1,21 @@
 angular.module('Simple-Botanica-app')
     .controller('plant-card-controller', function ($http, $rootScope, $scope, $localStorage,
-                                                   roleCheckFactory, settings) {
-
+                                                   settings, userFactory) {
+        const plantsPath = settings.PLANTS_PATH;
         // признак откуда была открыта карточка растения
-        // $scope.callPlace = $localStorage.plantCardCallPlace;
-        $scope.callPlace = 2;
-        //растение
-        $scope.plant = $localStorage.plantInfo;
+        $scope.callPlace = $localStorage.plantCardCallPlace;
 
         $scope.actionButtons = settings.ACTION_BUTTONS;
         $scope.imgPath = settings.IMG_DIRECTORY;
 
         $scope.isAdmin = function () {
-            return roleCheckFactory.isAdmin();
+            return userFactory.isAdmin();
         }
 
         $scope.careAction = function (careId) {
             switch (careId) {
                 case 1: {
+                    console.log("полить");
                     break;
                 }
                 case 2: {
@@ -29,10 +27,24 @@ angular.module('Simple-Botanica-app')
                 case 4: {
                     break;
                 }
+                case 5: {
+                    break;
+                }
             }
         };
 
-        $scope.addPlantToUserList = function (plantId){
-
+        $scope.addPlantToUserList = function (plantId) {
+            console.log("Добавление растения " + plantId + "в список пользователя");
         };
+
+        $scope.showPlantDetails = function () {
+            let plantId = $localStorage.plantId;
+            $http.get(plantsPath + '/plant/' + plantId).then(function successCallback(response) {
+                $scope.plant = response.data;
+            }, function errorCallback(reason) {
+            });
+        }
+
+        $scope.showPlantDetails();
+
     })
