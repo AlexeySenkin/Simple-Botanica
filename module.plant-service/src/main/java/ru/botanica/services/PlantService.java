@@ -101,8 +101,8 @@ public class PlantService {
 //     Поиск нового растения в нашем случае подходит только по имени, т.к. в один момент могут создавать сразу несколько растений и
 //     не факт, что id растения в таком случае будет последним. Если команда посчитает это не критичным, переделаю на поиск по
 //     последнему id из списка. Тогда можно оставить name не уникальным, но на мой взгляд, это будет ошибкой
-    public Long addProduct(String name, String family, String genus,
-                           String shortDescription, String description, String filePath, boolean isActive) {
+    public Long addPlant(String name, String family, String genus,
+                         String shortDescription, String description, String filePath, boolean isActive) {
         if (!checkOnExisting(name)) {
             boolean isOk = savePlantInRepo(null, name, family, genus, description, shortDescription, filePath, isActive);
             Long id = plantRepository.findIdByName(name);

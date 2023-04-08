@@ -82,7 +82,7 @@ public class PlantController {
                          @RequestParam String genus, @RequestParam(name = "short_description") String shortDescription,
                          @RequestParam String description, @RequestParam(required = false, name = "file_path") String filePath,
                          @RequestParam boolean isActive) {
-        return plantService.addProduct(name, family, genus, shortDescription, description, filePath, isActive);
+        return plantService.addPlant(name, family, genus, shortDescription, description, filePath, isActive);
     }
 
     /**
