@@ -28,8 +28,8 @@ public class PlantService {
      */
     public Page<PlantDto> findAll(String title, Pageable pageable) {
         Specification<Plant> specification = createSpecificationsWithFilter(title);
-        Page<Plant> plantPage = plantRepository.findAll(specification, pageable);
-        return plantPage.map(PlantDtoMapper::mapToDtoWithIdNameShortDescAndFilePath);
+        return plantRepository.findAll(specification, pageable)
+                .map(PlantDtoMapper::mapToDtoWithIdNameShortDescAndFilePath);
     }
 
     /**
@@ -53,8 +53,7 @@ public class PlantService {
      * @return Растение
      */
     public PlantDto findById(long id) {
-        Plant plant = plantRepository.findById(id).orElseThrow();
-        return PlantDtoMapper.mapToDto(plant);
+        return PlantDtoMapper.mapToDto(plantRepository.findById(id).orElseThrow());
     }
 
     /**
