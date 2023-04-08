@@ -6,7 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,9 +18,12 @@ import ru.botanica.dto.JwtResponse;
 import ru.botanica.services.UserService;
 import ru.botanica.utils.JwtTokenUtil;
 
+import java.util.Collection;
+
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowCredentials = "false")
 public class AuthController {
     private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
@@ -33,6 +38,8 @@ public class AuthController {
         }
         UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
         String token = jwtTokenUtil.generateToken(userDetails);
+//        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+//        int size = authorities.size();
         return ResponseEntity.ok(new JwtResponse(token));
     }
 }

@@ -5,6 +5,7 @@
 
 .info__container {
     padding: 10px;
+    flex-grow: 1;
 }
 
 .right__container {

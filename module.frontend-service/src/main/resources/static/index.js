@@ -5,10 +5,9 @@
 
     function config($routeProvider) {
         $routeProvider
-            // .when('/', {templateUrl: 'index.html', controller: 'SimpleBotanica-controller'})
             .when('/', {templateUrl: 'Plants/Plants.html', controller: 'plants-controller'})
             .when('/plant-info', {templateUrl: 'PlantCard/PlantCard.html', controller: 'plant-card-controller'})
-            .when('/user-profile', {templateUrl: 'User/UserProfile.html', controller: 'plant-card-controller'})
+            .when('/user-profile', {templateUrl: 'User/UserProfile.html', controller: 'user-profile-controller'})
             .otherwise({redirectTo: '/'})
     }
 
@@ -33,9 +32,11 @@ botanicaApp.value('plantInfo', {
 })
 
 botanicaApp.constant('settings', {
-    ENTRY_POINT: 'http://localhost:9890/botanica/',
+    ENTRY_POINT: 'http://localhost:9890/botanica',
     // пока нет шлюза для доступа через единую точку тут будут лежать адреса сервисов
-    PLANTS_PATH: 'http://localhost:8189/botanica/api/',
+    PLANTS_PATH: 'http://localhost:8189/botanica/api',
+    AUTH_PATH: 'http://localhost:8188/botanica/api',
+    USER_PATH: '',
     API_V: '',
     // директория хранения картинок растений
     IMG_DIRECTORY: 'img/db/',
@@ -47,20 +48,34 @@ botanicaApp.constant('settings', {
         {id: 5, img: 'img/re-potting.png', hint: 'Пересадить'}]
 })
 
-botanicaApp.factory('roleCheckFactory', function ($localStorage) {
-    let roleCheckFactoryObj = {};
-    roleCheckFactoryObj.isAdmin = function () {
-        return !!(($localStorage.botanicaWebUser) && ($localStorage.botanicaWebUser.role === 'admin'));
+botanicaApp.factory('userFactory', function ($localStorage) {
+    let userFactoryObj = {};
+    userFactoryObj.isAdmin = function () {
+        if ($localStorage.botanicaWebUser) {
+            let user_roles = JSON.parse(atob($localStorage.botanicaWebUser.token.split('.')[1])).roles;
+            if (user_roles.includes('ROLE_ADMIN')) {
+                return true;
+            }
+        }
+        return false;
     };
-    roleCheckFactoryObj.isAuthorized = function () {
+    userFactoryObj.isAuthorized = function () {
         return !!($localStorage.botanicaWebUser);
     };
-    return roleCheckFactoryObj;
+
+    userFactoryObj.logOut = function () {
+        if ($localStorage.botanicaWebUser && confirm('Выйти?')){
+                delete $localStorage.botanicaWebUser;
+                location.assign('#!/')
+        }
+    }
+    return userFactoryObj;
 })
+
 
 botanicaApp
     .controller('SimpleBotanica-controller', function ($http, $rootScope, $scope, $localStorage, $location,
-                                                       $uibModal, roleCheckFactory) {
+                                                       $uibModal, userFactory) {
         $scope.openAuthForm = function () {
             let modalInstance = $uibModal.open({
                 animation: true,
@@ -82,7 +97,11 @@ botanicaApp
         };
 
         $scope.isUserLoggedIn = function () {
-            return roleCheckFactory.isAuthorized();
+            return userFactory.isAuthorized();
         };
+
+        $scope.logOut = function() {
+            userFactory.logOut();
+        }
 
     })
