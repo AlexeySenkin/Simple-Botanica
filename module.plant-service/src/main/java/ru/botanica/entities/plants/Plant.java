@@ -24,16 +24,18 @@ public class Plant {
     @Column(nullable = false, length = 128, name = "genus")
     private String genus;
 
-    @Column(nullable = false, length = 1024, name = "description")
+    @Column(nullable = false, name = "description")
     private String description;
 
-    @Column(nullable = false, length = 128, name = "short_description")
+    @Column(nullable = false, length = 1024, name = "short_description")
     private String shortDescription;
 
     @Column(nullable = false, name = "is_active")
     private boolean isActive;
 
-    @OneToOne
+//    Зачем кто-то удалил отсюда cascade? Я чекнул свой коммит, я его с самого начала добавил, он тут нужен сейчас
+//    Buzas sprint2 plant service 30.03.23 3:39 (MSK) #5 , если интересно, когда он был
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "plant_id")
     private PlantPhoto photo;
 
@@ -50,7 +52,7 @@ public class Plant {
                 ", description='" + description + '\'' +
                 ", shortDescription='" + shortDescription + '\'' +
                 ", isActive=" + isActive + '\'' +
-                ", filePath=" + (photo == null? null : photo.getFilePath()) +
+                ", filePath=" + (photo == null ? null : photo.getFilePath()) +
                 '}';
     }
 }

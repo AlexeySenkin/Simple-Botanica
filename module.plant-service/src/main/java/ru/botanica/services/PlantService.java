@@ -6,10 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.botanica.entities.photos.PlantPhotoDto;
+import ru.botanica.entities.photos.PlantPhotoDtoMapper;
 import ru.botanica.entities.photos.PlantPhotoRepository;
 import ru.botanica.entities.plants.*;
 
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -65,24 +66,16 @@ public class PlantService {
      * @param genus            Род
      * @param shortDescription Краткое описание
      * @param description      Полное описание
-     * @param file_path        Путь к фото
+     * @param filePath         Путь к фото
      * @param isActive         Флаг активного растения
      * @return Идентификатор
      */
     public Long updateByID(long plantId, String name, String family, String genus,
-                           String shortDescription, String description, String file_path, boolean isActive) {
-        /**
-         * Часть, обновляющая данные растения
-         */
-        plantRepository.updateById(name, family, genus, description, shortDescription, isActive, plantId);
+                           String shortDescription, String description, String filePath, boolean isActive) {
 
-        /**
-         * Часть, добавляющая фотографию к растению, если поля не существует и обновляющая оное в обратном случае
-         */
-        if (photoRepository.existsById(plantId)) {
-            photoRepository.updateById(file_path, plantId);
-        } else {
-            photoRepository.insertById(file_path, plantId);
+        boolean isOk = savePlantInRepo(plantId, name, family, genus, shortDescription, description, filePath, isActive);
+        if (isOk) {
+            savePhotoInRepo(plantId, filePath);
         }
         return plantId;
     }
@@ -96,7 +89,7 @@ public class PlantService {
      * @param genus            Род
      * @param shortDescription Краткое описание
      * @param description      Полное описание
-     * @param file_path        Путь к фото
+     * @param filePath         Путь к фото
      * @param isActive         Флаг активного растения
      * @return Идентификатор
      */
@@ -110,16 +103,64 @@ public class PlantService {
 //     не факт, что id растения в таком случае будет последним. Если команда посчитает это не критичным, переделаю на поиск по
 //     последнему id из списка. Тогда можно оставить name не уникальным, но на мой взгляд, это будет ошибкой
     public Long addProduct(String name, String family, String genus,
-                           String shortDescription, String description, String file_path, boolean isActive) {
+                           String shortDescription, String description, String filePath, boolean isActive) {
         if (!checkOnExisting(name)) {
-            plantRepository.insertProduct(name, family, genus, description, shortDescription, isActive);
+            boolean isOk = savePlantInRepo(null, name, family, genus, description, shortDescription, filePath, isActive);
             Long id = plantRepository.findIdByName(name);
-            photoRepository.insertById(file_path, id);
+            if (isOk) {
+                savePhotoInRepo(id, filePath);
+            }
             return id;
         } else {
             log.error("Растение с именем " + name + " уже существует");
             return plantRepository.findIdByName(name);
         }
+    }
+
+    /**
+     * Собирает Dto и затем использует метод save() из CrudRepository.
+     *
+     * @param plantId          Идентификатор
+     * @param name             Название
+     * @param family           Семья
+     * @param genus            Род
+     * @param shortDescription Краткое описание
+     * @param description      Полное описание
+     * @param filePath         Путь к фото
+     * @param isActive         Флаг активного растения
+     * @return флаг, прошла ли операция
+     */
+    private boolean savePlantInRepo(Long plantId, String name, String family, String genus,
+                                    String shortDescription, String description, String filePath, boolean isActive) {
+        try {
+            PlantDto plantDto = new PlantDto();
+            /**
+             * Если нет значения id, вычисляет последнее доступное
+             */
+            if (plantId != null) {
+                plantDto.setId(plantId);
+            } else {
+                plantDto.setId(plantRepository.findLastIdAvailable());
+            }
+            plantDto.setName(name);
+            plantDto.setFamily(family);
+            plantDto.setGenus(genus);
+            plantDto.setShortDescription(shortDescription);
+            plantDto.setDescription(description);
+            plantDto.setFilePath(filePath);
+            plantDto.setActive(isActive);
+            plantRepository.saveAndFlush(PlantDtoMapper.mapToEntity(plantDto));
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    private void savePhotoInRepo(Long plantId, String filePath) {
+        PlantPhotoDto photoDto = new PlantPhotoDto();
+        photoDto.setId(plantId);
+        photoDto.setFilePath(filePath);
+        photoRepository.saveAndFlush(PlantPhotoDtoMapper.mapToEntity(photoDto));
     }
 
     /**
