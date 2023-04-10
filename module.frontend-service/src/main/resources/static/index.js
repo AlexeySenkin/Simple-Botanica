@@ -8,6 +8,7 @@
             .when('/', {templateUrl: 'Plants/Plants.html', controller: 'plants-controller'})
             .when('/plant-info', {templateUrl: 'PlantCard/PlantCard.html', controller: 'plant-card-controller'})
             .when('/user-profile', {templateUrl: 'User/UserProfile.html', controller: 'user-profile-controller'})
+            .when('/plant-edit', {templateUrl: 'PlantCard/PlantCard.html', controller: 'plant-card-controller'})
             .otherwise({redirectTo: '/'})
     }
 
@@ -64,15 +65,38 @@ botanicaApp.factory('userFactory', function ($localStorage) {
     };
 
     userFactoryObj.logOut = function () {
-        if ($localStorage.botanicaWebUser && confirm('Выйти?')){
-                delete $localStorage.botanicaWebUser;
-                location.assign('#!/')
+        if ($localStorage.botanicaWebUser && confirm('Выйти?')) {
+            delete $localStorage.botanicaWebUser;
+            location.assign('#!/')
         }
     }
     return userFactoryObj;
 })
 
+botanicaApp.factory('plantFactory', function ($http, settings) {
+    let plantFactoryObj = {};
+    const plantPath = settings.PLANTS_PATH;
+    plantFactoryObj.getPlant = function (plantId) {
+        $http.get(plantPath + '/plant/' + plantId).then(function successCallback(response) {
+            let plant = response.data;
+            if (!plant.file_path) {
+                plant.file_path = 'No-Image-Placeholder.png';
+            }
+            return plant;
+        }, function errorCallback(reason) {
+        });
+    };
 
+    plantFactoryObj.deletePlant = function (plantId) {
+        $http.delete(plantPath + '/plant/' + plantId).then(function successCallback(response) {
+                return response;
+        }, function errorCallback(reason) {
+            return reason;
+        })
+}
+return plantFactoryObj;
+})
+;
 botanicaApp
     .controller('SimpleBotanica-controller', function ($http, $rootScope, $scope, $localStorage, $location,
                                                        $uibModal, userFactory) {
@@ -100,7 +124,7 @@ botanicaApp
             return userFactory.isAuthorized();
         };
 
-        $scope.logOut = function() {
+        $scope.logOut = function () {
             userFactory.logOut();
         }
 

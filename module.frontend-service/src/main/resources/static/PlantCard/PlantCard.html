@@ -1,28 +1,62 @@
 <div>
     <div class="top__container">
-        <div class=" flex__container plant__info__card__container">
-            <div class="right__container">
-                <img class="plant__photo plant__card__photo" ng-src="{{imgPath}}{{plant.filePath}}" alt="{{plant.name}}" src="">
+        <div class="plant__info__card__container">
+            <div class="info__left__container">
+                <img class="plant__photo plant__card__photo" ng-src="{{imgPath}}{{plant.filePath}}" alt="{{plant.name}}"
+                     src="">
                 <button class="page__button mb-5 text text_center" ng-click="addPlantToUserList(plant.id)"
-                        ng-show="callPlace===1">
+                        ng-show="callPlace===1 && !isAdmin()">
                     Добавить к себе
+                </button>
+                <button class="page__button mb-5 text text_center" ng-click="dropPlant(plant.id)"
+                        ng-show="callPlace===1 && isAdmin()">
+                    Удалить
                 </button>
                 <div class="care__actions__container" ng-show="callPlace===2">
                     <div ng-repeat="bt in actionButtons">
-                        <button class="care__button text" >
+                        <button class="care__button text">
                             <img class="bi__care__icon" ng-src="{{bt.img}}" ng-click="careAction(bt.id)" alt="2"
                                  src=""/>
                         </button>
-
                     </div>
                 </div>
             </div>
-            <div class="info__container">
-                <h4 class="plant__name__header">{{plant.name}}</h4>
-                <h5 class="text"> Семейство: {{plant.family}}</h5>
-                <h5 class="text"> Род: {{plant.genus}}</h5>
-                <p class="text"> {{plant.description}}</p>
+            <div class="info__right__container">
+                <label class="text plant__edit__info__row" for="plantName">
+                    <span ng-show="isAdmin()"> Название: </span>
+                    <input id="plantName"
+                           ng-class="{'text plant__edit__control plant__edit__input':isAdmin(), 'plant__name__header':!isAdmin()}"
+                           ng-model="plant.name" ng-disabled="!isAdmin()">
+                </label>
+                <label class="text plant__edit__info__row" for="plantFamily"> Семейство:
+                    <input id="plantFamily"
+                           ng-class="{'text plant__edit__control plant__edit__input':isAdmin(), 'text':!isAdmin()}"
+                           ng-model="plant.family" ng-disabled="!isAdmin()">
+                </label>
+                <label class="text plant__edit__info__row" for="plantGenus"> Род:
+                    <input id="plantGenus"
+                           ng-class="{'text plant__edit__control plant__edit__input':isAdmin(), 'text':!isAdmin()}"
+                           ng-model="plant.genus" ng-disabled="!isAdmin()">
+                </label>
+                <div class="text" ng-show="!isAdmin()">{{plant.description}}</div>
+
+                <div class="plant__textarea__container" ng-show="isAdmin()">
+                    <label class="text plant__edit__info__row" for="plantShort"> Краткое описание:</label>
+                    <textarea id="plantShort"
+                              class="text plant__edit__control plant__edit__textarea"
+                              ng-model="plant.shortDescription" ng-disabled="!isAdmin()"></textarea>
+
+                    <label class="text plant__edit__info__row" for="plantDescription">Описание:</label>
+                    <textarea id="plantDescription"
+                              class="text plant__edit__control plant__edit__textarea"
+                              ng-model="plant.description" ng-disabled="!isAdmin()"></textarea>
+                </div>
             </div>
         </div>
+        <div class="plant__edit__buttons_container" ng-show="isAdmin()">
+            <button class="page__button ok__cancel__button text" ng-click="home()">Отмена</button>
+            <button class="page__button ok__cancel__button text" ng-click="savePlant()">Сохранить</button>
+        </div>
+
     </div>
 </div>

@@ -39,12 +39,27 @@ angular.module('Simple-Botanica-app')
 
         $scope.showPlantDetails = function () {
             let plantId = $localStorage.plantId;
-            $http.get(plantsPath + '/plant/' + plantId).then(function successCallback(response) {
-                $scope.plant = response.data;
-            }, function errorCallback(reason) {
-            });
+            if (plantId) {
+                $http.get(plantsPath + '/plant/' + plantId).then(function successCallback(response) {
+                    $scope.plant = response.data;
+                    if (!response.data.file_path){
+                        $scope.plant.file_path = 'No-Image-Placeholder.png';
+                    }
+                }, function errorCallback(reason) {
+                });
+            } else {
+                $scope.plant.file_path = 'No-Image-Placeholder.png';
+            }
         }
 
+        $scope.savePlant = function () {
+            console.log($scope.plant.name);
+            console.log($scope.plant.shortDescription.length);
+        }
+
+        $scope.home = function (){
+            location.assign('#!/')
+        }
         $scope.showPlantDetails();
 
     })
