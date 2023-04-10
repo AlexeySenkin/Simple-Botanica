@@ -7,4 +7,9 @@ public class PlantSpecifications {
         return (root, criteriaQuery, criteriaBuilder) ->
                 criteriaBuilder.like(root.get("name"), "%" + title + "%");
     }
+
+    public static Specification<Plant> isActive(boolean isActive) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("isActive"), isActive);
+    }
 }
