@@ -99,7 +99,7 @@ public class PlantService {
             return plantDto.getId();
         } else {
             Long id = plantRepository.findIdByName(plantDto.getName());
-            log.error("Растение с именем " + plantDto.getName() + " уже существует и имеет id " + id);
+            log.error("Растение с именем {} уже существует и имеет id {}", plantDto.getName(), id);
             return id;
         }
     }
@@ -148,7 +148,7 @@ public class PlantService {
      * @param id Идентификатор
      */
     public void deletePlantById(long id) {
-        PlantDto plantDto = PlantDtoMapper.mapToDto(plantRepository.findById(id).orElseThrow());
+        PlantDto plantDto = findById(id);
         plantDto.setActive(false);
         plantRepository.saveAndFlush(PlantDtoMapper.mapToEntity(plantDto));
     }
