@@ -47,42 +47,23 @@ public class PlantController {
     /**
      * Обновляет значения растения
      *
-     * @param plantId          Идентификатор
-     * @param name             Название
-     * @param family           Семейство
-     * @param genus            Род
-     * @param shortDescription Краткое описание
-     * @param description      Полное описание
-     * @param filePath         Путь к фото
-     * @param isActive         Флаг активного растения
+     * @param plantDto JSON с параметрами PlantDto.class
      * @return Идентификатор
      */
     @PutMapping("/plant")
-    public Long updateById(@RequestParam(name = "plant_id") long plantId, @RequestParam String name, @RequestParam String family,
-                           @RequestParam String genus, @RequestParam(name = "short_description") String shortDescription,
-                           @RequestParam String description, @RequestParam(required = false, name = "file_path") String filePath,
-                           @RequestParam boolean isActive) {
-        return plantService.updateByID(plantId, name, family, genus, shortDescription, description, filePath, isActive);
+    public Long updateById(@RequestBody PlantDto plantDto) {
+        return plantService.updateByID(plantDto);
     }
 
     /**
      * Добавляет растения с данными значениями
      *
-     * @param name             Название
-     * @param family           Семейство
-     * @param genus            Род
-     * @param shortDescription Краткое описание
-     * @param description      Полное описание
-     * @param filePath         Путь к фото
-     * @param isActive         Флаг активного растения
+     * @param plantDto JSON с параметрами PlantDto.class
      * @return Идентификатор
      */
     @PostMapping("/plant")
-    public Long addPlant(@RequestParam String name, @RequestParam String family,
-                         @RequestParam String genus, @RequestParam(name = "short_description") String shortDescription,
-                         @RequestParam String description, @RequestParam(required = false, name = "file_path") String filePath,
-                         @RequestParam boolean isActive) {
-        return plantService.addPlant(name, family, genus, shortDescription, description, filePath, isActive);
+    public Long addPlant(@RequestBody PlantDto plantDto) {
+        return plantService.addPlant(plantDto);
     }
 
     /**

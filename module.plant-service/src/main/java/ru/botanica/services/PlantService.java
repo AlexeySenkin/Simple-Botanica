@@ -27,7 +27,7 @@ public class PlantService {
      * @return Список растений
      */
     public Page<PlantDto> findAll(String title, Pageable pageable) {
-        Specification<Plant> specification = createSpecificationsWithFilter(title);
+        Specification<Plant> specification = createSpecificationsWithFilter(title, true);
         return plantRepository.findAll(specification, pageable)
                 .map(PlantDtoMapper::mapToDtoWithIdNameShortDescAndFilePath);
     }
@@ -38,10 +38,13 @@ public class PlantService {
      * @param title Название
      * @return Список параметров для запроса
      */
-    private Specification<Plant> createSpecificationsWithFilter(String title) {
+    private Specification<Plant> createSpecificationsWithFilter(String title, Boolean isActive) {
         Specification<Plant> specification = Specification.where(null);
         if (title != null) {
             specification = specification.and(PlantSpecifications.nameLike(title));
+        }
+        if (isActive != null) {
+            specification = specification.and(PlantSpecifications.isActive(isActive));
         }
         return specification;
     }
@@ -59,37 +62,22 @@ public class PlantService {
     /**
      * Обновляет значения растения
      *
-     * @param plantId          Идентификатор
-     * @param name             Название
-     * @param family           Семья
-     * @param genus            Род
-     * @param shortDescription Краткое описание
-     * @param description      Полное описание
-     * @param filePath         Путь к фото
-     * @param isActive         Флаг активного растения
+     * @param plantDto PlantDto.class
      * @return Идентификатор
      */
-    public Long updateByID(long plantId, String name, String family, String genus,
-                           String shortDescription, String description, String filePath, boolean isActive) {
-
-        boolean isOk = savePlantInRepo(plantId, name, family, genus, shortDescription, description, filePath, isActive);
+    public Long updateByID(PlantDto plantDto) {
+        boolean isOk = savePlantInRepo(plantDto);
         if (isOk) {
-            savePhotoInRepo(plantId, filePath);
+            savePhotoInRepo(plantDto.getId(), plantDto.getFilePath());
         }
-        return plantId;
+        return plantDto.getId();
     }
 
     /**
      * Добавляет растения с данными значениями, добавляет фото, если есть,
      * и возвращает идентификатор созданного растения
      *
-     * @param name             Название
-     * @param family           Семья
-     * @param genus            Род
-     * @param shortDescription Краткое описание
-     * @param description      Полное описание
-     * @param filePath         Путь к фото
-     * @param isActive         Флаг активного растения
+     * @param plantDto PlantDto.class
      * @return Идентификатор
      */
 
@@ -101,53 +89,35 @@ public class PlantService {
 //     Поиск нового растения в нашем случае подходит только по имени, т.к. в один момент могут создавать сразу несколько растений и
 //     не факт, что id растения в таком случае будет последним. Если команда посчитает это не критичным, переделаю на поиск по
 //     последнему id из списка. Тогда можно оставить name не уникальным, но на мой взгляд, это будет ошибкой
-    public Long addPlant(String name, String family, String genus,
-                         String shortDescription, String description, String filePath, boolean isActive) {
-        if (!checkOnExisting(name)) {
-            boolean isOk = savePlantInRepo(null, name, family, genus, description, shortDescription, filePath, isActive);
-            Long id = plantRepository.findIdByName(name);
+    public Long addPlant(PlantDto plantDto) {
+        if (!checkOnExisting(plantDto.getName())) {
+            boolean isOk = savePlantInRepo(plantDto);
+            plantDto.setId(plantRepository.findIdByName(plantDto.getName()));
             if (isOk) {
-                savePhotoInRepo(id, filePath);
+                savePhotoInRepo(plantDto.getId(), plantDto.getFilePath());
             }
-            return id;
+            return plantDto.getId();
         } else {
-            log.error("Растение с именем " + name + " уже существует");
-            return plantRepository.findIdByName(name);
+            Long id = plantRepository.findIdByName(plantDto.getName());
+            log.error("Растение с именем {} уже существует и имеет id {}", plantDto.getName(), id);
+            return id;
         }
     }
 
     /**
      * Собирает Dto и затем использует метод save() из CrudRepository.
      *
-     * @param plantId          Идентификатор
-     * @param name             Название
-     * @param family           Семья
-     * @param genus            Род
-     * @param shortDescription Краткое описание
-     * @param description      Полное описание
-     * @param filePath         Путь к фото
-     * @param isActive         Флаг активного растения
+     * @param plantDto PlantDto.class
      * @return флаг, прошла ли операция
      */
-    private boolean savePlantInRepo(Long plantId, String name, String family, String genus,
-                                    String shortDescription, String description, String filePath, boolean isActive) {
+    private boolean savePlantInRepo(PlantDto plantDto) {
         try {
-            PlantDto plantDto = new PlantDto();
             /**
              * Если нет значения id, вычисляет последнее доступное
              */
-            if (plantId != null) {
-                plantDto.setId(plantId);
-            } else {
+            if (plantDto.getId() == null) {
                 plantDto.setId(plantRepository.findLastIdAvailable());
             }
-            plantDto.setName(name);
-            plantDto.setFamily(family);
-            plantDto.setGenus(genus);
-            plantDto.setShortDescription(shortDescription);
-            plantDto.setDescription(description);
-            plantDto.setFilePath(filePath);
-            plantDto.setActive(isActive);
             plantRepository.saveAndFlush(PlantDtoMapper.mapToEntity(plantDto));
         } catch (Exception e) {
             return false;
@@ -178,6 +148,8 @@ public class PlantService {
      * @param id Идентификатор
      */
     public void deletePlantById(long id) {
-        plantRepository.deleteById(id);
+        PlantDto plantDto = findById(id);
+        plantDto.setActive(false);
+        plantRepository.saveAndFlush(PlantDtoMapper.mapToEntity(plantDto));
     }
 }
