@@ -92,7 +92,6 @@ public class PlantService {
     public Long addPlant(PlantDto plantDto) {
         if (!checkOnExisting(plantDto.getName())) {
             boolean isOk = savePlantInRepo(plantDto);
-            plantDto.setId(plantRepository.findIdByName(plantDto.getName()));
             if (isOk) {
                 savePhotoInRepo(plantDto.getId(), plantDto.getFilePath());
             }
