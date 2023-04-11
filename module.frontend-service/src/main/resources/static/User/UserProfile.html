@@ -1,0 +1,21 @@
+<div>
+    <div class="top__container">
+        <div class=" flex__container user__container">
+            <div class="user__photo__container">
+                <img class="user__photo mb-5" ng-src="img/user_photo_test.jpeg" alt="user photo" src="" ng-click="changePhoto()">
+                <div class="user__buttons__container">
+                    <button class="page__button text mb-5" title="Изменить пароль" ng-click="changePassword()">Изменить пароль</button>
+                    <button class="page__button text mb-5" title="Выйти" ng-click="logOut()">Выйти</button>
+                    <button class="page__button text mb-5" title="Удалить аккаунт"  ng-click="dropUser()">Удалить аккаунт</button>
+                    <button class="page__button text mb-5" title="Мои растения"  ng-click="showMyPlants()">Мои растения</button>
+                </div>
+            </div>
+            <div class="user__info__container">
+                <h1 class="user__info__labels">Имя {{userData.name}}</h1>
+                <h1 class="user__info__labels">Псевдоним {{userData.username}}</h1>
+                <h1 class="user__info__labels">e-mail {{userData.email}}</h1>
+                <h1 class="user__info__labels">О себе {{userData.userinfo}}</h1>
+            </div>
+        </div>
+    </div>
+</div>

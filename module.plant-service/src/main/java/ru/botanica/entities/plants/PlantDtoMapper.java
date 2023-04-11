@@ -28,7 +28,7 @@ public final class PlantDtoMapper {
         plantDto.setDescription(plant.getDescription());
         plantDto.setShortDescription(plant.getShortDescription());
         plantDto.setActive(plant.isActive());
-        plantDto.setFilePath(plant.getPhoto().getFilePath());
+        plantDto.setFilePath(plant.getPhoto() == null? null : plant.getPhoto().getFilePath());
         return plantDto;
     }
 
@@ -37,7 +37,7 @@ public final class PlantDtoMapper {
         plantDto.setId(plant.getId());
         plantDto.setName(plant.getName());
         plantDto.setShortDescription(plant.getShortDescription());
-        plantDto.setFilePath(plant.getPhoto().getFilePath());
+        plantDto.setFilePath(plant.getPhoto() == null? null : plant.getPhoto().getFilePath());
         return plantDto;
     }
 }

@@ -1,51 +1,21 @@
 angular.module('Simple-Botanica-app')
     .controller('plant-card-controller', function ($http, $rootScope, $scope, $localStorage,
-                                                   roleCheckFactory, settings) {
-        $scope.plant = {
-            id: 3,
-            name: 'Спатифилум',
-            filePath: 'Spatifilum.jpg',
-            family: 'Ароидные',
-            genus: 'Спатифилум',
-            description: 'Температура воздуха\n' +
-                'Оптимальная температура для выращивания Spathiphyllum — 18-25 °C. В летнее время года температура воздуха в помещении не должна подниматься выше 25 °C. Зимой правила ухода за спатифиллумом допускают понижение до 16 °C. Если содержать растение спатифиллум при температуре ниже 14 °C, оно заболеет и может даже погибнуть. При температуре в помещении ниже отметки 18 °C цветок растет и развивается медленнее.\n' +
-                '\n' +
-                'Потребность в освещении\n' +
-                'Одно из главных требований ухода за комнатным растением спатифиллум — обеспечить ему достаточное освещение. В период, когда световой день становится короче, спатифиллум требует искусственного подсвечивания.\n' +
-                '\n' +
-                'Воспользуйтесь предложением интернет-магазина «Флорен». Помогут сохранить здоровый вид домашних растений в зимнее время года и упростят уход за ними эстетичные фитолампы.\n' +
-                '\n' +
-                'Летом, осуществляя уход за растением женское счастье, поставьте вазон с растением в место с рассеянным солнечным светом, иначе прямые лучи могут оставить следы ожога на листьях.\n' +
-                '\n' +
-                'Режим полива и опрыскивание\n' +
-                'Домашние спатифиллумы — родственники тропических растений. Создайте ему подходящие условия — это является залогом его здоровья. Летом при уходе за спатифиллумом не забывайте о норме полива. Поливать комнатный спатифиллум нужно 2-3 раза в неделю, не допуская застоя воды в горшке. Важно при этом обращать внимание на степень увлажненности почвы. Перед очередным поливом покрывной слой земли должен быть сухим. Увлажняйте грунт в горшке с отверстиями и хорошим дренажным слоем. Не допускайте слишком обильного полива.',
-            care: [{
-                care_name: 'Полив',
-                care_id: 1,
-                care_count: 7
-            },
-                {
-                    care_name: 'Удобрение',
-                    care_id: 2,
-                    care_count: 14
-                }]
-        };
-
+                                                   settings, userFactory) {
+        const plantsPath = settings.PLANTS_PATH;
         // признак откуда была открыта карточка растения
         $scope.callPlace = $localStorage.plantCardCallPlace;
-        //растение
-        $scope.plant = $localStorage.plantInfo;
 
-        $scope.actionButtons = settings.actionButtons;
-        $scope.imgPath = settings.img_directory;
+        $scope.actionButtons = settings.ACTION_BUTTONS;
+        $scope.imgPath = settings.IMG_DIRECTORY;
 
         $scope.isAdmin = function () {
-            return roleCheckFactory.isAdmin();
+            return userFactory.isAdmin();
         }
 
         $scope.careAction = function (careId) {
             switch (careId) {
                 case 1: {
+                    console.log("полить");
                     break;
                 }
                 case 2: {
@@ -57,6 +27,64 @@ angular.module('Simple-Botanica-app')
                 case 4: {
                     break;
                 }
+                case 5: {
+                    break;
+                }
+            }
+        };
+
+        $scope.addPlantToUserList = function (plantId) {
+            console.log("Добавление растения " + plantId + "в список пользователя");
+        };
+
+        $scope.showPlantDetails = function () {
+            let plantId = $localStorage.plantId;
+            if (plantId) {
+                $http.get(plantsPath + '/plant/' + plantId).then(function successCallback(response) {
+                    $scope.plant = response.data;
+                    if (!response.data.filePath){
+                        $scope.plant.filePath = '../No-Image-Placeholder.png';
+                    }
+                }, function errorCallback(reason) {
+                });
+            } else {
+                $scope.plant = {};
+                $scope.plant.id = null;
+                $scope.plant.filePath = '../No-Image-Placeholder.png';
             }
         }
+
+        $scope.savePlant = function () {
+            console.log($scope.plant);
+            if ($scope.plant){
+                //если новое растение
+                if ($scope.plant.id === null) {
+                    $http.post(plantsPath + '/plant', $scope.plant).then(function successCallback(response){
+                        location.assign('#!/');
+                        console.log('растение добавлено успешно, id=' + response.data);
+                    }, function errorCallback(response){
+                        console.log('что-то пошло не так, ошибка: ' + response);
+
+                    })
+                } else {
+                //    если редактируется уже существующее
+                    $http.put(plantsPath + '/plant', $scope.plant).then(function successCallback(response){
+                        location.assign('#!/');
+                        console.log('растение отредактировано успешно, id=' + response.data);
+                    }, function errorCallback(response){
+                        console.log('что-то пошло не так, ошибка: ' + response);
+
+                    })
+
+                }
+            }
+        }
+
+        $scope.home = function (){
+            location.assign('#!/')
+        }
+        $scope.adm = userFactory.isAdmin();
+
+        $scope.showPlantDetails();
+
     })

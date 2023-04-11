@@ -1,15 +1,22 @@
 .plant__info__card__container {
     padding: 10px;
     /*background: url(../img/plant_card_img.png) no-repeat right bottom;*/
-    background: url(../img/wc.png) no-repeat right bottom;
-    border: 1px solid red;
+    display: flex;
+    justify-content: space-between;
+    /*height: 100vh;*/
 }
 
-.info__container {
+.info__right__container {
     padding: 10px;
+    flex-grow: 1;
+    box-sizing: border-box;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    /*height: 100vh;*/
 }
 
-.right__container {
+.info__left__container {
     display: flex;
     flex-direction: column;
 }
@@ -17,7 +24,8 @@
 .care__actions__container {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .care__button {
@@ -28,17 +36,71 @@
     max-height: 40px;
     margin: 5px;
     padding: 0;
-    /*display: inline-block;*/
     border: none;
     background: var(--main-dark-color-opacity-40);
 }
 .bi__care__icon{
-    width: 35px;
-    height: 35px;
+    width: 30px;
+    height: 30px;
     alignment: center;
 }
-.bi__watering__button {
-    background: url(//img/wc.png);
-    /*center center no-repeat;*/
-    background-size: auto;
+/*.bi__watering__button {*/
+/*    background: url(//img/wc.png);*/
+/*    background-size: auto;*/
+/*}*/
+
+.plant__card__photo{
+    width: auto;
 }
+
+.plant__edit__buttons_container {
+    padding: 10px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.plant__edit__info__row{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.plant__edit__textarea{
+    padding: 10px;
+    display: inline-block;
+    /*overflow: auto;*/
+    /*height: 100%;*/
+}
+.plant__textarea__container{
+    display: flex;
+    flex-direction: column;
+    height: 100ch;
+
+}
+.plant__edit__textarea:focus{
+    box-shadow: none;
+    outline: none;
+    background-color: var(--main-dark-color-opacity-40);
+}
+.plant__edit__control{
+    border: 1px solid var(--main-dark-color-opacity-40);
+    background: var(--main-light-color);
+    appearance: none;
+    border-radius: 5px;
+    flex-grow: 1;
+    box-sizing: border-box;
+}
+.plant__edit__input{
+    margin: 5px 5px 0 5px;
+}
+.plant__name__header:disabled,
+.plant__edit__textarea:disabled,
+input:disabled{
+    border: none;
+}
+.plant__edit__input:focus{
+    box-shadow: none;
+    outline: none;
+    background-color: var(--main-dark-color-opacity-40);
+}
+

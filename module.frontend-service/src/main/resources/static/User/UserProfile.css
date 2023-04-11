@@ -1,0 +1,30 @@
+.user__container {
+    padding: 10px;
+    background: var(--main-dark-color-opacity-10);
+}
+.user__info__labels{
+    width: auto;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    color: var(--main-dark-color);
+}
+.user__info__container{
+    justify-content: flex-start;
+    flex-grow: 1;
+    padding: 5px;
+}
+.user__photo__container{
+    max-width: 300px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+}
+.user__photo{
+    width: content-box;
+    border-radius: 10px 0;
+}
+.user__buttons__container{
+    display: flex;
+    flex-direction: column;
+}

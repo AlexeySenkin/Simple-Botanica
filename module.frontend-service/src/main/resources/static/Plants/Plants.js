@@ -1,53 +1,60 @@
 angular.module('Simple-Botanica-app')
     .controller('plants-controller', function ($http, $rootScope, $scope, $localStorage,
-                                               roleCheckFactory, settings, plantInfo) {
-        const plantsPath = settings.plants_path;
-
-        let plantsArray = [{photo: 'img/db/Philodendron.jpg', name: 'Филодендрон', id: 1}
-            , {photo: 'img/db/Scindapsus.jpg', name: 'Сциндапсус', id: 2}
-            , {photo: 'img/db/Spatifilum.jpg', name: 'Спатифилум', id: 3}
-            , {photo: 'img/db/Alocasia.jpg', name: 'Алоказия', id: 4}
-            , {photo: 'img/db/Spatifilum.jpg', name: 'Спатифилум', id: 5}
-            , {photo: 'img/db/Scindapsus.jpg', name: 'Сциндапсус', id: 6}
-            , {photo: 'img/db/Spatifilum.jpg', name: 'Спатифилум', id: 7}
-            , {photo: 'img/db/Spatifilum.jpg', name: 'Спатифилум', id: 8}]
-
+                                               settings, userFactory, plantFactory) {
+        const plantsPath = settings.PLANTS_PATH;
 
         $scope.getPlants = function () {
             $localStorage.plantCardCallPlace = 1;
-            $http.get(plantsPath + 'plants', {
+            $http.get(plantsPath + '/plants', {
                 params: {
-                    name: $scope.plantNameFilter,
+                    title: $scope.plantNameFilter,
                     page: $scope.currentPage
                 }
             }).then(function successCallback(response) {
+                    console.log("get all plants")
                     $scope.plantsPage = response.data.content;
-                    $scope.imgPath = settings.img_directory;
-                    $scope.totalPages = response.data.totalPages;
+                    $scope.imgPath = settings.IMG_DIRECTORY;
+                    $scope.totalPages = response.data.totalPages + 1;
                     $scope.currentPage = response.data.number + 1;
-                    $scope.totalItems = response.data.size;
+                    $scope.totalItems = response.data.totalElements + 1;
+                    $scope.maxPages = 6;
                 },
                 function errorCallback(reason) {
-                    $scope.plantsPage = plantsArray;
-                    $scope.totalPages = 4;
-                    $scope.currentPage = 2;
-                    $scope.totalItems = 30;
+                    console.log('Ошибка: ' + reason.data.status + ' с текстом: ' + reason.data.error);
+
                 })
         }
 
         $scope.showPlantDetails = function (plantId) {
-            $http.get(plantsPath + 'plant/' + plantId).then(function successCallback(response) {
-                    $localStorage.plantInfo = response.data;
-                    location.assign('#!/plantinfo');
-                },
-                function errorCallback(reason) {
-                });
+            $localStorage.plantId = plantId;
+            location.assign("#!/plant-info");
         }
 
         $scope.isAdmin = function () {
-            return true;
-            // roleCheckFactory.isAdmin();
+            return userFactory.isAdmin();
         }
+
+        $scope.addNewPlant = function () {
+            console.log("добавление нового растения");
+            delete $localStorage.plantId;
+            location.assign("#!/plant-edit")
+        }
+
+        $scope.deletePlant = function (plantId) {
+            console.log("Удалить растение " + plantId + " из БД");
+            // let res = plantFactory.deletePlant(plantId);
+            $http.delete(plantsPath + '/plant/' + plantId)
+                .then(function successCallback(response) {
+                    if (response.status === 200) {
+                        console.log("get all plants")
+                        console.log(response.status)
+                        $scope.getPlants();
+                        // location.reload();
+                    }
+                    console.log(response);
+                })
+        }
+
         $scope.getPlants();
 
     })

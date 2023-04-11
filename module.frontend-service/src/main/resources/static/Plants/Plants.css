@@ -6,7 +6,7 @@
 .plantcards__container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-start;
     padding: 20px 0 40px 0;
     /*padding-bottom: 40px;*/
 }
@@ -15,7 +15,7 @@
     /*max-width: 200px;*/
     border-radius: 10px;
     padding: 5px;
-    margin-bottom: 10px;
+    margin: 0 10px 10px 0;
     align-content: center;
     box-sizing: border-box;
     display: flex;
@@ -36,7 +36,7 @@
 }
 
 .plant__name__header {
-    width: auto;
+    width: 100%;
     font-size: 18px;
     font-weight: 400;
     letter-spacing: 0.05em;
