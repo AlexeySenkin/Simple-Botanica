@@ -56,6 +56,28 @@ angular.module('Simple-Botanica-app')
 
         $scope.savePlant = function () {
             console.log($scope.plant);
+            if ($scope.plant){
+                //если новое растение
+                if ($scope.plant.id === null) {
+                    $http.post(plantsPath + '/plant', $scope.plant).then(function successCallback(response){
+                        location.assign('#!/');
+                        console.log('растение добавлено успешно, id=' + response.data);
+                    }, function errorCallback(response){
+                        console.log('что-то пошло не так, ошибка: ' + response);
+
+                    })
+                } else {
+                //    если редактируется уже существующее
+                    $http.put(plantsPath + '/plant', $scope.plant).then(function successCallback(response){
+                        location.assign('#!/');
+                        console.log('растение отредактировано успешно, id=' + response.data);
+                    }, function errorCallback(response){
+                        console.log('что-то пошло не так, ошибка: ' + response);
+
+                    })
+
+                }
+            }
         }
 
         $scope.home = function (){
