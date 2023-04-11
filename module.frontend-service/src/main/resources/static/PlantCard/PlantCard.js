@@ -39,11 +39,51 @@ angular.module('Simple-Botanica-app')
 
         $scope.showPlantDetails = function () {
             let plantId = $localStorage.plantId;
-            $http.get(plantsPath + '/plant/' + plantId).then(function successCallback(response) {
-                $scope.plant = response.data;
-            }, function errorCallback(reason) {
-            });
+            if (plantId) {
+                $http.get(plantsPath + '/plant/' + plantId).then(function successCallback(response) {
+                    $scope.plant = response.data;
+                    if (!response.data.filePath){
+                        $scope.plant.filePath = '../No-Image-Placeholder.png';
+                    }
+                }, function errorCallback(reason) {
+                });
+            } else {
+                $scope.plant = {};
+                $scope.plant.id = null;
+                $scope.plant.filePath = '../No-Image-Placeholder.png';
+            }
         }
+
+        $scope.savePlant = function () {
+            console.log($scope.plant);
+            if ($scope.plant){
+                //если новое растение
+                if ($scope.plant.id === null) {
+                    $http.post(plantsPath + '/plant', $scope.plant).then(function successCallback(response){
+                        location.assign('#!/');
+                        console.log('растение добавлено успешно, id=' + response.data);
+                    }, function errorCallback(response){
+                        console.log('что-то пошло не так, ошибка: ' + response);
+
+                    })
+                } else {
+                //    если редактируется уже существующее
+                    $http.put(plantsPath + '/plant', $scope.plant).then(function successCallback(response){
+                        location.assign('#!/');
+                        console.log('растение отредактировано успешно, id=' + response.data);
+                    }, function errorCallback(response){
+                        console.log('что-то пошло не так, ошибка: ' + response);
+
+                    })
+
+                }
+            }
+        }
+
+        $scope.home = function (){
+            location.assign('#!/')
+        }
+        $scope.adm = userFactory.isAdmin();
 
         $scope.showPlantDetails();
 

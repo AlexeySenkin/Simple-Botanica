@@ -35,6 +35,7 @@ a:hover{
     display: flex;
     justify-content: space-between;
 }
+
 .top__container {
     max-width: 1140px;
     margin: 0 auto;
@@ -127,6 +128,12 @@ a:hover{
     outline: none;
     background-color: var(--main-dark-color-opacity-40);
 }
+/*.page__input:autofill{*/
+/*    !*border: 1px solid green;*!*/
+/*    box-shadow: none;*/
+/*    outline: none;*/
+/*    background-color: var(--main-dark-color-opacity-40);*/
+/*}*/
 
 .page__button{
     appearance: none;
@@ -139,7 +146,6 @@ a:hover{
 
 .page__button:hover{
     background-color: var(--main-dark-color-opacity-80);
-    /*background: rgba(46, 80, 70, 80%);*/
     color: var(--main-light-color);
 }
 
@@ -156,6 +162,9 @@ a:hover{
 .m-0 {
     margin: 0;
 }
+.mr-5{
+    margin-right: 5px;
+}
 
 .button__grid{
     display: grid;
@@ -165,4 +174,8 @@ a:hover{
 
 .footer__list{
     list-style-position: inside;
+}
+.ok__cancel__button{
+    width: 150px;
+    margin: 0 5px;
 }

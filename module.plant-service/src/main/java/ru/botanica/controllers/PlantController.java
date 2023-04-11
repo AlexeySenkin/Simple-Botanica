@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.botanica.entities.plants.PlantDto;
 import ru.botanica.services.PlantService;
@@ -72,7 +73,11 @@ public class PlantController {
      * @param id Идентификатор
      */
     @DeleteMapping("plant/{id}")
-    public void deletePlant(@PathVariable long id) {
-        plantService.deletePlantById(id);
+    public ResponseEntity<?> deletePlant(@PathVariable long id) {
+        try {
+            return ResponseEntity.ok(plantService.deletePlantById(id));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Ошибка удаления");
+        }
     }
 }

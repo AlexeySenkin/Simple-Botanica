@@ -36,7 +36,7 @@
 }
 
 .plant__name__header {
-    width: auto;
+    width: 100%;
     font-size: 18px;
     font-weight: 400;
     letter-spacing: 0.05em;
