@@ -37,11 +37,11 @@ public class UserServiceTests {
      */
     @Test
     void testFindById() {
-        int id = 1;
+        long id = 1L;
 
         User user = new User();
 
-        user.setUserId(1);
+        user.setUserId(id);
         user.setFirstName("first_name");
         user.setLastName("last_name");
         user.setEmail("email");
@@ -77,7 +77,7 @@ public class UserServiceTests {
      */
     @Test
     void testFindByIdWhenIllegalId() {
-        int id = 1;
+        long id = 1L;
 
         assertThrows(NoSuchElementException.class, () -> userService.findById(id));
     }

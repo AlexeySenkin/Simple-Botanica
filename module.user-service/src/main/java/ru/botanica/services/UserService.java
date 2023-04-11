@@ -19,7 +19,7 @@ public class UserService {
      * @param id Идентификатор
      * @return Пользователь
      */
-    public UserDto findById(int id) {
+    public UserDto findById(long id) {
         return UserDtoMapper.mapToDto(userRepository.findById(id).orElseThrow());
     }
 
