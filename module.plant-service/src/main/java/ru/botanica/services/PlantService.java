@@ -146,9 +146,10 @@ public class PlantService {
      *
      * @param id Идентификатор
      */
-    public void deletePlantById(long id) {
+    public PlantDto deletePlantById(long id) {
         PlantDto plantDto = findById(id);
         plantDto.setActive(false);
         plantRepository.saveAndFlush(PlantDtoMapper.mapToEntity(plantDto));
+        return plantDto;
     }
 }
