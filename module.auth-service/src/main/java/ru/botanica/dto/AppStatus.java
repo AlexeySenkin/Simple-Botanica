@@ -1,6 +1,6 @@
 package ru.botanica.dto;
 
-public class AppError {
+public class AppStatus {
     private int statusCode;
     private String message;
 
@@ -20,10 +20,10 @@ public class AppError {
         this.message = message;
     }
 
-    public AppError() {
+    public AppStatus() {
     }
 
-    public AppError(int statusCode, String message) {
+    public AppStatus(int statusCode, String message) {
         this.statusCode = statusCode;
         this.message = message;
     }

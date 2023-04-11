@@ -1,6 +1,7 @@
 package ru.botanica.entities;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @Table(name = "roles")
 public class Role {
     @Id
@@ -20,7 +22,7 @@ public class Role {
     private String name;
 
     @Column(name = "is_active")
-    private boolean isActive;
+    private Boolean isActive;
 
     @Override
     public String toString() {

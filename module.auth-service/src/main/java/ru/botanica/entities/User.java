@@ -1,14 +1,16 @@
 package ru.botanica.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 
 import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 @Table(name = "users")
 public class User {
     @Id
@@ -23,10 +25,10 @@ public class User {
     private String password;
 
     @Column(name = "is_banned")
-    private boolean isBanned;
+    private Boolean isBanned;
 
     @Column(name = "is_active")
-    private boolean isActive;
+    private Boolean isActive;
 
     @ManyToMany
     @JoinTable(name = "users_roles",
