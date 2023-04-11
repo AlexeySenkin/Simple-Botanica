@@ -92,7 +92,6 @@ public class PlantService {
     public Long addPlant(PlantDto plantDto) {
         if (!checkOnExisting(plantDto.getName())) {
             boolean isOk = savePlantInRepo(plantDto);
-            plantDto.setId(plantRepository.findIdByName(plantDto.getName()));
             if (isOk) {
                 savePhotoInRepo(plantDto.getId(), plantDto.getFilePath());
             }
@@ -147,9 +146,10 @@ public class PlantService {
      *
      * @param id Идентификатор
      */
-    public void deletePlantById(long id) {
+    public PlantDto deletePlantById(long id) {
         PlantDto plantDto = findById(id);
         plantDto.setActive(false);
         plantRepository.saveAndFlush(PlantDtoMapper.mapToEntity(plantDto));
+        return plantDto;
     }
 }
