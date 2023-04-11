@@ -8,8 +8,8 @@
                         ng-show="callPlace===1 && !isAdmin()">
                     Добавить к себе
                 </button>
-                <button class="page__button mb-5 text text_center" ng-click="dropPlant(plant.id)"
-                        ng-show="callPlace===1 && isAdmin()">
+                <button class="page__button mb-5 text text_center" ng-click="addPlantToUserList(plant.id)"
+                        ng-show="isAdmin()">
                     Удалить
                 </button>
                 <div class="care__actions__container" ng-show="callPlace===2">

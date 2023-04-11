@@ -11,6 +11,7 @@ angular.module('Simple-Botanica-app')
                     page: $scope.currentPage
                 }
             }).then(function successCallback(response) {
+                    console.log("get all plants")
                     $scope.plantsPage = response.data.content;
                     $scope.imgPath = settings.IMG_DIRECTORY;
                     $scope.totalPages = response.data.totalPages + 1;
@@ -45,8 +46,10 @@ angular.module('Simple-Botanica-app')
             $http.delete(plantsPath + '/plant/' + plantId)
                 .then(function successCallback(response) {
                     if (response.status === 200) {
+                        console.log("get all plants")
+                        console.log(response.status)
                         $scope.getPlants();
-                         location.reload();
+                        // location.reload();
                     }
                     console.log(response);
                 })
