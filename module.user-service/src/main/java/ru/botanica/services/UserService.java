@@ -23,4 +23,10 @@ public class UserService {
         return UserDtoMapper.mapToDto(userRepository.findById(id).orElseThrow());
     }
 
+    public Long findIdByUserName(String userName) {
+        return userRepository.findIdByUserName(userName);
+    }
+
+
+
 }
