@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Setter
 @AllArgsConstructor
 @Component
-public class PlantDtoList {
+public class PlantDtoShort {
     private Long id;
     private String name;
     private String shortDescription;
@@ -17,7 +17,7 @@ public class PlantDtoList {
 
     private String filePath;
 
-    public PlantDtoList() {
+    public PlantDtoShort() {
     }
 
     @Override

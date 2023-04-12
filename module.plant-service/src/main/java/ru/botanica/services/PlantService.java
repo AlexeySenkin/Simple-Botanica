@@ -37,10 +37,10 @@ public class PlantService {
      * @param pageable Страница(номер страницы, размер страницы)
      * @return Список растений
      */
-    public Page<PlantDtoList> findAll(String title, Pageable pageable) {
+    public Page<PlantDtoShort> findAll(String title, Pageable pageable) {
         Specification<Plant> specification = createSpecificationsWithFilter(title, true);
         return plantRepository.findAll(specification, pageable)
-                .map(PlantDtoMapper::mapToDtoList);
+                .map(PlantDtoMapper::mapToDtoShort);
     }
 
     /**
@@ -77,7 +77,7 @@ public class PlantService {
      * @return Идентификатор
      */
     @Transactional
-    public PlantDto updateExistPlant(PlantDto plantDto) {
+    public PlantDto updatePlant(PlantDto plantDto) {
         Plant plant = plantBuilder
                 .withId(plantDto.getId())
                 .withName(plantDto.getName())

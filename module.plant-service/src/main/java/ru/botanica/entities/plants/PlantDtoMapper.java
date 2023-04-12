@@ -32,8 +32,8 @@ public final class PlantDtoMapper {
         return plantDto;
     }
 
-    public static PlantDtoList mapToDtoList(Plant plant) {
-        PlantDtoList plantDto = new PlantDtoList();
+    public static PlantDtoShort mapToDtoShort(Plant plant) {
+        PlantDtoShort plantDto = new PlantDtoShort();
         plantDto.setId(plant.getId());
         plantDto.setName(plant.getName());
         plantDto.setShortDescription(plant.getShortDescription());
