@@ -8,8 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.botanica.entities.plants.PlantDto;
-import ru.botanica.entities.plants.PlantDtoList;
-import ru.botanica.entities.responses.AppResponse;
+import ru.botanica.entities.plants.PlantDtoShort;
 import ru.botanica.services.PlantService;
 
 @CrossOrigin(origins = "*", allowCredentials = "false")
@@ -28,11 +27,11 @@ public class PlantController {
      * @return Список растений
      */
     @GetMapping("/plants")
-    public Page<PlantDtoList> findAllByFilters(@RequestParam(required = false, defaultValue = "1") int page,
+    public Page<PlantDtoShort> findAllByFilters(@RequestParam(required = false, defaultValue = "1") int page,
 //                                           Изначально помещается 10, но, чтобы при текущих данных в БД было
 //                                           две страницы, сместил значение по умолчанию до 8
-                                               @RequestParam(required = false, defaultValue = "8") int size,
-                                               @RequestParam(required = false) String title) {
+                                                @RequestParam(required = false, defaultValue = "8") int size,
+                                                @RequestParam(required = false) String title) {
         int currentPage = page - 1;
         return plantService.findAll(title, PageRequest.of(currentPage, size));
     }
