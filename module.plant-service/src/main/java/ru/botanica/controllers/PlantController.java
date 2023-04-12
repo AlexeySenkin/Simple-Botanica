@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.botanica.entities.plants.PlantDto;
 import ru.botanica.entities.plants.PlantDtoShort;
+import ru.botanica.entities.responses.AppResponse;
 import ru.botanica.services.PlantService;
 
 @CrossOrigin(origins = "*", allowCredentials = "false")
@@ -64,7 +65,7 @@ public class PlantController {
                     "Растение не существует, id- " + id), HttpStatus.BAD_REQUEST);
         } else {
             try {
-                plantService.updateExistPlant(plantDto);
+                plantService.updatePlant(plantDto);
             } catch (Exception e) {
                 /**
                  * Неудачное обновление
