@@ -28,16 +28,17 @@ public final class PlantDtoMapper {
         plantDto.setDescription(plant.getDescription());
         plantDto.setShortDescription(plant.getShortDescription());
         plantDto.setActive(plant.isActive());
-        plantDto.setFilePath(plant.getPhoto() == null? null : plant.getPhoto().getFilePath());
+        plantDto.setFilePath(plant.getPhoto() == null ? null : plant.getPhoto().getFilePath());
         return plantDto;
     }
 
-    public static PlantDto mapToDtoWithIdNameShortDescAndFilePath(Plant plant) {
-        PlantDto plantDto = new PlantDto();
+    public static PlantDtoShort mapToDtoShort(Plant plant) {
+        PlantDtoShort plantDto = new PlantDtoShort();
         plantDto.setId(plant.getId());
         plantDto.setName(plant.getName());
         plantDto.setShortDescription(plant.getShortDescription());
-        plantDto.setFilePath(plant.getPhoto() == null? null : plant.getPhoto().getFilePath());
+        plantDto.setActive(plant.isActive());
+        plantDto.setFilePath(plant.getPhoto() == null ? null : plant.getPhoto().getFilePath());
         return plantDto;
     }
 }
