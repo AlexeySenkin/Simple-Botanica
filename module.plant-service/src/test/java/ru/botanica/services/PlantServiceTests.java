@@ -4,14 +4,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.botanica.entities.photos.PlantPhoto;
-import ru.botanica.entities.photos.PlantPhotoRepository;
+import ru.botanica.repositories.PlantPhotoRepository;
 import ru.botanica.entities.plants.Plant;
 import ru.botanica.entities.plants.PlantDto;
-import ru.botanica.entities.plants.PlantRepository;
+import ru.botanica.repositories.PlantRepository;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;

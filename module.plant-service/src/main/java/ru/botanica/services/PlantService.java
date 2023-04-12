@@ -6,10 +6,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.botanica.builders.PlantBuilder;
+import ru.botanica.entities.photos.PlantPhoto;
 import ru.botanica.entities.photos.PlantPhotoDto;
 import ru.botanica.entities.photos.PlantPhotoDtoMapper;
-import ru.botanica.entities.photos.PlantPhotoRepository;
-import ru.botanica.entities.plants.*;
+import ru.botanica.entities.plants.Plant;
+import ru.botanica.entities.plants.PlantDto;
+import ru.botanica.entities.plants.PlantDtoMapper;
+import ru.botanica.entities.plants.PlantSpecifications;
+import ru.botanica.repositories.PlantPhotoRepository;
+import ru.botanica.repositories.PlantRepository;
+
+import java.util.Optional;
 
 
 @Service
@@ -18,6 +27,8 @@ import ru.botanica.entities.plants.*;
 public class PlantService {
     private final PlantRepository plantRepository;
     private final PlantPhotoRepository photoRepository;
+
+    private final PlantPhotoService plantPhotoService;
 
     /**
      * Возвращает список растений, учитывающий заданные для поиска параметры
@@ -91,8 +102,7 @@ public class PlantService {
 //     последнему id из списка. Тогда можно оставить name не уникальным, но на мой взгляд, это будет ошибкой
     public Long addPlant(PlantDto plantDto) {
         if (!checkOnExisting(plantDto.getName())) {
-            boolean isOk = savePlantInRepo(plantDto);
-            if (isOk) {
+            if (savePlantInRepo(plantDto)) {
                 savePhotoInRepo(plantDto.getId(), plantDto.getFilePath());
             }
             return plantDto.getId();
@@ -101,6 +111,29 @@ public class PlantService {
             log.error("Растение с именем {} уже существует и имеет id {}", plantDto.getName(), id);
             return id;
         }
+    }
+
+    @Transactional
+    public PlantDto addNewPlant(PlantDto plantDto) {
+        PlantBuilder plantBuilder = new PlantBuilder();
+        Plant plant = plantBuilder.withName(plantDto.getName())
+                .withFamily(plantDto.getFamily())
+                .withGenus(plantDto.getGenus())
+                .withShortDescription(plantDto.getShortDescription())
+                .withDescription(plantDto.getShortDescription())
+                .withIsActive(true)
+                .build();
+        plantRepository.saveAndFlush(plant);
+        if (isPhotoPathAvaliable(plantDto.getFilePath())) {
+            plant.setPhoto(plantPhotoService.saveOrUpdate(plant.getId(), plantDto.getFilePath()));
+            plantRepository.saveAndFlush(plant);
+        }
+
+        return PlantDtoMapper.mapToDto(plant);
+    }
+
+    private boolean isPhotoPathAvaliable(String photoFilePath){
+        return photoFilePath != null && !photoFilePath.isBlank() && !photoFilePath.isEmpty();
     }
 
     /**
@@ -114,14 +147,12 @@ public class PlantService {
             /**
              * Если нет значения id, вычисляет последнее доступное
              */
-            if (plantDto.getId() == null) {
-                plantDto.setId(plantRepository.findLastIdAvailable());
-            }
-            plantRepository.saveAndFlush(PlantDtoMapper.mapToEntity(plantDto));
+            Plant plant = plantRepository.saveAndFlush(PlantDtoMapper.mapToEntity(plantDto));
+            plantDto.setId(plant.getId());
+            return true;
         } catch (Exception e) {
             return false;
         }
-        return true;
     }
 
     private void savePhotoInRepo(Long plantId, String filePath) {

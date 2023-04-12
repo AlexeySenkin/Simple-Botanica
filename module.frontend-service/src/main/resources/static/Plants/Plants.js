@@ -21,7 +21,6 @@ angular.module('Simple-Botanica-app')
                 },
                 function errorCallback(reason) {
                     console.log('Ошибка: ' + reason.data.status + ' с текстом: ' + reason.data.error);
-
                 })
         }
 

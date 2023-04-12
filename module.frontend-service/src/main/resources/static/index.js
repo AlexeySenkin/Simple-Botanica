@@ -41,6 +41,7 @@ botanicaApp.constant('settings', {
     API_V: '',
     // директория хранения картинок растений
     IMG_DIRECTORY: 'img/db/',
+    NO_PHOTO_PLACEHOLDER: "../No-Image-Placeholder.png",
     // кнопки ухода
     ACTION_BUTTONS: [{id: 1, img: 'img/watering_can.png', hint: 'Полить'},
         {id: 2, img: 'img/sprayer.png', hint: 'Опрыскать'},
@@ -73,30 +74,66 @@ botanicaApp.factory('userFactory', function ($localStorage) {
     return userFactoryObj;
 })
 
-botanicaApp.factory('plantFactory', function ($http, settings) {
+botanicaApp.factory('plantFactory', function ($http, settings, $q) {
     let plantFactoryObj = {};
+    let plant = {
+        id: null,
+        name: "",
+        family: "",
+        genus: "",
+        shortDescription: "",
+        description: "",
+        isActive: true,
+        filePath: ""
+    };
     const plantPath = settings.PLANTS_PATH;
+
+    let getPlantPhoto = function (filePathString) {
+        if (filePathString === null || filePathString.trim() === '' || typeof filePathString === undefined) {
+            return settings.NO_PHOTO_PLACEHOLDER;
+        }
+        return filePathString;
+    }
+
     plantFactoryObj.getPlant = function (plantId) {
+        let defer = $q.defer();
         $http.get(plantPath + '/plant/' + plantId).then(function successCallback(response) {
-            let plant = response.data;
-            if (!plant.file_path) {
-                plant.file_path = 'No-Image-Placeholder.png';
-            }
-            return plant;
+            plant = response.data;
+            plant.file_path = getPlantPhoto(plant.file_path);
+            defer.resolve(plant);
         }, function errorCallback(reason) {
+            defer.reject(reason);
         });
+        return defer.promise;
     };
 
     plantFactoryObj.deletePlant = function (plantId) {
+        let defer = $q.defer();
         $http.delete(plantPath + '/plant/' + plantId).then(function successCallback(response) {
-                return response;
+            defer.resolve(response);
         }, function errorCallback(reason) {
-            return reason;
-        })
-}
-return plantFactoryObj;
-})
-;
+            defer.reject(reason);
+        });
+        return defer.promise;
+    };
+
+    plantFactoryObj.saveOrUpdate = function (plantObject) {
+        plant = plantObject;
+        plant.isActive = true;
+        console.log(plant);
+        let defer = $q.defer();
+        $http.post(plantPath + '/plant', JSON.stringify(plant)).then(function successCallback(response){
+            defer.resolve(response);
+            console.log('plant saved id=' + response.data);
+        }, function errorCallback(reason){
+            defer.reject(reason);
+            console.log('error occurred while saving. error code:' + reason.data.status);
+        });
+        return defer.promise;
+    };
+    return plantFactoryObj;
+});
+
 botanicaApp
     .controller('SimpleBotanica-controller', function ($http, $rootScope, $scope, $localStorage, $location,
                                                        $uibModal, userFactory) {
