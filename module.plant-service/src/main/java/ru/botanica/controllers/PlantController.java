@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.botanica.entities.plants.PlantDto;
 import ru.botanica.entities.plants.PlantDtoList;
+import ru.botanica.entities.responses.AppResponse;
 import ru.botanica.services.PlantService;
 
 @CrossOrigin(origins = "*", allowCredentials = "false")
@@ -50,35 +52,96 @@ public class PlantController {
      * Обновляет значения растения
      *
      * @param plantDto JSON с параметрами PlantDto.class
-     * @return Идентификатор
+     * @return responseEntity с кодом и сообщением
      */
     @PutMapping("/plant")
-    public Long updateById(@RequestBody PlantDto plantDto) {
-        return plantService.updateExistPlant(plantDto).getId();
+    public ResponseEntity<?> updateById(@RequestBody PlantDto plantDto) {
+        Long id = plantDto.getId();
+        if (!plantService.isIdExist(id)) {
+            /**
+             * Если растение не существует
+             */
+            return new ResponseEntity<>(new AppResponse(HttpStatus.BAD_REQUEST.value(),
+                    "Растение не существует, id- " + id), HttpStatus.BAD_REQUEST);
+        } else {
+            try {
+                plantService.updateExistPlant(plantDto);
+            } catch (Exception e) {
+                /**
+                 * Неудачное обновление
+                 */
+                return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                        "Сервер не смог обновить растение с id " + id), HttpStatus.UNPROCESSABLE_ENTITY);
+            }
+            /**
+             * Удачное обновление
+             */
+            return new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
+                    "Растение обновлено, id: " + id), HttpStatus.OK);
+        }
     }
 
     /**
      * Добавляет растения с данными значениями
      *
      * @param plantDto JSON с параметрами PlantDto.class
-     * @return Идентификатор
+     * @return responseEntity с кодом и сообщением
      */
     @PostMapping("/plant")
-    public Long addPlant(@RequestBody PlantDto plantDto) {
-        return plantService.addNewPlant(plantDto).getId();
+    public ResponseEntity<?> addPlant(@RequestBody PlantDto plantDto, @RequestParam(name = "isOverwriting") boolean isOverwriting) {
+        if (plantService.findByName(plantDto.getName()).isPresent() && !isOverwriting) {
+            /**
+             * Если растение существует и его нельзя перезаписывать
+             */
+            return new ResponseEntity<>(new AppResponse(HttpStatus.BAD_REQUEST.value(),
+                    "Растение с таким именем существует"), HttpStatus.BAD_REQUEST);
+        } else {
+            try {
+                plantService.addNewPlant(plantDto);
+            } catch (Exception e) {
+                /**
+                 * Неудачное сохранение
+                 */
+                return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                        "Сервер не смог добавить растение"), HttpStatus.UNPROCESSABLE_ENTITY);
+            }
+            /**
+             * Удачное сохранение
+             */
+            return new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
+                    "Растение создано, имя: " + plantDto.getName()), HttpStatus.OK);
+        }
     }
 
     /**
      * Удаляет растение по идентификатору
      *
      * @param id Идентификатор
+     * @return responseEntity с кодом и сообщением
      */
     @DeleteMapping("plant/{id}")
     public ResponseEntity<?> deletePlant(@PathVariable long id) {
-        try {
-            return ResponseEntity.ok(plantService.deletePlantById(id));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Ошибка удаления");
+        if (!plantService.isIdExist(id)) {
+            /**
+             * Если растение не существует
+             */
+            return new ResponseEntity<>(new AppResponse(HttpStatus.BAD_REQUEST.value(),
+                    "Растение не существует, id- " + id), HttpStatus.BAD_REQUEST);
+        } else {
+            try {
+                plantService.deletePlantById(id);
+            } catch (Exception e) {
+                /**
+                 * Неудачное удаление
+                 */
+                return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                        "Сервер не смог удалить растение с id " + id), HttpStatus.UNPROCESSABLE_ENTITY);
+            }
+            /**
+             * Удачное удаление
+             */
+            return new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
+                    "Растение удалено, id: " + id), HttpStatus.OK);
         }
     }
 }
