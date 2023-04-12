@@ -50,19 +50,11 @@ angular.module('Simple-Botanica-app')
 
         $scope.showPlantDetails = function () {
             let plantId = $localStorage.plantId;
-            if (plantId) {
-                $http.get(plantsPath + '/plant/' + plantId).then(function successCallback(response) {
-                    $scope.plant = response.data;
-                    if (!response.data.filePath) {
-                        $scope.plant.filePath = "No-Image-Placeholder.png";
-                    }
+                plantFactory.getPlant(plantId).then(function successCallback(response) {
+                    $scope.plant = response;
                 }, function errorCallback(reason) {
+                    console.log('error ocurred while fetching a plant info:' + reason);
                 });
-            } else {
-                $scope.plant = {};
-                $scope.plant.id = null;
-                $scope.plant.filePath = "No-Image-Placeholder.png";
-            }
         }
 
         $scope.savePlant = function () {
@@ -77,6 +69,7 @@ angular.module('Simple-Botanica-app')
         $scope.home = function () {
             location.assign('#!/')
         }
+
         $scope.adm = userFactory.isAdmin();
 
         $scope.showPlantDetails();
