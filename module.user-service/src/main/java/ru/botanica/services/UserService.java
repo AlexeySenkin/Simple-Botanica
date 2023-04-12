@@ -23,6 +23,12 @@ public class UserService {
         return UserDtoMapper.mapToDto(userRepository.findById(id).orElseThrow());
     }
 
+    /**
+     * Возвращает идентификатор пользователя по имени пользователя
+     *
+     * @param userName Имя пользователя
+     * @return Идентификатор
+     */
     public Long findIdByUserName(String userName) {
         return userRepository.findIdByUserName(userName);
     }

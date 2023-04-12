@@ -26,6 +26,12 @@ public class UserController {
         return userService.findById(id);
     }
 
+    /**
+     * Возвращает идентификатор пользователя по имени пользователя
+     *
+     * @param userName Имя пользователя
+     * @return Идентификатор
+     */
     @GetMapping("/user")
     public Long findIdByUserName(@RequestParam("username") String userName) {
         return userService.findIdByUserName(userName);
