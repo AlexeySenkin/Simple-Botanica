@@ -64,7 +64,8 @@ public class PlantController {
      */
     @PostMapping("/plant")
     public Long addPlant(@RequestBody PlantDto plantDto) {
-        return plantService.addPlant(plantDto);
+//        return plantService.addPlant(plantDto);
+        return plantService.addNewPlant(plantDto).getId();
     }
 
     /**

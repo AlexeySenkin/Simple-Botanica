@@ -1,8 +1,9 @@
 <div>
     <div class="top__container">
         <div class="plant__info__card__container">
+<!--            ng-src="{{imgPath}}{{plant.filePath}}"-->
             <div class="info__left__container">
-                <img class="plant__photo plant__card__photo" ng-src="{{imgPath}}{{plant.filePath}}" alt="{{plant.name}}"
+                <img class="plant__photo plant__card__photo" ng-src="" alt="{{plant.name}}"
                      src="">
                 <button class="page__button mb-5 text text_center" ng-click="addPlantToUserList(plant.id)"
                         ng-show="callPlace===1 && !isAdmin()">
