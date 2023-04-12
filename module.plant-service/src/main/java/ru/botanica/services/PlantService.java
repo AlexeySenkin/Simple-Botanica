@@ -78,7 +78,15 @@ public class PlantService {
      */
     @Transactional
     public PlantDto updateExistPlant(PlantDto plantDto) {
-        Plant plant = createPlantFromDto(plantDto);
+        Plant plant = plantBuilder
+                .withId(plantDto.getId())
+                .withName(plantDto.getName())
+                .withFamily(plantDto.getFamily())
+                .withGenus(plantDto.getGenus())
+                .withShortDescription(plantDto.getShortDescription())
+                .withDescription(plantDto.getShortDescription())
+                .withIsActive(plantDto.isActive())
+                .build();
         plantRepository.saveAndFlush(plant);
         if (isPhotoPathAvailable(plantDto.getFilePath())) {
             plant.setPhoto(plantPhotoService.saveOrUpdate(plant.getId(), plantDto.getFilePath()));
@@ -96,7 +104,14 @@ public class PlantService {
     @Transactional
     public PlantDto addNewPlant(PlantDto plantDto) {
         if (!plantRepository.existsByName(plantDto.getName())) {
-            Plant plant = createPlantFromDto(plantDto);
+            Plant plant = plantBuilder
+                    .withName(plantDto.getName())
+                    .withFamily(plantDto.getFamily())
+                    .withGenus(plantDto.getGenus())
+                    .withShortDescription(plantDto.getShortDescription())
+                    .withDescription(plantDto.getShortDescription())
+                    .withIsActive(true)
+                    .build();
             plantRepository.saveAndFlush(plant);
             if (isPhotoPathAvailable(plantDto.getFilePath())) {
                 plant.setPhoto(plantPhotoService.saveOrUpdate(plant.getId(), plantDto.getFilePath()));
@@ -107,25 +122,6 @@ public class PlantService {
         } else {
             return plantDto;
         }
-    }
-
-
-    /**
-     * Собирает Plant из Дто
-     *
-     * @param plantDto объект для сборки в Plant
-     * @return Растение
-     */
-    private Plant createPlantFromDto(PlantDto plantDto) {
-        return plantBuilder
-                .withId(plantDto.getId())
-                .withName(plantDto.getName())
-                .withFamily(plantDto.getFamily())
-                .withGenus(plantDto.getGenus())
-                .withShortDescription(plantDto.getShortDescription())
-                .withDescription(plantDto.getShortDescription())
-                .withIsActive(true)
-                .build();
     }
 
     /**
