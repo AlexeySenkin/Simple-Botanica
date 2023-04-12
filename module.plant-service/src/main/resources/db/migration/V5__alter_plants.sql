@@ -1,0 +1,1 @@
+ALTER TABLE simple_botanica.plants ADD CONSTRAINT plants_UNIQUE UNIQUE KEY (name);
