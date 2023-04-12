@@ -27,6 +27,8 @@ public class PlantServiceTests {
     private PlantRepository plantRepository;
     @MockBean
     private PlantPhotoRepository photoRepository;
+    @MockBean
+    private PlantPhotoService photoService;
     @Autowired
     private PlantService plantService;
 

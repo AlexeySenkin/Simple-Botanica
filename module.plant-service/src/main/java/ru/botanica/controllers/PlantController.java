@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.botanica.entities.plants.PlantDto;
+import ru.botanica.entities.plants.PlantDtoList;
 import ru.botanica.services.PlantService;
 
 @CrossOrigin(origins = "*", allowCredentials = "false")
@@ -25,11 +26,11 @@ public class PlantController {
      * @return Список растений
      */
     @GetMapping("/plants")
-    public Page<PlantDto> findAllByFilters(@RequestParam(required = false, defaultValue = "1") int page,
+    public Page<PlantDtoList> findAllByFilters(@RequestParam(required = false, defaultValue = "1") int page,
 //                                           Изначально помещается 10, но, чтобы при текущих данных в БД было
 //                                           две страницы, сместил значение по умолчанию до 8
-                                           @RequestParam(required = false, defaultValue = "8") int size,
-                                           @RequestParam(required = false) String title) {
+                                               @RequestParam(required = false, defaultValue = "8") int size,
+                                               @RequestParam(required = false) String title) {
         int currentPage = page - 1;
         return plantService.findAll(title, PageRequest.of(currentPage, size));
     }
@@ -53,7 +54,7 @@ public class PlantController {
      */
     @PutMapping("/plant")
     public Long updateById(@RequestBody PlantDto plantDto) {
-        return plantService.updateByID(plantDto);
+        return plantService.updateExistPlant(plantDto).getId();
     }
 
     /**
@@ -64,7 +65,6 @@ public class PlantController {
      */
     @PostMapping("/plant")
     public Long addPlant(@RequestBody PlantDto plantDto) {
-//        return plantService.addPlant(plantDto);
         return plantService.addNewPlant(plantDto).getId();
     }
 

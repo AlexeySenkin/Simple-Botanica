@@ -10,9 +10,6 @@ import ru.botanica.entities.plants.Plant;
 @Repository
 public interface PlantRepository extends JpaRepository<Plant, Long>, JpaSpecificationExecutor<Plant> {
 
-    @Query("select (max(p.id) + 1) from Plant p")
-    Long findLastIdAvailable();
-
     boolean existsByName(String name);
 
     @Query("select p.id from Plant p where p.name like ?1")
