@@ -54,6 +54,10 @@ angular.module('Simple-Botanica-app')
                 })
         }
 
+        $scope.getPlantImagePath = function (filePath) {
+            return plantFactory.getPlantPhoto(filePath);
+        }
+
         $scope.getPlants();
 
     })

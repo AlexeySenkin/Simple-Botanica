@@ -37,11 +37,11 @@ botanicaApp.constant('settings', {
     // пока нет шлюза для доступа через единую точку тут будут лежать адреса сервисов
     PLANTS_PATH: 'http://localhost:8189/botanica/api',
     AUTH_PATH: 'http://localhost:8188/botanica/api',
-    USER_PATH: '',
+    USER_SERVICE_PATH: '',
     API_V: '',
     // директория хранения картинок растений
     IMG_DIRECTORY: 'img/db/',
-    NO_PHOTO_PLACEHOLDER: "../No-Image-Placeholder.png",
+    NO_PHOTO_PLACEHOLDER: "img/No-Image-Placeholder.png",
     // кнопки ухода
     ACTION_BUTTONS: [{id: 1, img: 'img/watering_can.png', hint: 'Полить'},
         {id: 2, img: 'img/sprayer.png', hint: 'Опрыскать'},
@@ -88,23 +88,28 @@ botanicaApp.factory('plantFactory', function ($http, settings, $q) {
     };
     const plantPath = settings.PLANTS_PATH;
 
-    let getPlantPhoto = function (filePathString) {
-        if (filePathString === null || filePathString.trim() === '' || typeof filePathString === undefined) {
+    plantFactoryObj.getPlantPhoto = function (filePathString) {
+        if (filePathString != null && filePathString.trim() !== '' && typeof filePathString !== undefined) {
+            return settings.IMG_DIRECTORY + filePathString;
+        } else {
             return settings.NO_PHOTO_PLACEHOLDER;
         }
-        return filePathString;
-    }
+    };
 
     plantFactoryObj.getPlant = function (plantId) {
         let defer = $q.defer();
-        $http.get(plantPath + '/plant/' + plantId).then(function successCallback(response) {
-            plant = response.data;
-            plant.file_path = getPlantPhoto(plant.file_path);
-            defer.resolve(plant);
-        }, function errorCallback(reason) {
-            defer.reject(reason);
-        });
-        return defer.promise;
+        if (plantId) {
+            $http.get(plantPath + '/plant/' + plantId).then(function successCallback(response) {
+                plant = response.data;
+                plant.filePath = plantFactoryObj.getPlantPhoto(plant.filePath);
+                defer.resolve(plant);
+            }, function errorCallback(reason) {
+                defer.reject(reason);
+            });
+            return defer.promise;
+        } else {
+            return defer.resolve(plant).promise;
+        }
     };
 
     plantFactoryObj.deletePlant = function (plantId) {
@@ -122,15 +127,31 @@ botanicaApp.factory('plantFactory', function ($http, settings, $q) {
         plant.isActive = true;
         console.log(plant);
         let defer = $q.defer();
-        $http.post(plantPath + '/plant', JSON.stringify(plant)).then(function successCallback(response){
+        $http.post(plantPath + '/plant', JSON.stringify(plant)).then(function successCallback(response) {
             defer.resolve(response);
             console.log('plant saved id=' + response.data);
-        }, function errorCallback(reason){
+        }, function errorCallback(reason) {
             defer.reject(reason);
             console.log('error occurred while saving. error code:' + reason.data.status);
         });
         return defer.promise;
     };
+
+    plantFactoryObj.getAllPlants = function (userId) {
+        let getPath = "";
+        let defer = $q.defer;
+        if (userId === null) {
+            //    растения из базы знаний
+            getPath = plantPath + '/plants';
+        } else {
+            //    растения из списка пользователя
+            getPath = settings.USER_SERVICE_PATH + '/plants';
+        }
+
+        $http.get(getPath).then(
+
+        )
+    }
     return plantFactoryObj;
 });
 
