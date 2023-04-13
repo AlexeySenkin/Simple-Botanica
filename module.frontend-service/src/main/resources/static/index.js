@@ -76,39 +76,41 @@ botanicaApp.factory('userFactory', function ($localStorage) {
 
 botanicaApp.factory('plantFactory', function ($http, settings, $q) {
     let plantFactoryObj = {};
-    let plant = {
-        id: null,
-        name: "",
-        family: "",
-        genus: "",
-        shortDescription: "",
-        description: "",
-        isActive: true,
-        filePath: ""
-    };
     const plantPath = settings.PLANTS_PATH;
 
     plantFactoryObj.getPlantPhoto = function (filePathString) {
-        if (filePathString != null && filePathString.trim() !== '' && typeof filePathString !== undefined) {
+        if (typeof filePathString !== undefined && filePathString != null && filePathString.trim() !== '') {
             return settings.IMG_DIRECTORY + filePathString;
-        } else {
-            return settings.NO_PHOTO_PLACEHOLDER;
         }
+        return settings.NO_PHOTO_PLACEHOLDER;
     };
 
     plantFactoryObj.getPlant = function (plantId) {
         let defer = $q.defer();
+        let responseEntity = {data: {}, photoPath: ""};
         if (plantId) {
             $http.get(plantPath + '/plant/' + plantId).then(function successCallback(response) {
-                plant = response.data;
-                plant.filePath = plantFactoryObj.getPlantPhoto(plant.filePath);
-                defer.resolve(plant);
+                responseEntity.data = response.data;
+                responseEntity.photoPath = plantFactoryObj.getPlantPhoto(responseEntity.data.filePath);
+                defer.resolve(responseEntity);
             }, function errorCallback(reason) {
                 defer.reject(reason);
             });
             return defer.promise;
         } else {
-            return defer.resolve(plant).promise;
+            responseEntity.data = {
+                id: null,
+                name: "",
+                family: "",
+                genus: "",
+                shortDescription: "",
+                description: "",
+                isActive: true,
+                filePath: ""
+            };
+            responseEntity.photoPath = plantFactoryObj.getPlantPhoto("");
+            defer.resolve(responseEntity);
+            return defer.promise;
         }
     };
 
@@ -123,17 +125,32 @@ botanicaApp.factory('plantFactory', function ($http, settings, $q) {
     };
 
     plantFactoryObj.saveOrUpdate = function (plantObject) {
-        plant = plantObject;
-        plant.isActive = true;
-        console.log(plant);
+        let plant = plantObject;
+        if (!plant.isActive) {
+            plant.isActive = true;
+        }
         let defer = $q.defer();
-        $http.post(plantPath + '/plant', JSON.stringify(plant)).then(function successCallback(response) {
-            defer.resolve(response);
-            console.log('plant saved id=' + response.data);
-        }, function errorCallback(reason) {
-            defer.reject(reason);
-            console.log('error occurred while saving. error code:' + reason.data.status);
-        });
+        if (plant.id === null) {
+            console.log('Saving a new plant: ' + plant);
+            $http.post(plantPath + '/plant', JSON.stringify(plant)).then(function successCallback(response) {
+                defer.resolve(response);
+                console.log('New plant saved, id=' + response.data);
+            }, function errorCallback(reason) {
+                defer.reject(reason);
+                console.log('Error occurred while saving a new plant. error code:' + reason.data.status);
+            })
+        } else {
+            console.log('Saving changes into plant: ' + plant);
+            $http.put(plantPath + '/plant', JSON.stringify(plant))
+                .then(function successCallback(response) {
+                    defer.resolve(response);
+                    console.log('Changes into plant with id = '+response.data + ' saved');
+                }, function errorCallback(reason) {
+                    defer.reject(reason);
+                    console.log('Error occurred while saving changes into plant. error code:' + reason.data.status);
+                })
+
+        }
         return defer.promise;
     };
 
@@ -185,5 +202,4 @@ botanicaApp
         $scope.logOut = function () {
             userFactory.logOut();
         }
-
     })
