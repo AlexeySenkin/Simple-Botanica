@@ -86,7 +86,7 @@ public class PlantService {
                 .withFamily(plantDto.getFamily())
                 .withGenus(plantDto.getGenus())
                 .withShortDescription(plantDto.getShortDescription())
-                .withDescription(plantDto.getShortDescription())
+                .withDescription(plantDto.getDescription())
                 .withIsActive(plantDto.isActive())
                 .build();
         plantRepository.saveAndFlush(plant);
@@ -111,7 +111,7 @@ public class PlantService {
                     .withFamily(plantDto.getFamily())
                     .withGenus(plantDto.getGenus())
                     .withShortDescription(plantDto.getShortDescription())
-                    .withDescription(plantDto.getShortDescription())
+                    .withDescription(plantDto.getDescription())
                     .withIsActive(true)
                     .build();
             plantRepository.saveAndFlush(plant);
