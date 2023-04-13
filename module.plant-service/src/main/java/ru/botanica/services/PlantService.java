@@ -12,6 +12,8 @@ import ru.botanica.builders.PlantBuilder;
 import ru.botanica.entities.plants.*;
 import ru.botanica.repositories.PlantRepository;
 
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -74,7 +76,7 @@ public class PlantService {
      * Обновляет значения растения в БД
      *
      * @param plantDto PlantDto.class
-     * @return Идентификатор
+     * @return Dto растения
      */
     @Transactional
     public PlantDto updatePlant(PlantDto plantDto) {
@@ -98,7 +100,7 @@ public class PlantService {
      * Добавляет растение с данными значениями и добавляет фото в БД
      *
      * @param plantDto PlantDto.class
-     * @return Идентификатор
+     * @return Dto растения
      */
 
     @Transactional
@@ -144,5 +146,13 @@ public class PlantService {
         plantDto.setActive(false);
         plantRepository.saveAndFlush(PlantDtoMapper.mapToEntity(plantDto));
         return plantDto;
+    }
+
+    public Optional<PlantDto> findByName(String name) {
+        return plantRepository.findByName(name).map(PlantDtoMapper::mapToDto);
+    }
+
+    public boolean isIdExist(Long id) {
+        return plantRepository.existsById(id);
     }
 }
