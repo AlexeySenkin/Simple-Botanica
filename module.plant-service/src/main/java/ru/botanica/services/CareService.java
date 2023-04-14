@@ -26,10 +26,26 @@ public class CareService {
         return CareDtoMapper.mapToDto(careRepository.findById(id).orElseThrow());
     }
 
-    public PlantCareDto createPlantCare(CareDto careDto, PlantDto plantDto, PlantCareDto plantCareDto) {
+    public PlantCareDto createPlantCareWithObjects(CareDto careDto, PlantDto plantDto, PlantCareDto plantCareDto) {
         PlantCare plantCare = PlantCareDtoMapper.mapToEntity(plantCareDto,
                 PlantDtoMapper.mapToEntity(plantDto), CareDtoMapper.mapToEntity(careDto));
         PlantCare result = plantCareRepository.saveAndFlush(plantCare);
         return PlantCareDtoMapper.mapToDto(result);
+    }
+
+    public PlantCareDto createPlantCareWithQuery(PlantCareDto plantCareDto, Long plantId, Long careId) {
+        /**
+         * Проверка на существование процедуры по id растения и процедуры
+         */
+        if (plantCareRepository.existsByCareIdAndPlantId(careId, plantId).isPresent()){
+            log.error("УЖЕ СУЩЕСТВУЕТ, careId= {}, plantId= {}", careId, plantId);
+        } else {
+            /**
+             * Сохранение данных
+             */
+            plantCareRepository.insertPlantCare(careId, plantId,
+                    plantCareDto.getCareCount(), plantCareDto.getCareVolume());
+        }
+        return PlantCareDtoMapper.mapToDto(plantCareRepository.findByCareIdAndPlantId(careId, plantId));
     }
 }

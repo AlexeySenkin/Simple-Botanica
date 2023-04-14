@@ -9,9 +9,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.botanica.builders.PlantBuilder;
+import ru.botanica.entities.care.CareDto;
+import ru.botanica.entities.plantCares.PlantCareDto;
 import ru.botanica.entities.plants.*;
 import ru.botanica.repositories.PlantRepository;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 
@@ -35,10 +38,10 @@ public class PlantService {
 //        Метод, которым я проверял работает ли маппинг и добавление.
 //        CareDto careDto = careService.findById(2L);
 //        PlantDto plantDto = findById(41);
-//        PlantCareDto plantCareDto = new PlantCareDto();
-//        plantCareDto.setCareCount(5);
-//        plantCareDto.setCareVolume(BigDecimal.valueOf(10));
-//        System.out.println(careService.createPlantCare(careDto, plantDto, plantCareDto).toString());
+        PlantCareDto plantCareDto = new PlantCareDto();
+        plantCareDto.setCareCount(5);
+        plantCareDto.setCareVolume(BigDecimal.valueOf(10));
+        System.out.println(careService.createPlantCareWithQuery(plantCareDto, 41L, 1L).toString());
     }
 
     /**
