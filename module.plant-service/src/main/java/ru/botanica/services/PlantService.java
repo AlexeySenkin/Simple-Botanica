@@ -38,10 +38,11 @@ public class PlantService {
 //        Метод, которым я проверял работает ли маппинг и добавление.
 //        CareDto careDto = careService.findById(2L);
 //        PlantDto plantDto = findById(41);
-        PlantCareDto plantCareDto = new PlantCareDto();
-        plantCareDto.setCareCount(5);
-        plantCareDto.setCareVolume(BigDecimal.valueOf(10));
-        System.out.println(careService.createPlantCareWithQuery(plantCareDto, 41L, 1L).toString());
+//        PlantCareDto plantCareDto = new PlantCareDto();
+//        plantCareDto.setCareCount(5);
+//        plantCareDto.setCareVolume(BigDecimal.valueOf(10));
+//        System.out.println(careService.createPlantCareWithQuery(plantCareDto, 41L, 1L).toString());
+//        System.out.println(careService.createPlantCareWithObjects(careDto, plantDto, plantCareDto).toString());
     }
 
     /**
