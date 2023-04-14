@@ -50,8 +50,9 @@ botanicaApp.constant('settings', {
         {id: 5, img: 'img/re-potting.png', hint: 'Пересадить'}]
 })
 
-botanicaApp.factory('userFactory', function ($localStorage) {
+botanicaApp.factory('userFactory', function ($localStorage, $http, $q, settings) {
     let userFactoryObj = {};
+
     userFactoryObj.isAdmin = function () {
         if ($localStorage.botanicaWebUser) {
             let user_roles = JSON.parse(atob($localStorage.botanicaWebUser.token.split('.')[1])).roles;
@@ -70,6 +71,46 @@ botanicaApp.factory('userFactory', function ($localStorage) {
             delete $localStorage.botanicaWebUser;
             location.assign('#!/')
         }
+    }
+
+    userFactoryObj.updateWebUser = function (username, token) {
+        $localStorage.botanicaWebUser = {
+            username: username,
+            token: token,
+        };
+    };
+
+    userFactoryObj.tryToAuth = function (user) {
+        let defer = $q.defer();
+        $http.post(settings.AUTH_PATH + '/auth', user).then(function successCallback(response) {
+                $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
+                userFactoryObj.updateWebUser(user.username, response.data.token)
+
+                user.username = null;
+                user.password = null;
+                defer.resolve({user: user, status: 200});
+            },
+            function errorCallback(reason) {
+                defer.reject(reason);
+            });
+        return defer.promise;
+    }
+
+    userFactoryObj.registerUser = function (user) {
+        let defer = $q.defer();
+        $http.post(settings.AUTH_PATH + '/register', user).then(
+            function successCallback(response) {
+                userFactoryObj.updateWebUser(user.username, response.data.token)
+
+                user.username = null;
+                user.password = null;
+                user.email = null;
+
+                defer.resolve({user: user, status: 200})
+            }, function errorCallback(reason) {
+                defer.reject(reason);
+            });
+        return defer.promise;
     }
     return userFactoryObj;
 })
@@ -144,7 +185,7 @@ botanicaApp.factory('plantFactory', function ($http, settings, $q) {
             $http.put(plantPath + '/plant', JSON.stringify(plant))
                 .then(function successCallback(response) {
                     defer.resolve(response);
-                    console.log('Changes into plant with id = '+response.data + ' saved');
+                    console.log('Changes into plant with id = ' + response.data + ' saved');
                 }, function errorCallback(reason) {
                     defer.reject(reason);
                     console.log('Error occurred while saving changes into plant. error code:' + reason.data.status);
@@ -175,15 +216,15 @@ botanicaApp.factory('plantFactory', function ($http, settings, $q) {
 botanicaApp
     .controller('SimpleBotanica-controller', function ($http, $rootScope, $scope, $localStorage, $location,
                                                        $uibModal, userFactory) {
-        $scope.openAuthForm = function () {
+        $scope.openAuthRegisterForm = function (registerSign) {
             let modalInstance = $uibModal.open({
                 animation: true,
-                templateUrl: 'Auth/AuthForm.html',
+                templateUrl: 'Auth/AuthAndRegisterForm.html',
                 controller: 'authFormController',
                 size: 'sm',
                 resolve: {
-                    $test: function () {
-                        return 'res';
+                    test: function () {
+                        return registerSign;
                     }
                 }
             });
