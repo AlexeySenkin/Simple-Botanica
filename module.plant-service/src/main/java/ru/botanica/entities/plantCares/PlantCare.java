@@ -12,8 +12,6 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Table(schema = "simple_botanica", name = "plant_care")
-// Т.к. у нас есть два дополнительных параметра в данной таблице, удобнее оказалось сделать entity,
-//  чем доставать эти данные кастомным запросом.
 public class PlantCare {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,10 +38,11 @@ public class PlantCare {
     @Override
     public String toString() {
         return "PlantCare{" +
-                "id=" + care.getId() +
-                ", name=" + care.getName() +
+                "id=" + id +
                 ", careCount=" + careCount +
                 ", careVolume=" + careVolume +
+                ", care=" + care.getId() + " " + care.getName() +
+                ", plant=" + plant.getId() +" " + plant.getName() +
                 '}';
     }
 }

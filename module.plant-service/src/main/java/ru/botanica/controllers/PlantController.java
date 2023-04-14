@@ -67,9 +67,7 @@ public class PlantController {
         } else {
             try {
                 PlantDto result = plantService.updatePlant(plantDto);
-//                TODO: оба метода рабочие, что в добавлении, что в обновлении. Нужно выбрать один вариант.
-//                plantService.addCaresWithObjects(result, plantDto.getCares());
-//                plantService.addCaresWithQuery(result, plantDto.getCares());
+                plantService.addCaresWithObjects(result, plantDto.getCares());
             } catch (Exception e) {
                 /**
                  * Неудачное обновление
@@ -108,8 +106,7 @@ public class PlantController {
         } else {
             try {
                 PlantDto result = plantService.addNewPlant(plantDto);
-//                plantService.addCaresWithObjects(result, plantDto.getCares());
-//                plantService.addCaresWithQuery(result, plantDto.getCares());
+                plantService.addCaresWithObjects(result, plantDto.getCares());
             } catch (Exception e) {
                 /**
                  * Неудачное сохранение

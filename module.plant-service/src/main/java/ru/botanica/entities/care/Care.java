@@ -3,9 +3,6 @@ package ru.botanica.entities.care;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.botanica.entities.plantCares.PlantCare;
-
-import java.util.Set;
 
 @Entity
 @Getter
@@ -22,9 +19,6 @@ public class Care {
 
     @Column(name = "is_active")
     private boolean isActive;
-
-    @OneToMany(mappedBy = "care")
-    private Set<PlantCare> plantCares;
 
     public Care() {
     }

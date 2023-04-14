@@ -140,27 +140,13 @@ public class PlantService {
 //            действий
             careService.deletePlantCaresByPlantId(plantDto.getId());
             for (PlantCareDto plantCareDto : plantCareDtoList) {
-                careService.createPlantCareWithObjects(careService.findById(plantCareDto.getId()),
-                        plantDto, plantCareDto);
+                careService.createPlantCareWithObjects(plantDto, plantCareDto);
             }
             plantDto.setCares(careService.findAllPlantDtoCaresByPlantId(plantDto.getId()));
         }
         return plantDto;
     }
 
-    @Transactional
-    public PlantDto addCaresWithQuery(PlantDto plantDto, List<PlantCareDto> plantCareDtoList) {
-        if (plantCareDtoList.isEmpty() || plantCareDtoList == null) {
-            return plantDto;
-        } else {
-            careService.deletePlantCaresByPlantId(plantDto.getId());
-            for (PlantCareDto plantCareDto : plantCareDtoList) {
-                careService.createPlantCareWithQuery(plantCareDto, plantDto.getId(), plantCareDto.getId());
-            }
-            plantDto.setCares(careService.findAllPlantDtoCaresByPlantId(plantDto.getId()));
-        }
-        return plantDto;
-    }
 
     /**
      * Проверяет доступен ли путь к фотографии
