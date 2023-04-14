@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import ru.botanica.entities.photos.PlantPhoto;
+import ru.botanica.entities.plantCares.PlantCare;
+
+import java.util.Set;
 
 @Entity
 @Getter
@@ -33,11 +36,13 @@ public class Plant {
     @Column(nullable = false, name = "is_active")
     private boolean isActive;
 
-//    Зачем кто-то удалил отсюда cascade? Я чекнул свой коммит, я его с самого начала добавил, он тут нужен сейчас
-//    Buzas sprint2 plant service 30.03.23 3:39 (MSK) #5 , если интересно, когда он был
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "plant_id")
     private PlantPhoto photo;
+
+//    EAGER - неприятная штука, но без нее выдает ошибку
+    @OneToMany(mappedBy = "plant", fetch = FetchType.EAGER)
+    private Set<PlantCare> cares;
 
     public Plant() {
     }
@@ -53,6 +58,7 @@ public class Plant {
                 ", shortDescription='" + shortDescription + '\'' +
                 ", isActive=" + isActive + '\'' +
                 ", filePath=" + (photo == null ? null : photo.getFilePath()) +
+                ", cares=" + (cares.isEmpty() ? null : cares.toString()) +
                 '}';
     }
 }

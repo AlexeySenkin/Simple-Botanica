@@ -22,6 +22,8 @@ public class PlantService {
     private final PlantRepository plantRepository;
 
     private final PlantPhotoService plantPhotoService;
+
+    private final CareService careService;
     private PlantBuilder plantBuilder;
 
     /**
@@ -30,6 +32,13 @@ public class PlantService {
     @PostConstruct
     private void init() {
         plantBuilder = new PlantBuilder();
+//        Метод, которым я проверял работает ли маппинг и добавление.
+//        CareDto careDto = careService.findById(2L);
+//        PlantDto plantDto = findById(41);
+//        PlantCareDto plantCareDto = new PlantCareDto();
+//        plantCareDto.setCareCount(5);
+//        plantCareDto.setCareVolume(BigDecimal.valueOf(10));
+//        System.out.println(careService.createPlantCare(careDto, plantDto, plantCareDto).toString());
     }
 
     /**

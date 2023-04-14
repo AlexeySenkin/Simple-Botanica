@@ -14,4 +14,5 @@ public interface PlantRepository extends JpaRepository<Plant, Long>, JpaSpecific
     boolean existsByName(String name);
 
     Optional<Plant> findByName(String name);
+    Optional<Plant> findById (Long id);
 }
