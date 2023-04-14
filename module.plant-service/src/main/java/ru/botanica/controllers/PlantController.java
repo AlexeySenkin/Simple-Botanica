@@ -66,7 +66,10 @@ public class PlantController {
                     "Растение не существует, id- " + id), HttpStatus.BAD_REQUEST);
         } else {
             try {
-                plantService.updatePlant(plantDto);
+                PlantDto result = plantService.updatePlant(plantDto);
+//                TODO: оба метода рабочие, что в добавлении, что в обновлении. Нужно выбрать один вариант.
+//                plantService.addCaresWithObjects(result, plantDto.getCares());
+//                plantService.addCaresWithQuery(result, plantDto.getCares());
             } catch (Exception e) {
                 /**
                  * Неудачное обновление
@@ -87,7 +90,8 @@ public class PlantController {
     /**
      * Добавляет растения с данными значениями
      *
-     * @param plantDto JSON с параметрами PlantDto.class
+     * @param plantDto      JSON с параметрами PlantDto.class
+     * @param isOverwriting флаг, нужно ли перезаписать существующие растение
      * @return responseEntity с кодом и сообщением
      */
     @PostMapping("/plant")
@@ -103,7 +107,9 @@ public class PlantController {
                     "Растение с таким именем существует"), HttpStatus.BAD_REQUEST);
         } else {
             try {
-                plantService.addNewPlant(plantDto);
+                PlantDto result = plantService.addNewPlant(plantDto);
+//                plantService.addCaresWithObjects(result, plantDto.getCares());
+//                plantService.addCaresWithQuery(result, plantDto.getCares());
             } catch (Exception e) {
                 /**
                  * Неудачное сохранение

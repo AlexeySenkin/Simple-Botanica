@@ -9,12 +9,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.botanica.builders.PlantBuilder;
-import ru.botanica.entities.care.CareDto;
 import ru.botanica.entities.plantCares.PlantCareDto;
 import ru.botanica.entities.plants.*;
 import ru.botanica.repositories.PlantRepository;
 
-import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -35,14 +34,6 @@ public class PlantService {
     @PostConstruct
     private void init() {
         plantBuilder = new PlantBuilder();
-//        Метод, которым я проверял работает ли маппинг и добавление.
-//        CareDto careDto = careService.findById(2L);
-//        PlantDto plantDto = findById(41);
-//        PlantCareDto plantCareDto = new PlantCareDto();
-//        plantCareDto.setCareCount(5);
-//        plantCareDto.setCareVolume(BigDecimal.valueOf(10));
-//        System.out.println(careService.createPlantCareWithQuery(plantCareDto, 41L, 1L).toString());
-//        System.out.println(careService.createPlantCareWithObjects(careDto, plantDto, plantCareDto).toString());
     }
 
     /**
@@ -137,6 +128,38 @@ public class PlantService {
         } else {
             return plantDto;
         }
+    }
+
+    @Transactional
+    public PlantDto addCaresWithObjects(PlantDto plantDto, List<PlantCareDto> plantCareDtoList) {
+        if (plantCareDtoList.isEmpty() || plantCareDtoList == null) {
+            return plantDto;
+        } else {
+//            Т.к. мы используем транзакцию, удаление действий для конкретного растения на самом деле не происходит,
+//            если проваливается запись новых... Но на всякий метод удаления всегда предоставляет список удаленных
+//            действий
+            careService.deletePlantCaresByPlantId(plantDto.getId());
+            for (PlantCareDto plantCareDto : plantCareDtoList) {
+                careService.createPlantCareWithObjects(careService.findById(plantCareDto.getId()),
+                        plantDto, plantCareDto);
+            }
+            plantDto.setCares(careService.findAllPlantDtoCaresByPlantId(plantDto.getId()));
+        }
+        return plantDto;
+    }
+
+    @Transactional
+    public PlantDto addCaresWithQuery(PlantDto plantDto, List<PlantCareDto> plantCareDtoList) {
+        if (plantCareDtoList.isEmpty() || plantCareDtoList == null) {
+            return plantDto;
+        } else {
+            careService.deletePlantCaresByPlantId(plantDto.getId());
+            for (PlantCareDto plantCareDto : plantCareDtoList) {
+                careService.createPlantCareWithQuery(plantCareDto, plantDto.getId(), plantCareDto.getId());
+            }
+            plantDto.setCares(careService.findAllPlantDtoCaresByPlantId(plantDto.getId()));
+        }
+        return plantDto;
     }
 
     /**

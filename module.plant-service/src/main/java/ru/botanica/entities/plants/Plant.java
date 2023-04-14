@@ -58,7 +58,7 @@ public class Plant {
                 ", shortDescription='" + shortDescription + '\'' +
                 ", isActive=" + isActive + '\'' +
                 ", filePath=" + (photo == null ? null : photo.getFilePath()) +
-                ", cares=" + (cares.isEmpty() ? null : cares.toString()) +
+                ", cares=" + (cares == null ? null : cares.toString()) +
                 '}';
     }
 }

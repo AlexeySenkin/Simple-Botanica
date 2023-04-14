@@ -20,10 +20,10 @@ public final class PlantCareDtoMapper {
 //    существовать без указания привязки по id растения и процедуры в БД. Заранее говорю: сейчас будет доработка,
 //    но есть большой шанс, что этот метод просто будет приводить к ошибкам. После теста на добавление в БД процедуры
 //    для конкретного растения, все отработало, но уверенности это не прибавило
-    public static PlantCare mapToEntity(PlantCareDto careDto, Plant plant, Care care) {
+    public static PlantCare mapToEntity(PlantCareDto plantCareDto, Plant plant, Care care) {
         PlantCare plantCare = new PlantCare();
-        plantCare.setCareVolume(careDto.getCareVolume());
-        plantCare.setCareCount(careDto.getCareCount());
+        plantCare.setCareVolume(plantCareDto.getCareVolume());
+        plantCare.setCareCount(plantCareDto.getCareCount());
         plantCare.setPlant(plant);
         plantCare.setCare(care);
         return plantCare;

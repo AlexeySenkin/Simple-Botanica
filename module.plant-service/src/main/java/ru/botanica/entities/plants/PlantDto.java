@@ -39,7 +39,7 @@ public class PlantDto {
                 ", shortDescription='" + shortDescription + '\'' +
                 ", isActive=" + isActive + '\'' +
                 ", filePath=" + filePath +
-                ", cares=" + cares +
+                ", cares=" + (cares == null ? null : cares.toString()) +
                 '}';
     }
 }
