@@ -1,4 +1,6 @@
-package ru.botanica.entities.users;
+package ru.botanica.dto;
+
+import ru.botanica.entities.User;
 
 public final class UserDtoMapper {
 

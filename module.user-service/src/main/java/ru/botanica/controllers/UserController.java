@@ -2,10 +2,8 @@ package ru.botanica.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-import ru.botanica.entities.users.UserDto;
+import org.springframework.web.bind.annotation.*;
+import ru.botanica.dto.UserDto;
 import ru.botanica.services.UserService;
 
 @RestController
@@ -24,5 +22,7 @@ public class UserController {
     public UserDto findById(@PathVariable int id) {
         return userService.findById(id);
     }
+
+
 
 }

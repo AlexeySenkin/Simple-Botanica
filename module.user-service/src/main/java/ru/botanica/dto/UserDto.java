@@ -1,4 +1,4 @@
-package ru.botanica.entities.users;
+package ru.botanica.dto;
 
 import lombok.Data;
 
