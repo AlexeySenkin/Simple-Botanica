@@ -1,5 +1,6 @@
 package ru.botanica.controllers;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -7,10 +8,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.botanica.entities.plantCares.PlantCareDto;
 import ru.botanica.entities.plants.PlantDto;
 import ru.botanica.entities.plants.PlantDtoShort;
 import ru.botanica.entities.responses.AppResponse;
+import ru.botanica.services.CareService;
 import ru.botanica.services.PlantService;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @CrossOrigin(origins = "*", allowCredentials = "false")
 @RestController
@@ -18,6 +25,28 @@ import ru.botanica.services.PlantService;
 @Slf4j
 public class PlantController {
     private final PlantService plantService;
+    private final CareService careService;
+
+    @PostConstruct
+    private void init() {
+        PlantDto plantDto = new PlantDto();
+        plantDto.setName("plantDto");
+        plantDto.setFamily("plantDto");
+        plantDto.setGenus("plantDto");
+        plantDto.setDescription("plantDtoWayTooLong");
+        plantDto.setShortDescription("plantDtoShort");
+        plantDto.setFilePath("plantDto.png");
+
+        List<PlantCareDto> careDtoList = new ArrayList<>();
+        PlantCareDto plantCareDto = new PlantCareDto();
+        plantCareDto.setCareVolume(BigDecimal.valueOf(5));
+        plantCareDto.setCareCount(3);
+        plantCareDto.setCareDto(careService.findById(3L));
+        careDtoList.add(plantCareDto);
+
+        plantDto.setCares(careDtoList);
+        addPlant(plantDto, true);
+    }
 
     /**
      * Возвращает список растений, учитывающий заданные для поиска параметры
@@ -67,7 +96,15 @@ public class PlantController {
         } else {
             try {
                 PlantDto result = plantService.updatePlant(plantDto);
-                plantService.addCaresWithObjects(result, plantDto.getCares());
+                /**
+                 * Пытается записать действия для растения, если не выходит - уведомляет сервер
+                 */
+//                TODO: определиться, как отсылать это на фронт
+                try {
+                    plantService.addCaresWithObjects(result, plantDto.getCares());
+                } catch (Exception e) {
+                    log.error("Сервер не смог записать действия для растения с id {}", id);
+                }
             } catch (Exception e) {
                 /**
                  * Неудачное обновление
@@ -106,7 +143,11 @@ public class PlantController {
         } else {
             try {
                 PlantDto result = plantService.addNewPlant(plantDto, isOverwriting);
-                plantService.addCaresWithObjects(result, plantDto.getCares());
+                try {
+                    plantService.addCaresWithObjects(result, plantDto.getCares());
+                } catch (Exception e) {
+                    log.error("Сервер не смог записать действия для растения с id {}", result.getId());
+                }
             } catch (Exception e) {
                 /**
                  * Неудачное сохранение
