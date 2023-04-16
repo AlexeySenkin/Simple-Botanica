@@ -14,13 +14,13 @@ public class Care {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "care_id")
-    private Integer careId;
+    private Long careId;
 
     @Column(name = "care_name")
     private String careName;
 
     @Column(nullable = false, name = "is_active")
-    private Integer isActive;
+    private Boolean isActive;
 
     @Override
     public String toString() {

@@ -7,7 +7,7 @@ import java.util.Date;
 @Data
 public class UserDto {
 
-    private Integer userId;
+    private Long userId;
 
     private String firstName;
 
@@ -21,9 +21,9 @@ public class UserDto {
 
     private Date regDate;
 
-    private Integer isBanned;
+    private Boolean isBanned;
 
-    private Integer isActive;
+    private Boolean isActive;
 
     private String userName;
 

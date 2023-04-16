@@ -1,6 +1,6 @@
 package ru.botanica.dto;
 
-import ru.botanica.entities.UserPlants;
+import ru.botanica.entities.UserPlant;
 
 public class UserPlantsDtoMapper {
 
@@ -9,24 +9,24 @@ public class UserPlantsDtoMapper {
         throw new AssertionError("Instantiating utility class");
     }
 
-    public static UserPlantsDto mapToDto(UserPlants userPlants) {
+    public static UserPlantsDto mapToDto(UserPlant userPlant) {
         UserPlantsDto dto = new UserPlantsDto();
 
-        dto.setUserPlantId(userPlants.getUserPlantId());
+        dto.setUserPlantId(userPlant.getUserPlantId());
 
-        dto.setUserId(userPlants.getUserId());
+        dto.setUserId(userPlant.getUserId());
 
-        dto.setPlantId(userPlants.getPlantId());
+        dto.setPlantId(userPlant.getPlantId());
 
-        dto.setIsBanned(userPlants.getIsBanned());
+        dto.setIsBanned(userPlant.getIsBanned());
 
-        dto.setIsActive(userPlants.getIsActive());
+        dto.setIsActive(userPlant.getIsActive());
 
-        dto.setPlant(userPlants.getPlant());
+        dto.setPlant(userPlant.getPlant());
 
-        dto.setUserCare(userPlants.getUserCare());
+        dto.setUserCare(userPlant.getUserCare());
 
-        dto.setUserCareCustom(userPlants.getUserCareCustom());
+        dto.setUserCareCustom(userPlant.getUserCareCustom());
 
         return dto;
     }

@@ -14,25 +14,34 @@ public class UserCareCustom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_care_custom_id")
-    private Integer userCareCustomId;
+    private Long userCareCustomId;
 
     @Column(name = "user_plant_id")
-    private Integer userPlantId;
+    private Long userPlantId;
 
 
     @Column(name = "care_id")
-    private Integer careId;
+    private Long careId;
 
-    @Column(name = "care_care_count")
-    private Integer careCareCount;
+    @Column(name = "user_care_count")
+    private Integer userCareCount;
 
-    @Column(name = "care_care_volume")
-    private Integer careCareVolume;
+    @Column(name = "user_care_volume")
+    private Double userCareVolume;
 
-    @OneToOne()
-    @JoinTable(name = "care",
-            joinColumns = @JoinColumn(name = "care_id"))
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @PrimaryKeyJoinColumn
     private Care care;
 
-
+    @Override
+    public String toString() {
+        return "UserCareCustom{" +
+                "userCareCustomId=" + userCareCustomId +
+                ", userPlantId=" + userPlantId +
+                ", careId=" + careId +
+                ", userCareCount=" + userCareCount +
+                ", userCareVolume=" + userCareVolume +
+                ", care=" + (care == null ?  null : care) +
+                '}';
+    }
 }

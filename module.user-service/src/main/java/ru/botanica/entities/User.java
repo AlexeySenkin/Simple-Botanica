@@ -18,40 +18,39 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Integer userId;
+    private Long userId;
 
-    @Column(nullable = true, length = 45, name = "first_name")
+    @Column(length = 45, name = "first_name")
     private String firstName;
 
-    @Column(nullable = true, length = 45, name = "last_name")
+    @Column(length = 45, name = "last_name")
     private String lastName;
 
     @Column(nullable = false, length = 45, name = "email")
     private String email;
 
-    @Column(nullable = true, length = 45, name = "phone_number")
+    @Column(length = 45, name = "phone_number")
     private String phoneNumber;
 
-    @Column(nullable = true, length = 128, name = "address")
+    @Column(length = 128, name = "address")
     private String address;
 
     @Column(nullable = false, name = "reg_date")
     private Date regDate;
 
     @Column(nullable = false, name = "is_banned")
-    private Integer isBanned;
+    private Boolean isBanned;
 
     @Column(nullable = false, name = "is_active")
-    private Integer isActive;
+    private Boolean isActive;
 
     @Column(nullable = false, length = 45, name = "user_name")
     private String userName;
 
-    @OneToMany
-    @JoinTable(name = "users_plants",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "plant_id"))
-    private Collection<UserPlants> userPlants;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
+    private Collection<UserPlant> userPlants;
 
 
     @Override

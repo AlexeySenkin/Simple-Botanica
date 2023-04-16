@@ -16,27 +16,25 @@ public class UserCare {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_care_id")
-    private Integer userCareId;
+    private Long userCareId;
 
     @Column(name = "user_plant_id")
-    private Integer userPlantId;
+    private Long userPlantId;
 
     @Column(nullable = false, name = "event_date")
     private Date eventDate;
 
     @Column(name = "care_id")
-    private Integer careId;
+    private Long careId;
 
     @Column(name = "care_volume")
-    private Integer careVolume;
+    private Double careVolume;
 
     @Column(name = "prim")
     private Integer prims;
 
-    @OneToOne()
-    @JoinTable(name = "care",
-            joinColumns = @JoinColumn(name = "care_id"))
-    private Care care;
+//    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+//    private Care care;
 
 
     @Override
@@ -48,7 +46,7 @@ public class UserCare {
                 ", careId=" + careId +
                 ", careVolume=" + careVolume +
                 ", prims=" + prims +
-                ", care=" + (care == null ? null : care) +
+            //    ", care=" + (care == null ? null : care) +
                 '}';
     }
 }

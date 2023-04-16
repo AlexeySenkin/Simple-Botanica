@@ -10,15 +10,15 @@ import java.util.Collection;
 @Data
 public class UserPlantsDto {
 
-    private Integer userPlantId;
+    private Long userPlantId;
 
-    private String userId;
+    private Long userId;
 
-    private String plantId;
+    private Long plantId;
 
-    private Integer isBanned;
+    private Boolean isBanned;
 
-    private Integer isActive;
+    private Boolean isActive;
 
     private Plant plant;
 

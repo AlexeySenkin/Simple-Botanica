@@ -11,41 +11,38 @@ import java.util.Collection;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(schema = "simple_botanica", name = "users_plants")
-public class UserPlants {
+@Table(schema = "simple_botanica", name = "user_plants")
+public class UserPlant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_plant_id")
-    private Integer userPlantId;
+    private Long userPlantId;
 
     @Column(name = "user_id")
-    private String userId;
+    private Long userId;
 
     @Column(name = "plant_id")
-    private String plantId;
+    private Long plantId;
 
     @Column(nullable = false, name = "is_banned")
-    private Integer isBanned;
+    private Boolean isBanned;
 
     @Column(nullable = false, name = "is_active")
-    private Integer isActive;
+    private Boolean isActive;
 
-    @OneToMany
-    @JoinTable(name = "user_care",
-            joinColumns = @JoinColumn(name = "user_plant_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_care_id"))
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_plant_id")
     private Collection<UserCare> userCare;
 
-    @OneToMany
-    @JoinTable(name = "user_care",
-            joinColumns = @JoinColumn(name = "user_plant_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_care_id"))
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_plant_id")
     private Collection<UserCareCustom> userCareCustom;
-
-
-    @OneToOne()
-    @JoinTable(name = "plants",
-            joinColumns = @JoinColumn(name = "plant_id"))
+//
+//
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @PrimaryKeyJoinColumn
     private Plant plant;
 
 
@@ -58,7 +55,7 @@ public class UserPlants {
                 ", isBanned=" + isBanned +
                 ", isActive=" + isActive +
                 ", userCareCustom=" + (userCareCustom == null ? null : userCareCustom) +
-                ", userCare=" + (userCare == null ? null : userCare) +
+               // ", userCare=" + (userCare == null ? null : userCare) +
                 ", plant=" + (plant == null ? null : plant) +
                 '}';
     }
