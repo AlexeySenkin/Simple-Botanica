@@ -105,7 +105,7 @@ public class PlantController {
                     "Растение с таким именем существует"), HttpStatus.BAD_REQUEST);
         } else {
             try {
-                PlantDto result = plantService.addNewPlant(plantDto);
+                PlantDto result = plantService.addNewPlant(plantDto, isOverwriting);
                 plantService.addCaresWithObjects(result, plantDto.getCares());
             } catch (Exception e) {
                 /**
@@ -120,6 +120,8 @@ public class PlantController {
              * Удачное сохранение
              */
             log.debug("Растение сохранено, имя: {}", plantDto.getName());
+            log.debug("{}", new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
+                    "Растение создано, имя: " + plantDto.getName()), HttpStatus.OK));
             return new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
                     "Растение создано, имя: " + plantDto.getName()), HttpStatus.OK);
         }

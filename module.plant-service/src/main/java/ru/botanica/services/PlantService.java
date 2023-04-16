@@ -103,13 +103,15 @@ public class PlantService {
     /**
      * Добавляет растение с данными значениями и добавляет фото в БД
      *
-     * @param plantDto PlantDto.class
+     * @param plantDto      PlantDto.class
+     * @param isOverwriting флаг, нужно ли проводить перезапись в случае существования растения с таким именем
      * @return Dto растения
      */
 
     @Transactional
-    public PlantDto addNewPlant(PlantDto plantDto) {
-        if (!plantRepository.existsByName(plantDto.getName())) {
+    public PlantDto addNewPlant(PlantDto plantDto, boolean isOverwriting) {
+        boolean existsByName = plantRepository.existsByName(plantDto.getName());
+        if (!existsByName) {
             Plant plant = plantBuilder
                     .withName(plantDto.getName())
                     .withFamily(plantDto.getFamily())
@@ -123,6 +125,21 @@ public class PlantService {
                 plant.setPhoto(plantPhotoService.saveOrUpdate(plant.getId(), plantDto.getFilePath()));
 //                Пока оставлено по просьбе Марии
 //            plantRepository.saveAndFlush(plant);
+            }
+            return PlantDtoMapper.mapToDto(plant);
+        } else if (existsByName && isOverwriting) {
+            Plant plant = plantBuilder
+                    .withId(findByName(plantDto.getName()).orElseThrow().getId())
+                    .withName(plantDto.getName())
+                    .withFamily(plantDto.getFamily())
+                    .withGenus(plantDto.getGenus())
+                    .withShortDescription(plantDto.getShortDescription())
+                    .withDescription(plantDto.getDescription())
+                    .withIsActive(true)
+                    .build();
+            plantRepository.saveAndFlush(plant);
+            if (isPhotoPathAvailable(plantDto.getFilePath())) {
+                plant.setPhoto(plantPhotoService.saveOrUpdate(plant.getId(), plantDto.getFilePath()));
             }
             return PlantDtoMapper.mapToDto(plant);
         } else {
