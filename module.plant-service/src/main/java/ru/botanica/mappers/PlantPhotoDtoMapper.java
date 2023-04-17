@@ -1,6 +1,8 @@
-package ru.botanica.entities.photos;
+package ru.botanica.mappers;
 
 import org.springframework.stereotype.Component;
+import ru.botanica.dtos.PlantPhotoDto;
+import ru.botanica.entities.PlantPhoto;
 
 @Component
 public final class PlantPhotoDtoMapper {

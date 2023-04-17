@@ -1,7 +1,7 @@
 package ru.botanica.builders;
 
-import ru.botanica.entities.photos.PlantPhoto;
-import ru.botanica.entities.plants.Plant;
+import ru.botanica.entities.PlantPhoto;
+import ru.botanica.entities.Plant;
 
 /**
  * Билдер для объектов типа Plant

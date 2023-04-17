@@ -3,12 +3,12 @@ package ru.botanica.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.botanica.entities.care.CareDto;
-import ru.botanica.entities.care.CareDtoMapper;
-import ru.botanica.entities.plantCares.PlantCare;
-import ru.botanica.entities.plantCares.PlantCareDto;
-import ru.botanica.entities.plantCares.PlantCareDtoMapper;
-import ru.botanica.entities.plants.PlantDto;
+import ru.botanica.dtos.CareDto;
+import ru.botanica.mappers.CareDtoMapper;
+import ru.botanica.entities.PlantCare;
+import ru.botanica.dtos.PlantCareDto;
+import ru.botanica.mappers.PlantCareDtoMapper;
+import ru.botanica.dtos.PlantDto;
 import ru.botanica.repositories.CareRepository;
 import ru.botanica.repositories.PlantCareRepository;
 
