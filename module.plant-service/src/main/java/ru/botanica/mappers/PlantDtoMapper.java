@@ -1,10 +1,12 @@
-package ru.botanica.entities.plants;
+package ru.botanica.mappers;
 
 import org.springframework.stereotype.Component;
-import ru.botanica.entities.photos.PlantPhoto;
-import ru.botanica.entities.plantCares.PlantCare;
-import ru.botanica.entities.plantCares.PlantCareDto;
-import ru.botanica.entities.plantCares.PlantCareDtoMapper;
+import ru.botanica.dtos.PlantDto;
+import ru.botanica.dtos.PlantDtoShort;
+import ru.botanica.entities.PlantPhoto;
+import ru.botanica.entities.PlantCare;
+import ru.botanica.dtos.PlantCareDto;
+import ru.botanica.entities.Plant;
 
 import java.util.ArrayList;
 import java.util.List;

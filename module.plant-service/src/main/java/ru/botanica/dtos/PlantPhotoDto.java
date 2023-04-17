@@ -1,4 +1,4 @@
-package ru.botanica.entities.photos;
+package ru.botanica.dtos;
 
 import lombok.Getter;
 import lombok.Setter;

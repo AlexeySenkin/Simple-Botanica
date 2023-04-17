@@ -1,6 +1,8 @@
-package ru.botanica.entities.care;
+package ru.botanica.mappers;
 
 import org.springframework.stereotype.Component;
+import ru.botanica.dtos.CareDto;
+import ru.botanica.entities.Care;
 
 @Component
 public final class CareDtoMapper {

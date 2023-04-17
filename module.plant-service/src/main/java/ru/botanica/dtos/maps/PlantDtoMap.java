@@ -1,6 +1,7 @@
-package ru.botanica.entities.plants;
+package ru.botanica.dtos.maps;
 
 import org.springframework.stereotype.Component;
+import ru.botanica.dtos.PlantDto;
 
 import java.util.HashMap;
 import java.util.Map;

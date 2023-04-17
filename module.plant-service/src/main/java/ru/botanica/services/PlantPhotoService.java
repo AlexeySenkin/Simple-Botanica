@@ -3,7 +3,7 @@ package ru.botanica.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.botanica.entities.photos.PlantPhoto;
+import ru.botanica.entities.PlantPhoto;
 import ru.botanica.repositories.PlantPhotoRepository;
 
 import java.util.Optional;

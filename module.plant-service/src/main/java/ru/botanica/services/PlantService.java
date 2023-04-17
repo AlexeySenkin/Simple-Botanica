@@ -9,8 +9,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.botanica.builders.PlantBuilder;
-import ru.botanica.entities.plantCares.PlantCareDto;
-import ru.botanica.entities.plants.*;
+import ru.botanica.dtos.PlantCareDto;
+import ru.botanica.dtos.PlantDto;
+import ru.botanica.dtos.PlantDtoShort;
+import ru.botanica.entities.Plant;
+import ru.botanica.entities.PlantSpecifications;
+import ru.botanica.mappers.PlantDtoMapper;
 import ru.botanica.repositories.PlantRepository;
 
 import java.util.List;

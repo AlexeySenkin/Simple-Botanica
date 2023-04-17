@@ -7,9 +7,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.botanica.entities.plants.PlantDto;
-import ru.botanica.entities.plants.PlantDtoShort;
-import ru.botanica.entities.responses.AppResponse;
+import ru.botanica.dtos.PlantDto;
+import ru.botanica.dtos.PlantDtoShort;
+import ru.botanica.responses.AppResponse;
 import ru.botanica.services.PlantService;
 
 @CrossOrigin(origins = "*", allowCredentials = "false")
