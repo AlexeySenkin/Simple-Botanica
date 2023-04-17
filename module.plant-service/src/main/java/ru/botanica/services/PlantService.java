@@ -123,8 +123,6 @@ public class PlantService {
             plantRepository.saveAndFlush(plant);
             if (isPhotoPathAvailable(plantDto.getFilePath())) {
                 plant.setPhoto(plantPhotoService.saveOrUpdate(plant.getId(), plantDto.getFilePath()));
-//                Пока оставлено по просьбе Марии
-//            plantRepository.saveAndFlush(plant);
             }
             return PlantDtoMapper.mapToDto(plant);
         } else if (existsByName && isOverwriting) {
