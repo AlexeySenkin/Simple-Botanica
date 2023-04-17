@@ -1,27 +1,33 @@
-package ru.botanica.entities.care;
+package ru.botanica.dtos;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @Component
-public class CareDto {
+public class PlantDtoShort {
     private Long id;
     private String name;
+    private String shortDescription;
     private boolean isActive;
 
-    public CareDto() {
+    private String filePath;
+
+    public PlantDtoShort() {
     }
 
-//    TODO:
     @Override
     public String toString() {
-        return "CareDto{" +
+        return "PlantDtoList{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", shortDescription='" + shortDescription + '\'' +
                 ", isActive=" + isActive +
+                ", filePath='" + filePath + '\'' +
                 '}';
     }
 }

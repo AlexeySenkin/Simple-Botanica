@@ -1,4 +1,4 @@
-package ru.botanica.entities.care;
+package ru.botanica.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;

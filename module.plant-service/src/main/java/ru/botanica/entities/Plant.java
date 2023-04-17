@@ -1,10 +1,8 @@
-package ru.botanica.entities.plants;
+package ru.botanica.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.botanica.entities.photos.PlantPhoto;
-import ru.botanica.entities.plantCares.PlantCare;
 
 import java.util.Set;
 

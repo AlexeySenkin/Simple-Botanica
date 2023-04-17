@@ -1,4 +1,4 @@
-package ru.botanica.entities.responses;
+package ru.botanica.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
-import ru.botanica.entities.plantCares.PlantCare;
+import ru.botanica.entities.PlantCare;
 
 import java.util.List;
 

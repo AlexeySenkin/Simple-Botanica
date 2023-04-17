@@ -6,14 +6,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.botanica.entities.photos.PlantPhoto;
+import ru.botanica.entities.PlantPhoto;
 import ru.botanica.repositories.CareRepository;
 import ru.botanica.repositories.PlantCareRepository;
 import ru.botanica.repositories.PlantPhotoRepository;
-import ru.botanica.entities.plants.Plant;
-import ru.botanica.entities.plants.PlantDto;
-import ru.botanica.entities.plants.PlantDtoMapper;
-import ru.botanica.repositories.PlantPhotoRepository;
+import ru.botanica.entities.Plant;
+import ru.botanica.dtos.PlantDto;
 import ru.botanica.repositories.PlantRepository;
 
 import java.util.NoSuchElementException;

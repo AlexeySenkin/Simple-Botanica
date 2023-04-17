@@ -1,9 +1,8 @@
-package ru.botanica.entities.plantCares;
+package ru.botanica.dtos;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
-import ru.botanica.entities.care.CareDto;
 
 import java.math.BigDecimal;
 

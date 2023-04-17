@@ -1,4 +1,4 @@
-package ru.botanica.entities.plants;
+package ru.botanica.entities;
 
 import org.springframework.data.jpa.domain.Specification;
 

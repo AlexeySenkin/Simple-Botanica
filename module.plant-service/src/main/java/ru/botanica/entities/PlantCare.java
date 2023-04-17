@@ -1,10 +1,8 @@
-package ru.botanica.entities.plantCares;
+package ru.botanica.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.botanica.entities.care.Care;
-import ru.botanica.entities.plants.Plant;
 
 import java.math.BigDecimal;
 
