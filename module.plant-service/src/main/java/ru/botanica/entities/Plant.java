@@ -38,7 +38,8 @@ public class Plant {
     @JoinColumn(name = "plant_id")
     private PlantPhoto photo;
 
-//    EAGER - неприятная штука, но без нее выдает ошибку
+//    TODO: EAGER - техдолг. До доработки сущностей без него выдавало ошибку на стадии инициализации, теперь - нет.
+//     Проверить, все ли работает без него
     @OneToMany(mappedBy = "plant", fetch = FetchType.EAGER)
     private Set<PlantCare> cares;
 
