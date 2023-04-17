@@ -28,3 +28,31 @@
     display: flex;
     flex-direction: column;
 }
+
+.user__edit__control{
+    border: 1px solid var(--main-dark-color-opacity-40);
+    background: var(--main-light-color);
+    appearance: none;
+    border-radius: 5px;
+    flex-grow: 1;
+    box-sizing: border-box;
+}
+.user__edit__input{
+    margin: 5px 5px 0 5px;
+}
+/*.plant__name__header:disabled,*/
+/*.plant__edit__textarea:disabled,*/
+.user__edit__input:disabled
+.user__edit__input:read-only
+{
+    border: none;
+    background: none;
+}
+
+.user__edit__input:focus,
+.user__edit__input:active{
+    border: none;
+    box-shadow: none;
+    outline: none;
+    background-color: var(--main-dark-color-opacity-40);
+}

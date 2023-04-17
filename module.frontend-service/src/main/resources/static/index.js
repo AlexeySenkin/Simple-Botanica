@@ -37,7 +37,7 @@ botanicaApp.constant('settings', {
     // пока нет шлюза для доступа через единую точку тут будут лежать адреса сервисов
     PLANTS_PATH: 'http://localhost:8189/botanica/api',
     AUTH_PATH: 'http://localhost:8188/botanica/api',
-    USER_SERVICE_PATH: '',
+    USER_SERVICE_PATH: 'http://localhost:8187/botanica/api',
     API_V: '',
     // директория хранения картинок растений
     IMG_DIRECTORY: 'img/db/',
@@ -77,7 +77,23 @@ botanicaApp.factory('userFactory', function ($localStorage, $http, $q, settings)
         $localStorage.botanicaWebUser = {
             username: username,
             token: token,
+            userId: 0
         };
+        userFactoryObj.getUserId(username).then(function successCallback(response) {
+            $localStorage.botanicaWebUser.userId = response.userId;
+        });
+    };
+
+    userFactoryObj.getUserId = function (username) {
+        let defer = $q.defer();
+        $http.get(settings.USER_SERVICE_PATH + '/user', {params: {username: username}}).then(
+            function successCallback(response) {
+                defer.resolve({userId: response.data});
+            }, function errorCallback(reason) {
+                defer.reject(reason);
+            }
+        );
+        return defer.promise;
     };
 
     userFactoryObj.tryToAuth = function (user) {
@@ -85,7 +101,6 @@ botanicaApp.factory('userFactory', function ($localStorage, $http, $q, settings)
         $http.post(settings.AUTH_PATH + '/auth', user).then(function successCallback(response) {
                 $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
                 userFactoryObj.updateWebUser(user.username, response.data.token)
-
                 user.username = null;
                 user.password = null;
                 defer.resolve({user: user, status: 200});
@@ -109,6 +124,22 @@ botanicaApp.factory('userFactory', function ($localStorage, $http, $q, settings)
                 defer.resolve({user: user, status: 200})
             }, function errorCallback(reason) {
                 defer.reject(reason);
+            });
+        return defer.promise;
+    }
+
+    userFactoryObj.getUserProfileData = function () {
+        let defer = $q.defer();
+        if ($localStorage.botanicaWebUser && $localStorage.botanicaWebUser.userId === 0) {
+            console.log('user id not found. contact administrator');
+            defer.reject({code: 404, message: "user id not found"})
+            return defer.promise;
+        }
+        $http.get(settings.USER_SERVICE_PATH + '/user/' + $localStorage.botanicaWebUser.userId)
+            .then(function successCallback(response) {
+                defer.resolve(response);
+            }, function errorCallback(reason) {
+                defer.reject({code: reason.data.status, message: reason.data.message});
             });
         return defer.promise;
     }
@@ -229,7 +260,7 @@ botanicaApp
                 }
             });
             modalInstance.result.then(function successCallback(response) {
-                    console.log('index.js response=' + response)
+                    console.log('Auth response=' + response)
                 },
                 function errorCallback() {
                     console.log(new Date());

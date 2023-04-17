@@ -26,9 +26,10 @@ a{
 }
 
 a:hover{
-    font-style: normal;
+    /*font-style: normal;*/
     text-decoration: none;
     color: var(--main-light-color);
+    cursor: pointer;
 
 }
 .flex__container{
