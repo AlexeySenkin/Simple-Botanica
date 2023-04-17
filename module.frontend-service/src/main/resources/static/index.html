@@ -52,9 +52,13 @@
                 <a class="menu__item__button text" ng-click="logOut()" ng-show="isUserLoggedIn()">
                     Выйти
                 </a>
-                <a class="menu__item__button text" ng-click="openAuthForm()" ng-show="!isUserLoggedIn()">
+                <a class="menu__item__button text" ng-click="openAuthRegisterForm(1)" ng-show="!isUserLoggedIn()">
+                    Зарегистрироваться
+                </a>
+                <a class="menu__item__button text" ng-click="openAuthRegisterForm(2)" ng-show="!isUserLoggedIn()">
                     Войти
                 </a>
+
             </div>
         </header>
         <div class="about__block">

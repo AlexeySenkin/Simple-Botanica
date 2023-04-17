@@ -1,5 +1,5 @@
 angular.module('Simple-Botanica-app')
-    .controller('plant-card-controller', function ($http, $rootScope, $scope, $localStorage,
+    .controller('plant-card-controller', function ($rootScope, $scope, $localStorage,
                                                    settings, userFactory, plantFactory) {
         const plantsPath = settings.PLANTS_PATH;
         // признак откуда была открыта карточка растения
@@ -50,19 +50,19 @@ angular.module('Simple-Botanica-app')
 
         $scope.showPlantDetails = function () {
             let plantId = $localStorage.plantId;
-                plantFactory.getPlant(plantId).then(function successCallback(response) {
-                    $scope.plant = response.data;
-                    $scope.plantPhotoCurrent = response.photoPath;
-                }, function errorCallback(reason) {
-                    console.log('error ocurred while fetching a plant info:' + reason);
-                });
+            plantFactory.getPlant(plantId).then(function successCallback(response) {
+                $scope.plant = response.data;
+                $scope.plantPhotoCurrent = response.photoPath;
+            }, function errorCallback(reason) {
+                console.log('error ocurred while fetching a plant info:' + reason);
+            });
         }
 
         $scope.savePlant = function () {
-            plantFactory.saveOrUpdate($scope.plant).then(function (response){
+            plantFactory.saveOrUpdate($scope.plant).then(function (response) {
                 console.log(response);
                 location.assign('#!/');
-            }, function (reason){
+            }, function (reason) {
                 console.log(reason);
             })
         }
@@ -71,10 +71,9 @@ angular.module('Simple-Botanica-app')
             location.assign('#!/')
         }
 
-        $scope.addPlantPhoto = function (){
+        $scope.addPlantPhoto = function () {
             alert("Извините, мы пока не умеем загружать фото!");
         }
-        // $scope.adm = userFactory.isAdmin();
 
         $scope.showPlantDetails();
 
