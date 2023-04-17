@@ -9,9 +9,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.botanica.builders.PlantBuilder;
+import ru.botanica.entities.plantCares.PlantCareDto;
 import ru.botanica.entities.plants.*;
 import ru.botanica.repositories.PlantRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -22,6 +24,8 @@ public class PlantService {
     private final PlantRepository plantRepository;
 
     private final PlantPhotoService plantPhotoService;
+
+    private final CareService careService;
     private PlantBuilder plantBuilder;
 
     /**
@@ -99,14 +103,31 @@ public class PlantService {
     /**
      * Добавляет растение с данными значениями и добавляет фото в БД
      *
-     * @param plantDto PlantDto.class
+     * @param plantDto      PlantDto.class
+     * @param isOverwriting флаг, нужно ли проводить перезапись в случае существования растения с таким именем
      * @return Dto растения
      */
 
     @Transactional
-    public PlantDto addNewPlant(PlantDto plantDto) {
-        if (!plantRepository.existsByName(plantDto.getName())) {
+    public PlantDto addNewPlant(PlantDto plantDto, boolean isOverwriting) {
+        boolean existsByName = plantRepository.existsByName(plantDto.getName());
+        if (!existsByName) {
             Plant plant = plantBuilder
+                    .withName(plantDto.getName())
+                    .withFamily(plantDto.getFamily())
+                    .withGenus(plantDto.getGenus())
+                    .withShortDescription(plantDto.getShortDescription())
+                    .withDescription(plantDto.getDescription())
+                    .withIsActive(true)
+                    .build();
+            plantRepository.saveAndFlush(plant);
+            if (isPhotoPathAvailable(plantDto.getFilePath())) {
+                plant.setPhoto(plantPhotoService.saveOrUpdate(plant.getId(), plantDto.getFilePath()));
+            }
+            return PlantDtoMapper.mapToDto(plant);
+        } else if (existsByName && isOverwriting) {
+            Plant plant = plantBuilder
+                    .withId(findByName(plantDto.getName()).orElseThrow().getId())
                     .withName(plantDto.getName())
                     .withFamily(plantDto.getFamily())
                     .withGenus(plantDto.getGenus())
@@ -123,6 +144,24 @@ public class PlantService {
             return plantDto;
         }
     }
+
+    @Transactional
+    public PlantDto addCaresWithObjects(PlantDto plantDto, List<PlantCareDto> plantCareDtoList) {
+        if (plantCareDtoList.isEmpty() || plantCareDtoList == null) {
+            return plantDto;
+        } else {
+//            Т.к. мы используем транзакцию, удаление действий для конкретного растения на самом деле не происходит,
+//            если проваливается запись новых... Но на всякий метод удаления всегда предоставляет список удаленных
+//            действий
+            careService.deletePlantCaresByPlantId(plantDto.getId());
+            for (PlantCareDto plantCareDto : plantCareDtoList) {
+                careService.createPlantCareWithObjects(plantDto, plantCareDto);
+            }
+            plantDto.setCares(careService.findAllPlantDtoCaresByPlantId(plantDto.getId()));
+        }
+        return plantDto;
+    }
+
 
     /**
      * Проверяет доступен ли путь к фотографии

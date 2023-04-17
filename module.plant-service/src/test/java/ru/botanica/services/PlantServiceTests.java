@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.botanica.entities.photos.PlantPhoto;
+import ru.botanica.repositories.CareRepository;
+import ru.botanica.repositories.PlantCareRepository;
+import ru.botanica.repositories.PlantPhotoRepository;
 import ru.botanica.entities.plants.Plant;
 import ru.botanica.entities.plants.PlantDto;
 import ru.botanica.entities.plants.PlantDtoMapper;
@@ -29,7 +32,13 @@ public class PlantServiceTests {
     @MockBean
     private PlantPhotoRepository photoRepository;
     @MockBean
+    private PlantCareRepository plantCareRepository;
+    @MockBean
+    private CareRepository careRepository;
+    @MockBean
     private PlantPhotoService photoService;
+    @MockBean
+    private CareService careService;
     @Autowired
     private PlantService plantService;
 
