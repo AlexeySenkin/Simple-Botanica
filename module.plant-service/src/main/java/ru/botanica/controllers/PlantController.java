@@ -66,7 +66,16 @@ public class PlantController {
                     "Растение не существует, id- " + id), HttpStatus.BAD_REQUEST);
         } else {
             try {
-                plantService.updatePlant(plantDto);
+                PlantDto result = plantService.updatePlant(plantDto);
+                /**
+                 * Пытается записать действия для растения, если не выходит - уведомляет сервер
+                 */
+//                TODO: определиться, как отсылать это на фронт
+                try {
+                    plantService.addCaresWithObjects(result, plantDto.getCares());
+                } catch (Exception e) {
+                    log.error("Сервер не смог записать действия для растения с id {}", id);
+                }
             } catch (Exception e) {
                 /**
                  * Неудачное обновление
@@ -87,7 +96,8 @@ public class PlantController {
     /**
      * Добавляет растения с данными значениями
      *
-     * @param plantDto JSON с параметрами PlantDto.class
+     * @param plantDto      JSON с параметрами PlantDto.class
+     * @param isOverwriting флаг, нужно ли перезаписать существующие растение
      * @return responseEntity с кодом и сообщением
      */
     @PostMapping("/plant")
@@ -103,7 +113,12 @@ public class PlantController {
                     "Растение с таким именем существует"), HttpStatus.BAD_REQUEST);
         } else {
             try {
-                plantService.addNewPlant(plantDto);
+                PlantDto result = plantService.addNewPlant(plantDto, isOverwriting);
+                try {
+                    plantService.addCaresWithObjects(result, plantDto.getCares());
+                } catch (Exception e) {
+                    log.error("Сервер не смог записать действия для растения с id {}", result.getId());
+                }
             } catch (Exception e) {
                 /**
                  * Неудачное сохранение
@@ -117,6 +132,8 @@ public class PlantController {
              * Удачное сохранение
              */
             log.debug("Растение сохранено, имя: {}", plantDto.getName());
+            log.debug("{}", new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
+                    "Растение создано, имя: " + plantDto.getName()), HttpStatus.OK));
             return new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
                     "Растение создано, имя: " + plantDto.getName()), HttpStatus.OK);
         }
