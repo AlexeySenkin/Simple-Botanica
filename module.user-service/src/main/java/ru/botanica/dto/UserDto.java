@@ -1,4 +1,4 @@
-package ru.botanica.entities.users;
+package ru.botanica.dto;
 
 import lombok.Data;
 
@@ -21,9 +21,9 @@ public class UserDto {
 
     private Date regDate;
 
-    private Integer isBanned;
+    private Boolean isBanned;
 
-    private Integer isActive;
+    private Boolean isActive;
 
     private String userName;
 

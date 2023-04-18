@@ -7,9 +7,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.botanica.entities.users.User;
-import ru.botanica.entities.users.UserDto;
-import ru.botanica.entities.users.UserRepository;
+import ru.botanica.entities.User;
+import ru.botanica.dto.UserDto;
+import ru.botanica.repositories.UserRepository;
 
 import java.sql.Date;
 import java.time.LocalDate;
