@@ -7,10 +7,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.botanica.dtos.CareDtoShort;
 import ru.botanica.dtos.PlantDto;
 import ru.botanica.dtos.PlantDtoShort;
 import ru.botanica.responses.AppResponse;
+import ru.botanica.services.CareService;
 import ru.botanica.services.PlantService;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*", allowCredentials = "false")
 @RestController
@@ -18,6 +22,7 @@ import ru.botanica.services.PlantService;
 @Slf4j
 public class PlantController {
     private final PlantService plantService;
+    private final CareService careService;
 
     /**
      * Возвращает список растений, учитывающий заданные для поиска параметры
@@ -172,5 +177,15 @@ public class PlantController {
             return new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
                     "Растение удалено, id: " + id), HttpStatus.OK);
         }
+    }
+
+    /**
+     * Возвращает список процедур, если они активны
+     *
+     * @return Список процедур
+     */
+    @GetMapping("/care_types")
+    public List<CareDtoShort> findAllActiveCares() {
+        return careService.findAllActive();
     }
 }
