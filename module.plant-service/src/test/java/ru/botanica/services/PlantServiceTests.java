@@ -2,23 +2,25 @@ package ru.botanica.services;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import ru.botanica.dtos.PlantDto;
+import ru.botanica.entities.Plant;
 import ru.botanica.entities.PlantPhoto;
 import ru.botanica.repositories.CareRepository;
 import ru.botanica.repositories.PlantCareRepository;
 import ru.botanica.repositories.PlantPhotoRepository;
-import ru.botanica.entities.Plant;
-import ru.botanica.dtos.PlantDto;
 import ru.botanica.repositories.PlantRepository;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = {PlantService.class})
 @ExtendWith(MockitoExtension.class)
@@ -39,7 +41,8 @@ public class PlantServiceTests {
     private CareService careService;
     @Autowired
     private PlantService plantService;
-
+    @Captor
+    private ArgumentCaptor<Plant> plantCaptor;
 
     /**
      * Тест возвращения растения по идентификатору
@@ -137,19 +140,27 @@ public class PlantServiceTests {
         savedPlant.setDescription("desc");
         savedPlant.setShortDescription("short_desc");
 
-        when(plantRepository.saveAndFlush(plant)).thenReturn(savedPlant);
         when(photoService.saveOrUpdate(plantPhoto)).thenReturn(plantPhoto);
         when(photoService.saveOrUpdate(plantPhoto.getId(), plantPhoto.getFilePath())).thenReturn(plantPhoto);
         PlantDto result = plantService.addNewPlant(plantDto, true);
+
+        verify(plantRepository, times(1)).saveAndFlush(any());
+        verify(plantRepository).saveAndFlush(plantCaptor.capture());
+        Plant captorValue = plantCaptor.getValue();
+
         assertAll(
-//                TODO: закомментированы части, которые возвращают null
-//                ()->assertEquals(savedPlant.getId(), result.getId()),
-                ()->assertEquals(savedPlant.getName(), result.getName()),
-                ()->assertEquals(savedPlant.getFamily(), result.getFamily()),
-                ()->assertEquals(savedPlant.getGenus(), result.getGenus()),
-                ()->assertEquals(savedPlant.getDescription(), result.getDescription()),
-                ()->assertEquals(savedPlant.getShortDescription(), result.getShortDescription())
-//                ()->assertEquals(savedPlant.getPhoto().getFilePath(), result.getFilePath())
+                () -> assertEquals(savedPlant.getName(), result.getName()),
+                () -> assertEquals(savedPlant.getFamily(), result.getFamily()),
+                () -> assertEquals(savedPlant.getGenus(), result.getGenus()),
+                () -> assertEquals(savedPlant.getDescription(), result.getDescription()),
+                () -> assertEquals(savedPlant.getShortDescription(), result.getShortDescription()),
+                () -> assertAll("Ошибка формирования данных на отправку в plantRepository",
+                        () -> assertEquals("Ошибка имени", plant.getName(), captorValue.getName()),
+                        () -> assertEquals(plant.getFamily(), captorValue.getFamily()),
+                        () -> assertEquals(plant.getGenus(), captorValue.getGenus()),
+                        () -> assertEquals(plant.getDescription(), captorValue.getDescription()),
+                        () -> assertEquals(plant.getShortDescription(), captorValue.getShortDescription())
+                )
         );
     }
 
