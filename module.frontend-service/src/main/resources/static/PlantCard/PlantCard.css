@@ -44,10 +44,6 @@
     height: 30px;
     alignment: center;
 }
-/*.bi__watering__button {*/
-/*    background: url(//img/wc.png);*/
-/*    background-size: auto;*/
-/*}*/
 
 .plant__card__photo{
     width: auto;
@@ -103,4 +99,13 @@ input:disabled{
     outline: none;
     background-color: var(--main-dark-color-opacity-40);
 }
+.plant__info__label{
+    font-family: Roboto, sans-serif;
+    color: var(--main-dark-color);
+    font-style: normal;
+    font-size: 16px;
+    line-height: 26px;
+    letter-spacing: 0.02em;
+    font-weight: 300;
 
+}

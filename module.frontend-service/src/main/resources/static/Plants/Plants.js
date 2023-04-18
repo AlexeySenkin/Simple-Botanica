@@ -2,9 +2,9 @@ angular.module('Simple-Botanica-app')
     .controller('plants-controller', function ($http, $rootScope, $scope, $localStorage,
                                                settings, userFactory, plantFactory) {
         const plantsPath = settings.PLANTS_PATH;
-
         $scope.getPlants = function () {
             $localStorage.plantCardCallPlace = 1;
+
             $http.get(plantsPath + '/plants', {
                 params: {
                     title: $scope.plantNameFilter,
@@ -21,7 +21,6 @@ angular.module('Simple-Botanica-app')
                 },
                 function errorCallback(reason) {
                     console.log('Ошибка: ' + reason.data.status + ' с текстом: ' + reason.data.error);
-
                 })
         }
 
@@ -42,7 +41,16 @@ angular.module('Simple-Botanica-app')
 
         $scope.deletePlant = function (plantId) {
             console.log("Удалить растение " + plantId + " из БД");
-            // let res = plantFactory.deletePlant(plantId);
+            plantFactory.deletePlant(plantId).then(
+                function successCallback(response){
+                    console.log("Plant id={} was successfully deleted", plantId);
+                    $scope.getPlants();
+                }, function errorCallback(reason){
+                    console.log("Error occurred while deleting plant id={}", plantId);
+
+                }
+            )
+
             $http.delete(plantsPath + '/plant/' + plantId)
                 .then(function successCallback(response) {
                     if (response.status === 200) {
@@ -53,6 +61,10 @@ angular.module('Simple-Botanica-app')
                     }
                     console.log(response);
                 })
+        }
+
+        $scope.getPlantImagePath = function (filePath) {
+            return plantFactory.getPlantPhoto(filePath);
         }
 
         $scope.getPlants();

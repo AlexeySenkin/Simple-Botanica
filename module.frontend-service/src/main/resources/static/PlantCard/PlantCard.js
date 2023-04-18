@@ -1,12 +1,23 @@
 angular.module('Simple-Botanica-app')
-    .controller('plant-card-controller', function ($http, $rootScope, $scope, $localStorage,
-                                                   settings, userFactory) {
+    .controller('plant-card-controller', function ($rootScope, $scope, $localStorage,
+                                                   settings, userFactory, plantFactory) {
         const plantsPath = settings.PLANTS_PATH;
         // признак откуда была открыта карточка растения
         $scope.callPlace = $localStorage.plantCardCallPlace;
 
-        $scope.actionButtons = settings.ACTION_BUTTONS;
+       $scope.actionButtons = settings.ACTION_BUTTONS;
         $scope.imgPath = settings.IMG_DIRECTORY;
+
+        $scope.plant = {
+            id: null,
+            name: "",
+            family: "",
+            genus: "",
+            shortDescription: "",
+            description: "",
+            isActive: true,
+            filePath: ""
+        }
 
         $scope.isAdmin = function () {
             return userFactory.isAdmin();
@@ -18,72 +29,57 @@ angular.module('Simple-Botanica-app')
                     console.log("полить");
                     break;
                 }
-                case 2: {
+                case 3: {
+                    console.log("опрыскать");
                     break;
                 }
-                case 3: {
+                case 2: {
+                    console.log("удобрить");
                     break
                 }
                 case 4: {
+                    console.log("обрезать");
                     break;
                 }
                 case 5: {
+                    console.log("пересадить");
                     break;
                 }
             }
         };
 
         $scope.addPlantToUserList = function (plantId) {
+
             console.log("Добавление растения " + plantId + "в список пользователя");
         };
 
         $scope.showPlantDetails = function () {
             let plantId = $localStorage.plantId;
-            if (plantId) {
-                $http.get(plantsPath + '/plant/' + plantId).then(function successCallback(response) {
-                    $scope.plant = response.data;
-                    if (!response.data.filePath){
-                        $scope.plant.filePath = '../No-Image-Placeholder.png';
-                    }
-                }, function errorCallback(reason) {
-                });
-            } else {
-                $scope.plant = {};
-                $scope.plant.id = null;
-                $scope.plant.filePath = '../No-Image-Placeholder.png';
-            }
+            plantFactory.getPlant(plantId).then(function successCallback(response) {
+                $scope.plant = response.data;
+                $scope.plantPhotoCurrent = response.photoPath;
+                $scope.actionButtons = response.actualCareButtons;
+            }, function errorCallback(reason) {
+                console.log('error occurred while fetching a plant info:' + reason);
+            });
         }
 
         $scope.savePlant = function () {
-            console.log($scope.plant);
-            if ($scope.plant){
-                //если новое растение
-                if ($scope.plant.id === null) {
-                    $http.post(plantsPath + '/plant', $scope.plant).then(function successCallback(response){
-                        location.assign('#!/');
-                        console.log('растение добавлено успешно, id=' + response.data);
-                    }, function errorCallback(response){
-                        console.log('что-то пошло не так, ошибка: ' + response);
-
-                    })
-                } else {
-                //    если редактируется уже существующее
-                    $http.put(plantsPath + '/plant', $scope.plant).then(function successCallback(response){
-                        location.assign('#!/');
-                        console.log('растение отредактировано успешно, id=' + response.data);
-                    }, function errorCallback(response){
-                        console.log('что-то пошло не так, ошибка: ' + response);
-
-                    })
-
-                }
-            }
+            plantFactory.saveOrUpdate($scope.plant).then(function (response) {
+                console.log(response);
+                location.assign('#!/');
+            }, function (reason) {
+                console.log(reason);
+            })
         }
 
-        $scope.home = function (){
+        $scope.home = function () {
             location.assign('#!/')
         }
-        $scope.adm = userFactory.isAdmin();
+
+        $scope.addPlantPhoto = function () {
+            alert("Извините, мы пока не умеем загружать фото!");
+        }
 
         $scope.showPlantDetails();
 

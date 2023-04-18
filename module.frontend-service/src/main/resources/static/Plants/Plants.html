@@ -16,7 +16,7 @@
         <div class="top__container plantcards__container">
             <div class="plant__card" ng-repeat="plant in plantsPage">
                 <div class="plant__card__body__container">
-                    <img class="plant__photo" ng-src="{{imgPath}}{{plant.filePath}}" alt="{{plant.name}}" src="">
+                    <img class="plant__photo" ng-src="{{getPlantImagePath(plant.filePath)}}" alt="{{plant.name}}" src="">
 
                     <h4 class="plant__name__header">{{plant.name}}</h4>
                     <p class="text text_center">

@@ -8,9 +8,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.botanica.controllers.PlantController;
-import ru.botanica.entities.photos.PlantPhoto;
-import ru.botanica.entities.plants.Plant;
-import ru.botanica.entities.plants.PlantRepository;
+import ru.botanica.entities.PlantPhoto;
+import ru.botanica.entities.Plant;
+import ru.botanica.repositories.PlantRepository;
 
 import java.util.List;
 import java.util.Optional;

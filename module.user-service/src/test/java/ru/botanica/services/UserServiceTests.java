@@ -1,14 +1,15 @@
 package ru.botanica.services;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.botanica.entities.users.User;
-import ru.botanica.entities.users.UserDto;
-import ru.botanica.entities.users.UserRepository;
+import ru.botanica.entities.User;
+import ru.botanica.dto.UserDto;
+import ru.botanica.repositories.UserRepository;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -28,20 +29,13 @@ public class UserServiceTests {
     private UserRepository userRepository;
     @Autowired
     private UserService userService;
+    private static final long ID = 1L;
+    private static User user;
 
-
-    /**
-     * Тест возвращения пользователя по идентификатору
-     * <p>
-     * Кейс в случае существования пользователя с таким идентификатором.
-     */
-    @Test
-    void testFindById() {
-        int id = 1;
-
-        User user = new User();
-
-        user.setUserId(1);
+    @BeforeAll
+    static void init() {
+        user = new User();
+        user.setUserId(ID);
         user.setFirstName("first_name");
         user.setLastName("last_name");
         user.setEmail("email");
@@ -51,10 +45,18 @@ public class UserServiceTests {
         user.setIsBanned(0);
         user.setIsActive(1);
         user.setUserName("user_name");
+    }
 
-        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+    /**
+     * Тест возвращения пользователя по идентификатору
+     * <p>
+     * Кейс в случае существования пользователя с таким идентификатором.
+     */
+    @Test
+    void testFindById() {
+        when(userRepository.findById(ID)).thenReturn(Optional.of(user));
 
-        UserDto userDto = userService.findById(id);
+        UserDto userDto = userService.findById(ID);
 
         assertAll(
                 () -> assertEquals(user.getUserId(), userDto.getUserId()),
@@ -77,9 +79,7 @@ public class UserServiceTests {
      */
     @Test
     void testFindByIdWhenIllegalId() {
-        int id = 1;
-
-        assertThrows(NoSuchElementException.class, () -> userService.findById(id));
+        assertThrows(NoSuchElementException.class, () -> userService.findById(ID));
     }
 
 }

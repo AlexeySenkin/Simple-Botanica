@@ -1,15 +1,24 @@
 package ru.botanica.services;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.botanica.entities.photos.PlantPhotoDto;
-import ru.botanica.entities.photos.PlantPhotoDtoMapper;
-import ru.botanica.entities.photos.PlantPhotoRepository;
-import ru.botanica.entities.plants.*;
+import org.springframework.transaction.annotation.Transactional;
+import ru.botanica.builders.PlantBuilder;
+import ru.botanica.dtos.PlantCareDto;
+import ru.botanica.dtos.PlantDto;
+import ru.botanica.dtos.PlantDtoShort;
+import ru.botanica.entities.Plant;
+import ru.botanica.entities.PlantSpecifications;
+import ru.botanica.mappers.PlantDtoMapper;
+import ru.botanica.repositories.PlantRepository;
+
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -17,7 +26,19 @@ import ru.botanica.entities.plants.*;
 @Slf4j
 public class PlantService {
     private final PlantRepository plantRepository;
-    private final PlantPhotoRepository photoRepository;
+
+    private final PlantPhotoService plantPhotoService;
+
+    private final CareService careService;
+    private PlantBuilder plantBuilder;
+
+    /**
+     * Метод инициализирующий builder для растений
+     */
+    @PostConstruct
+    private void init() {
+        plantBuilder = new PlantBuilder();
+    }
 
     /**
      * Возвращает список растений, учитывающий заданные для поиска параметры
@@ -26,10 +47,10 @@ public class PlantService {
      * @param pageable Страница(номер страницы, размер страницы)
      * @return Список растений
      */
-    public Page<PlantDto> findAll(String title, Pageable pageable) {
+    public Page<PlantDtoShort> findAll(String title, Pageable pageable) {
         Specification<Plant> specification = createSpecificationsWithFilter(title, true);
         return plantRepository.findAll(specification, pageable)
-                .map(PlantDtoMapper::mapToDtoWithIdNameShortDescAndFilePath);
+                .map(PlantDtoMapper::mapToDtoShort);
     }
 
     /**
@@ -60,85 +81,100 @@ public class PlantService {
     }
 
     /**
-     * Обновляет значения растения
+     * Обновляет значения растения в БД
      *
      * @param plantDto PlantDto.class
-     * @return Идентификатор
+     * @return Dto растения
      */
-    public Long updateByID(PlantDto plantDto) {
-        boolean isOk = savePlantInRepo(plantDto);
-        if (isOk) {
-            savePhotoInRepo(plantDto.getId(), plantDto.getFilePath());
+    @Transactional
+    public PlantDto updatePlant(PlantDto plantDto) {
+        Plant plant = plantBuilder
+                .withId(plantDto.getId())
+                .withName(plantDto.getName())
+                .withFamily(plantDto.getFamily())
+                .withGenus(plantDto.getGenus())
+                .withShortDescription(plantDto.getShortDescription())
+                .withDescription(plantDto.getDescription())
+                .withIsActive(plantDto.isActive())
+                .build();
+        plantRepository.saveAndFlush(plant);
+        if (isPhotoPathAvailable(plantDto.getFilePath())) {
+            plant.setPhoto(plantPhotoService.saveOrUpdate(plant.getId(), plantDto.getFilePath()));
         }
-        return plantDto.getId();
+        return PlantDtoMapper.mapToDto(plant);
     }
 
     /**
-     * Добавляет растения с данными значениями, добавляет фото, если есть,
-     * и возвращает идентификатор созданного растения
+     * Добавляет растение с данными значениями и добавляет фото в БД
      *
-     * @param plantDto PlantDto.class
-     * @return Идентификатор
+     * @param plantDto      PlantDto.class
+     * @param isOverwriting флаг, нужно ли проводить перезапись в случае существования растения с таким именем
+     * @return Dto растения
      */
 
-//    TODO: наша БД пропускает название как неуникальное значение. Т.е. условных растений с именем Test у нас может быть целая база.
-//     Искать вообще по всем полям ничем не помогает: остальные поля изначально могут совпадать, потому два растения с одинаковым именем
-//     будут находится и в данном случае. Этот момент надо поправить в скрипте.
-//     Так же пока нет обработки ошибок вынужден прокидывать id'шник уже существующего растения и логировать внесение ошибочны данных
-
-//     Поиск нового растения в нашем случае подходит только по имени, т.к. в один момент могут создавать сразу несколько растений и
-//     не факт, что id растения в таком случае будет последним. Если команда посчитает это не критичным, переделаю на поиск по
-//     последнему id из списка. Тогда можно оставить name не уникальным, но на мой взгляд, это будет ошибкой
-    public Long addPlant(PlantDto plantDto) {
-        if (!checkOnExisting(plantDto.getName())) {
-            boolean isOk = savePlantInRepo(plantDto);
-            if (isOk) {
-                savePhotoInRepo(plantDto.getId(), plantDto.getFilePath());
+    @Transactional
+    public PlantDto addNewPlant(PlantDto plantDto, boolean isOverwriting) {
+        boolean existsByName = plantRepository.existsByName(plantDto.getName());
+        if (!existsByName) {
+            Plant plant = plantBuilder
+                    .withName(plantDto.getName())
+                    .withFamily(plantDto.getFamily())
+                    .withGenus(plantDto.getGenus())
+                    .withShortDescription(plantDto.getShortDescription())
+                    .withDescription(plantDto.getDescription())
+                    .withIsActive(true)
+                    .build();
+            plantRepository.saveAndFlush(plant);
+            if (isPhotoPathAvailable(plantDto.getFilePath())) {
+                plant.setPhoto(plantPhotoService.saveOrUpdate(plant.getId(), plantDto.getFilePath()));
             }
-            return plantDto.getId();
+            return PlantDtoMapper.mapToDto(plant);
+        } else if (existsByName && isOverwriting) {
+            Plant plant = plantBuilder
+                    .withId(findByName(plantDto.getName()).orElseThrow().getId())
+                    .withName(plantDto.getName())
+                    .withFamily(plantDto.getFamily())
+                    .withGenus(plantDto.getGenus())
+                    .withShortDescription(plantDto.getShortDescription())
+                    .withDescription(plantDto.getDescription())
+                    .withIsActive(true)
+                    .build();
+            plantRepository.saveAndFlush(plant);
+            if (isPhotoPathAvailable(plantDto.getFilePath())) {
+                plant.setPhoto(plantPhotoService.saveOrUpdate(plant.getId(), plantDto.getFilePath()));
+            }
+            return PlantDtoMapper.mapToDto(plant);
         } else {
-            Long id = plantRepository.findIdByName(plantDto.getName());
-            log.error("Растение с именем {} уже существует и имеет id {}", plantDto.getName(), id);
-            return id;
+            return plantDto;
         }
     }
 
-    /**
-     * Собирает Dto и затем использует метод save() из CrudRepository.
-     *
-     * @param plantDto PlantDto.class
-     * @return флаг, прошла ли операция
-     */
-    private boolean savePlantInRepo(PlantDto plantDto) {
-        try {
-            /**
-             * Если нет значения id, вычисляет последнее доступное
-             */
-            if (plantDto.getId() == null) {
-                plantDto.setId(plantRepository.findLastIdAvailable());
+    @Transactional
+    public PlantDto addCaresWithObjects(PlantDto plantDto, List<PlantCareDto> plantCareDtoList) {
+        if (plantCareDtoList.isEmpty() || plantCareDtoList == null) {
+            return plantDto;
+        } else {
+//            Т.к. мы используем транзакцию, удаление действий для конкретного растения на самом деле не происходит,
+//            если проваливается запись новых... Но на всякий метод удаления всегда предоставляет список удаленных
+//            действий
+            careService.deletePlantCaresByPlantId(plantDto.getId());
+            for (PlantCareDto plantCareDto : plantCareDtoList) {
+                careService.createPlantCareWithObjects(plantDto, plantCareDto);
             }
-            plantRepository.saveAndFlush(PlantDtoMapper.mapToEntity(plantDto));
-        } catch (Exception e) {
-            return false;
+            plantDto.setCares(careService.findAllPlantDtoCaresByPlantId(plantDto.getId()));
         }
-        return true;
+        return plantDto;
     }
 
-    private void savePhotoInRepo(Long plantId, String filePath) {
-        PlantPhotoDto photoDto = new PlantPhotoDto();
-        photoDto.setId(plantId);
-        photoDto.setFilePath(filePath);
-        photoRepository.saveAndFlush(PlantPhotoDtoMapper.mapToEntity(photoDto));
-    }
 
     /**
-     * Находит, если в базе растение с указанным названием
+     * Проверяет доступен ли путь к фотографии
      *
-     * @param name Название
+     * @param photoFilePath имя фотографии
      * @return boolean-значение
      */
-    public boolean checkOnExisting(String name) {
-        return plantRepository.existsByName(name);
+    private boolean isPhotoPathAvailable(String photoFilePath) {
+        return photoFilePath != null && !photoFilePath.isBlank() && !photoFilePath.isEmpty();
     }
 
     /**
@@ -151,5 +187,13 @@ public class PlantService {
         plantDto.setActive(false);
         plantRepository.saveAndFlush(PlantDtoMapper.mapToEntity(plantDto));
         return plantDto;
+    }
+
+    public Optional<PlantDto> findByName(String name) {
+        return plantRepository.findByName(name).map(PlantDtoMapper::mapToDto);
+    }
+
+    public boolean isIdExist(Long id) {
+        return plantRepository.existsById(id);
     }
 }
