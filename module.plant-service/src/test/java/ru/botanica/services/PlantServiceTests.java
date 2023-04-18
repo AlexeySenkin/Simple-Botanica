@@ -155,7 +155,7 @@ public class PlantServiceTests {
                 () -> assertEquals(savedPlant.getDescription(), result.getDescription()),
                 () -> assertEquals(savedPlant.getShortDescription(), result.getShortDescription()),
                 () -> assertAll("Ошибка формирования данных на отправку в plantRepository",
-                        () -> assertEquals("Ошибка имени", plant.getName(), captorValue.getName()),
+                        () -> assertEquals(plant.getName(), captorValue.getName(), "Ошибка в имени"),
                         () -> assertEquals(plant.getFamily(), captorValue.getFamily()),
                         () -> assertEquals(plant.getGenus(), captorValue.getGenus()),
                         () -> assertEquals(plant.getDescription(), captorValue.getDescription()),
