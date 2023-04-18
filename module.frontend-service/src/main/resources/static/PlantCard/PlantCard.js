@@ -5,7 +5,7 @@ angular.module('Simple-Botanica-app')
         // признак откуда была открыта карточка растения
         $scope.callPlace = $localStorage.plantCardCallPlace;
 
-        $scope.actionButtons = settings.ACTION_BUTTONS;
+       $scope.actionButtons = settings.ACTION_BUTTONS;
         $scope.imgPath = settings.IMG_DIRECTORY;
 
         $scope.plant = {
@@ -29,22 +29,27 @@ angular.module('Simple-Botanica-app')
                     console.log("полить");
                     break;
                 }
-                case 2: {
+                case 3: {
+                    console.log("опрыскать");
                     break;
                 }
-                case 3: {
+                case 2: {
+                    console.log("удобрить");
                     break
                 }
                 case 4: {
+                    console.log("обрезать");
                     break;
                 }
                 case 5: {
+                    console.log("пересадить");
                     break;
                 }
             }
         };
 
         $scope.addPlantToUserList = function (plantId) {
+
             console.log("Добавление растения " + plantId + "в список пользователя");
         };
 
@@ -53,8 +58,9 @@ angular.module('Simple-Botanica-app')
             plantFactory.getPlant(plantId).then(function successCallback(response) {
                 $scope.plant = response.data;
                 $scope.plantPhotoCurrent = response.photoPath;
+                $scope.actionButtons = response.actualCareButtons;
             }, function errorCallback(reason) {
-                console.log('error ocurred while fetching a plant info:' + reason);
+                console.log('error occurred while fetching a plant info:' + reason);
             });
         }
 
