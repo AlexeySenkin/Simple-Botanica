@@ -1,17 +1,20 @@
 angular.module('Simple-Botanica-app')
-    .controller('user-profile-controller', function ($http, $rootScope, $scope, $localStorage,
-                                                     userFactory, settings) {
-        const userPath = settings.USER_PATH;
-
+    .controller('user-profile-controller', function ($rootScope, $scope, $localStorage, userFactory) {
+        $scope.toDisable = true;
         $scope.getUserData = function () {
-            $http.get(userPath + '/user' , $localStorage.botanicaWebUser.username).then(
-                function successCallback(response) {
+            if (userFactory.isAuthorized()) {
+                userFactory.getUserProfileData().then(function successCallback(response) {
                     $scope.userData = response.data;
-                }, function errorCallback(reason) {
-                    console.log('Ошибка: '+ reason.data.status + ' с текстом: ' +reason.data.error)
-                }
-            )
+                    if (userFactory.isAdmin()){
+                        $scope.toDisable = false;
+                    }
+                        }, function errorCallback(reason) {
+                    console.log(reason)
+                    // TODO: сделать единую страницу для отображения ошибок пользователю
+                });
+            }
         }
+
 
         $scope.getUserData();
 
