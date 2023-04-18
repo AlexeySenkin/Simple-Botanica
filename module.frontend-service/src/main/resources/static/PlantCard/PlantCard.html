@@ -3,15 +3,15 @@
         <div class="plant__info__card__container">
 <!--            ng-src="{{imgPath}}{{plant.filePath}}"-->
             <div class="info__left__container">
-                <img class="plant__photo plant__card__photo" ng-src="" alt="{{plant.name}}"
+                <img class="plant__photo plant__card__photo" ng-src="{{plantPhotoCurrent}}" alt="{{plant.name}}"
                      src="">
                 <button class="page__button mb-5 text text_center" ng-click="addPlantToUserList(plant.id)"
                         ng-show="callPlace===1 && !isAdmin()">
                     Добавить к себе
                 </button>
-                <button class="page__button mb-5 text text_center" ng-click="addPlantToUserList(plant.id)"
+                <button class="page__button mb-5 text text_center" ng-click="addPlantPhoto()"
                         ng-show="isAdmin()">
-                    Удалить
+                    Загрузить фото
                 </button>
                 <div class="care__actions__container" ng-show="callPlace===2">
                     <div ng-repeat="bt in actionButtons">

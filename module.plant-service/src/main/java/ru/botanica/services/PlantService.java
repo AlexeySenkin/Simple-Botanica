@@ -9,8 +9,16 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.botanica.builders.PlantBuilder;
-import ru.botanica.entities.plants.*;
+import ru.botanica.dtos.PlantCareDto;
+import ru.botanica.dtos.PlantDto;
+import ru.botanica.dtos.PlantDtoShort;
+import ru.botanica.entities.Plant;
+import ru.botanica.entities.PlantSpecifications;
+import ru.botanica.mappers.PlantDtoMapper;
 import ru.botanica.repositories.PlantRepository;
+
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -20,6 +28,8 @@ public class PlantService {
     private final PlantRepository plantRepository;
 
     private final PlantPhotoService plantPhotoService;
+
+    private final CareService careService;
     private PlantBuilder plantBuilder;
 
     /**
@@ -74,7 +84,7 @@ public class PlantService {
      * Обновляет значения растения в БД
      *
      * @param plantDto PlantDto.class
-     * @return Идентификатор
+     * @return Dto растения
      */
     @Transactional
     public PlantDto updatePlant(PlantDto plantDto) {
@@ -84,7 +94,7 @@ public class PlantService {
                 .withFamily(plantDto.getFamily())
                 .withGenus(plantDto.getGenus())
                 .withShortDescription(plantDto.getShortDescription())
-                .withDescription(plantDto.getShortDescription())
+                .withDescription(plantDto.getDescription())
                 .withIsActive(plantDto.isActive())
                 .build();
         plantRepository.saveAndFlush(plant);
@@ -97,32 +107,65 @@ public class PlantService {
     /**
      * Добавляет растение с данными значениями и добавляет фото в БД
      *
-     * @param plantDto PlantDto.class
-     * @return Идентификатор
+     * @param plantDto      PlantDto.class
+     * @param isOverwriting флаг, нужно ли проводить перезапись в случае существования растения с таким именем
+     * @return Dto растения
      */
 
     @Transactional
-    public PlantDto addNewPlant(PlantDto plantDto) {
-        if (!plantRepository.existsByName(plantDto.getName())) {
+    public PlantDto addNewPlant(PlantDto plantDto, boolean isOverwriting) {
+        boolean existsByName = plantRepository.existsByName(plantDto.getName());
+        if (!existsByName) {
             Plant plant = plantBuilder
                     .withName(plantDto.getName())
                     .withFamily(plantDto.getFamily())
                     .withGenus(plantDto.getGenus())
                     .withShortDescription(plantDto.getShortDescription())
-                    .withDescription(plantDto.getShortDescription())
+                    .withDescription(plantDto.getDescription())
                     .withIsActive(true)
                     .build();
             plantRepository.saveAndFlush(plant);
             if (isPhotoPathAvailable(plantDto.getFilePath())) {
                 plant.setPhoto(plantPhotoService.saveOrUpdate(plant.getId(), plantDto.getFilePath()));
-//                Пока оставлено по просьбе Марии
-//            plantRepository.saveAndFlush(plant);
+            }
+            return PlantDtoMapper.mapToDto(plant);
+        } else if (existsByName && isOverwriting) {
+            Plant plant = plantBuilder
+                    .withId(findByName(plantDto.getName()).orElseThrow().getId())
+                    .withName(plantDto.getName())
+                    .withFamily(plantDto.getFamily())
+                    .withGenus(plantDto.getGenus())
+                    .withShortDescription(plantDto.getShortDescription())
+                    .withDescription(plantDto.getDescription())
+                    .withIsActive(true)
+                    .build();
+            plantRepository.saveAndFlush(plant);
+            if (isPhotoPathAvailable(plantDto.getFilePath())) {
+                plant.setPhoto(plantPhotoService.saveOrUpdate(plant.getId(), plantDto.getFilePath()));
             }
             return PlantDtoMapper.mapToDto(plant);
         } else {
             return plantDto;
         }
     }
+
+    @Transactional
+    public PlantDto addCaresWithObjects(PlantDto plantDto, List<PlantCareDto> plantCareDtoList) {
+        if (plantCareDtoList.isEmpty() || plantCareDtoList == null) {
+            return plantDto;
+        } else {
+//            Т.к. мы используем транзакцию, удаление действий для конкретного растения на самом деле не происходит,
+//            если проваливается запись новых... Но на всякий метод удаления всегда предоставляет список удаленных
+//            действий
+            careService.deletePlantCaresByPlantId(plantDto.getId());
+            for (PlantCareDto plantCareDto : plantCareDtoList) {
+                careService.createPlantCareWithObjects(plantDto, plantCareDto);
+            }
+            plantDto.setCares(careService.findAllPlantDtoCaresByPlantId(plantDto.getId()));
+        }
+        return plantDto;
+    }
+
 
     /**
      * Проверяет доступен ли путь к фотографии
@@ -144,5 +187,13 @@ public class PlantService {
         plantDto.setActive(false);
         plantRepository.saveAndFlush(PlantDtoMapper.mapToEntity(plantDto));
         return plantDto;
+    }
+
+    public Optional<PlantDto> findByName(String name) {
+        return plantRepository.findByName(name).map(PlantDtoMapper::mapToDto);
+    }
+
+    public boolean isIdExist(Long id) {
+        return plantRepository.existsById(id);
     }
 }

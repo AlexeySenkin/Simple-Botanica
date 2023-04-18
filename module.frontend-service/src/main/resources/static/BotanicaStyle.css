@@ -123,17 +123,10 @@ a:hover{
 }
 
 .page__input:focus{
-    /*border: 1px solid green;*/
     box-shadow: none;
     outline: none;
     background-color: var(--main-dark-color-opacity-40);
 }
-/*.page__input:autofill{*/
-/*    !*border: 1px solid green;*!*/
-/*    box-shadow: none;*/
-/*    outline: none;*/
-/*    background-color: var(--main-dark-color-opacity-40);*/
-/*}*/
 
 .page__button{
     appearance: none;
@@ -178,4 +171,22 @@ a:hover{
 .ok__cancel__button{
     width: 150px;
     margin: 0 5px;
+}
+
+/* Change Autocomplete styles in Chrome*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    background-color: var(--main-light-color);
+    border: 1px solid var(--main-dark-color);
+    -webkit-text-fill-color: var(--main-dark-color);
+    -webkit-box-shadow: none;
+    /*-webkit-box-shadow: 0 0 0px 1000px #000 inset;*/
+    transition: background-color 5000s ease-in-out 0s;
 }

@@ -1,5 +1,5 @@
 angular.module('Simple-Botanica-app')
-    .controller('plant-card-controller', function ($http, $rootScope, $scope, $localStorage,
+    .controller('plant-card-controller', function ($rootScope, $scope, $localStorage,
                                                    settings, userFactory, plantFactory) {
         const plantsPath = settings.PLANTS_PATH;
         // признак откуда была открыта карточка растения
@@ -16,7 +16,7 @@ angular.module('Simple-Botanica-app')
             shortDescription: "",
             description: "",
             isActive: true,
-            filePath: "No-Image-Placeholder.png"
+            filePath: ""
         }
 
         $scope.isAdmin = function () {
@@ -50,26 +50,19 @@ angular.module('Simple-Botanica-app')
 
         $scope.showPlantDetails = function () {
             let plantId = $localStorage.plantId;
-            if (plantId) {
-                $http.get(plantsPath + '/plant/' + plantId).then(function successCallback(response) {
-                    $scope.plant = response.data;
-                    if (!response.data.filePath) {
-                        $scope.plant.filePath = "No-Image-Placeholder.png";
-                    }
-                }, function errorCallback(reason) {
-                });
-            } else {
-                $scope.plant = {};
-                $scope.plant.id = null;
-                $scope.plant.filePath = "No-Image-Placeholder.png";
-            }
+            plantFactory.getPlant(plantId).then(function successCallback(response) {
+                $scope.plant = response.data;
+                $scope.plantPhotoCurrent = response.photoPath;
+            }, function errorCallback(reason) {
+                console.log('error ocurred while fetching a plant info:' + reason);
+            });
         }
 
         $scope.savePlant = function () {
-            plantFactory.saveOrUpdate($scope.plant).then(function (response){
+            plantFactory.saveOrUpdate($scope.plant).then(function (response) {
                 console.log(response);
                 location.assign('#!/');
-            }, function (reason){
+            }, function (reason) {
                 console.log(reason);
             })
         }
@@ -77,7 +70,10 @@ angular.module('Simple-Botanica-app')
         $scope.home = function () {
             location.assign('#!/')
         }
-        $scope.adm = userFactory.isAdmin();
+
+        $scope.addPlantPhoto = function () {
+            alert("Извините, мы пока не умеем загружать фото!");
+        }
 
         $scope.showPlantDetails();
 

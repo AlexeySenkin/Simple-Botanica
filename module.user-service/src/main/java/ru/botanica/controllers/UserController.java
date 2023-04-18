@@ -2,8 +2,11 @@ package ru.botanica.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-import ru.botanica.dto.UserDto;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.botanica.services.UserService;
 
 @RestController
@@ -19,10 +22,31 @@ public class UserController {
      * @return Пользователь
      */
     @GetMapping("/user/{id}")
-    public UserDto findById(@PathVariable int id) {
-        return userService.findById(id);
+    public ResponseEntity<?> findById(@PathVariable long id) {
+        try {
+            log.debug("Получение пользователя по id: {}", id);
+            return ResponseEntity.ok().body(userService.findById(id));
+        } catch (Exception e) {
+            log.error("Ошибка получения пользователя по id: {}", id);
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
-
+    /**
+     * Возвращает идентификатор пользователя по имени пользователя
+     *
+     * @param userName Имя пользователя
+     * @return Идентификатор
+     */
+    @GetMapping("/user")
+    public ResponseEntity<?> findIdByUserName(@RequestParam("username") String userName) {
+        try {
+            log.debug("Получение идентификатора пользователя по имени: {}", userName);
+            return ResponseEntity.ok().body(userService.findIdByUserName(userName));
+        } catch (Exception e) {
+            log.error("Ошибка идентификатора пользователя по имени: {}", userName);
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
 }

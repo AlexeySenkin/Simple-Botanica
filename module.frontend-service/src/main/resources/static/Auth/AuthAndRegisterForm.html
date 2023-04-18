@@ -1,0 +1,29 @@
+<div class="auth__container">
+    <form class="auth__form" ng-submit="authOrRegister()">
+        <div id="authPart">
+            <label for="username" class="auth__label">Логин</label>
+            <input class="text page__input auth__input" id="username" type="text" ng-model="user.username"
+                   placeholder="username" autocomplete="on" required>
+            <label class="auth__label" for="password">Пароль</label>
+            <input class="text page__input auth__input" id="password" type="password" ng-model="user.password"
+                   placeholder="password" autocomplete="false" required>
+        </div>
+        <div id="registerPart" ng-show="!isAuth()">
+<!--            <label class="auth__label" for="repeatPassword">Повторите пароль</label>-->
+<!--            <input class="text page__input auth__input" id="repeatPassword" type="password"-->
+<!--                   ng-model="user.repeatPassword"-->
+<!--                   placeholder="password" autocomplete="false">-->
+            <label for="email" class="auth__label">e-mail</label>
+            <input class="text page__input auth__input" id="email" type="email" ng-model="user.email"
+                   placeholder="e-mail" autocomplete="on">
+
+        </div>
+        <div class="auth__bottom__container">
+            <button class="page__button" type="submit">
+                <span ng-show="isAuth()">Войти</span>
+                <span ng-show="!isAuth()">Регистрация</span>
+            </button>
+            <button class="page__button" type="reset" ng-click="cancel()">Отмена</button>
+        </div>
+    </form>
+</div>
