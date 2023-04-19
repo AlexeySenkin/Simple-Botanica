@@ -66,15 +66,19 @@ public class PlantController {
                     "Растение не существует, id- " + id), HttpStatus.BAD_REQUEST);
         } else {
             try {
-                PlantDto result = plantService.updatePlant(plantDto);
+                PlantDto saveResult = plantService.updatePlant(plantDto);
                 /**
                  * Пытается записать действия для растения, если не выходит - уведомляет сервер
                  */
-//                TODO: определиться, как отсылать это на фронт
                 try {
-                    plantService.addCaresWithObjects(result, plantDto.getCares());
+                    plantService.addPhotoToPlant(saveResult, plantDto.getFilePath());
                 } catch (Exception e) {
-                    log.error("Сервер не смог записать действия для растения с id {}", id);
+                    log.error("Сервер не смог обновить фото для растения с id {}", id);
+                }
+                try {
+                    plantService.addCaresWithObjects(saveResult, plantDto.getCares());
+                } catch (Exception e) {
+                    log.error("Сервер не смог обновить действия для растения с id {}", id);
                 }
             } catch (Exception e) {
                 /**
@@ -112,12 +116,26 @@ public class PlantController {
             return new ResponseEntity<>(new AppResponse(HttpStatus.BAD_REQUEST.value(),
                     "Растение с таким именем существует"), HttpStatus.BAD_REQUEST);
         } else {
+//          TODO:  Пока нет обработчика ошибок, это самый короткий способ заставить бэк уведомлять фронт о
+//           ошибках на разных шагах сохранения. Монструозно. Сделать обработчик, затем избавиться от этого
             try {
-                PlantDto result = plantService.addNewPlant(plantDto, isOverwriting);
+                PlantDto saveResult = plantService.addNewPlant(plantDto, isOverwriting);
                 try {
-                    plantService.addCaresWithObjects(result, plantDto.getCares());
+                    plantService.addPhotoToPlant(saveResult, plantDto.getFilePath());
                 } catch (Exception e) {
-                    log.error("Сервер не смог записать действия для растения с id {}", result.getId());
+                    log.error("Сервер не смог сохранить фото для растения с id {}", saveResult.getId());
+                    return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                            "Сервер не смог сохранить фото для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
+                }
+                /**
+                 * Сохранить процедуры для растения не вышло
+                 */
+                try {
+                    plantService.addCaresWithObjects(saveResult, plantDto.getCares());
+                } catch (Exception e) {
+                    log.error("Сервер не смог записать действия для растения с id {}", saveResult.getId());
+                    return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                            "Сервер не смог сохранить процедуры для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
                 }
             } catch (Exception e) {
                 /**
