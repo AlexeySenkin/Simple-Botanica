@@ -72,7 +72,7 @@ public class PlantController {
                  */
 //                TODO: определиться, как отсылать это на фронт
                 try {
-                    plantService.addCaresWithObjects(result, plantDto.getCares());
+                    plantService.addCaresWithObjects(result, plantDto.getStandardCarePlan());
                 } catch (Exception e) {
                     log.error("Сервер не смог записать действия для растения с id {}", id);
                 }
@@ -115,7 +115,7 @@ public class PlantController {
             try {
                 PlantDto result = plantService.addNewPlant(plantDto, isOverwriting);
                 try {
-                    plantService.addCaresWithObjects(result, plantDto.getCares());
+                    plantService.addCaresWithObjects(result, plantDto.getStandardCarePlan());
                 } catch (Exception e) {
                     log.error("Сервер не смог записать действия для растения с id {}", result.getId());
                 }
