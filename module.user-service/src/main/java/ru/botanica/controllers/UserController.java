@@ -2,6 +2,8 @@ package ru.botanica.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.json.JSONParser;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.botanica.services.UserService;
@@ -43,6 +45,16 @@ public class UserController {
             return ResponseEntity.ok().body(userService.findIdByUserName(userName));
         } catch (Exception e) {
             log.error("Ошибка идентификатора пользователя по имени: {}", userName);
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/user/register")
+    public ResponseEntity<?> registerNewUser(@RequestParam("username") String userName, @RequestParam(required = false, name = "email") String email){
+        try {
+            userService.registerNewUser(userName, email);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

@@ -19,3 +19,11 @@ spring:
 jwt:
   secret: IIBIukkn887*&^&%&%CVJhghhkhkkgyg6546%%^5787z
   lifetime: 36000000
+
+integrations:
+  user-service:
+    url: http://localhost:8187/botanica/api
+    connection-timeout: 10000
+    read-timeout: 1000
+    write-timeout: 1000
+
