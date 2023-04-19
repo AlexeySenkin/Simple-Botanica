@@ -74,11 +74,15 @@ public class PlantController {
                     plantService.addPhotoToPlant(saveResult, plantDto.getFilePath());
                 } catch (Exception e) {
                     log.error("Сервер не смог обновить фото для растения с id {}", id);
+                    return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                            "Сервер не смог обновить фото для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
                 }
                 try {
                     plantService.addCaresWithObjects(saveResult, plantDto.getCares());
                 } catch (Exception e) {
                     log.error("Сервер не смог обновить действия для растения с id {}", id);
+                    return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                            "Сервер не смог обновить процедуры для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
                 }
             } catch (Exception e) {
                 /**
@@ -123,23 +127,26 @@ public class PlantController {
                 try {
                     plantService.addPhotoToPlant(saveResult, plantDto.getFilePath());
                 } catch (Exception e) {
+                    /**
+                     * Сохранить фото для растения не вышло
+                     */
                     log.error("Сервер не смог сохранить фото для растения с id {}", saveResult.getId());
                     return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
                             "Сервер не смог сохранить фото для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
                 }
-                /**
-                 * Сохранить процедуры для растения не вышло
-                 */
                 try {
                     plantService.addCaresWithObjects(saveResult, plantDto.getCares());
                 } catch (Exception e) {
+                    /**
+                     * Сохранить процедуры для растения не вышло
+                     */
                     log.error("Сервер не смог записать действия для растения с id {}", saveResult.getId());
                     return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
                             "Сервер не смог сохранить процедуры для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
                 }
             } catch (Exception e) {
                 /**
-                 * Неудачное сохранение
+                 * Неудачное сохранение растения
                  */
                 log.error("Сервер не смог сохранить растение с именем: {}", plantDto.getName());
                 log.error("{}", plantDto.toString());
