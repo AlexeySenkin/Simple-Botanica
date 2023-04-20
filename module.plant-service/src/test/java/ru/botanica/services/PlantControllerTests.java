@@ -31,6 +31,8 @@ public class PlantControllerTests {
     @MockBean
     private PlantService plantService;
     @MockBean
+    private CareService careService;
+    @MockBean
     private PlantRepository plantRepository;
 
     /**

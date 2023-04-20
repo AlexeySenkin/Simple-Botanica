@@ -2,8 +2,12 @@ package ru.botanica.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.botanica.dtos.CareDto;
+import ru.botanica.dtos.CareDtoShort;
+import ru.botanica.entities.Care;
+import ru.botanica.entities.CareSpecifications;
 import ru.botanica.mappers.CareDtoMapper;
 import ru.botanica.entities.PlantCare;
 import ru.botanica.dtos.PlantCareDto;
@@ -21,6 +25,31 @@ import java.util.List;
 public class CareService {
     private final CareRepository careRepository;
     private final PlantCareRepository plantCareRepository;
+
+    /**
+     * Возвращает список процедур, учитывающий лишь активные(isActive=true)
+     *
+     * @return Список процедур
+     */
+    public List<CareDtoShort> findAllActive() {
+        Specification<Care> specification = createSpecificationsWithFilter(true);
+        return careRepository.findAll(specification).stream()
+                .map(CareDtoMapper::matToDtoShort).toList();
+    }
+
+    /**
+     * Составляет список, собирающий все параметры, задаваемые при запросе списка процедур
+     *
+     * @param isActive флаг активной процедуры
+     * @return Список параметров
+     */
+    private Specification<Care> createSpecificationsWithFilter(Boolean isActive) {
+        Specification<Care> specification = Specification.where(null);
+        if (isActive != null) {
+            specification = specification.and(CareSpecifications.isActive(isActive));
+        }
+        return specification;
+    }
 
     /**
      * Находит процедуру из общего списка по id
