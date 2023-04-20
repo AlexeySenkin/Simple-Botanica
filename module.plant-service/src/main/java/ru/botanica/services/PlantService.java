@@ -123,8 +123,6 @@ public class PlantService {
                     .build();
             plantRepository.saveAndFlush(plant);
             return PlantDtoMapper.mapToDto(plant);
-        //убрала отсюда условие existsByName, оно лишнее, так как сюда мы попадаем только если оно true
-// по ветке else
         } else if (isOverwriting) {
             Plant plant = plantBuilder
                     .withId(findByName(plantDto.getName()).orElseThrow().getId())
