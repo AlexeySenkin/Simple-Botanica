@@ -98,14 +98,11 @@ public class PlantService {
                 .withIsActive(plantDto.isActive())
                 .build();
         plantRepository.saveAndFlush(plant);
-        if (isPhotoPathAvailable(plantDto.getFilePath())) {
-            plant.setPhoto(plantPhotoService.saveOrUpdate(plant.getId(), plantDto.getFilePath()));
-        }
         return PlantDtoMapper.mapToDto(plant);
     }
 
     /**
-     * Добавляет растение с данными значениями и добавляет фото в БД
+     * Добавляет растение с данными значениями в БД
      *
      * @param plantDto      PlantDto.class
      * @param isOverwriting флаг, нужно ли проводить перезапись в случае существования растения с таким именем
@@ -113,7 +110,7 @@ public class PlantService {
      */
 
     @Transactional
-    public PlantDto addNewPlant(PlantDto plantDto, boolean isOverwriting) {
+    public PlantDto addNewPlant(PlantDto plantDto, boolean isOverwriting) throws Exception {
         boolean existsByName = plantRepository.existsByName(plantDto.getName());
         if (!existsByName) {
             Plant plant = plantBuilder
@@ -125,9 +122,6 @@ public class PlantService {
                     .withIsActive(true)
                     .build();
             plantRepository.saveAndFlush(plant);
-            if (isPhotoPathAvailable(plantDto.getFilePath())) {
-                plant.setPhoto(plantPhotoService.saveOrUpdate(plant.getId(), plantDto.getFilePath()));
-            }
             return PlantDtoMapper.mapToDto(plant);
         //убрала отсюда условие existsByName, оно лишнее, так как сюда мы попадаем только если оно true
 // по ветке else
@@ -142,15 +136,36 @@ public class PlantService {
                     .withIsActive(true)
                     .build();
             plantRepository.saveAndFlush(plant);
-            if (isPhotoPathAvailable(plantDto.getFilePath())) {
-                plant.setPhoto(plantPhotoService.saveOrUpdate(plant.getId(), plantDto.getFilePath()));
-            }
             return PlantDtoMapper.mapToDto(plant);
         } else {
-            return plantDto;
+            throw new Exception();
         }
     }
 
+    /**
+     * Добавляет указанный путь к указанному растению в БД
+     *
+     * @param plantDto растение, к которому приписывается путь
+     * @param filePath путь к фото
+     * @return Dto полученного растения
+     */
+    @Transactional
+    public PlantDto addPhotoToPlant(PlantDto plantDto, String filePath) {
+        if (isPhotoPathAvailable(filePath)) {
+            plantDto.setFilePath(plantPhotoService.saveOrUpdate(plantDto.getId(), filePath).getFilePath());
+            return plantDto;
+        } else {
+            throw new IllegalStateException("Пути для сохранения нет");
+        }
+    }
+
+    /**
+     * Добавляет список действий к растению в БД
+     *
+     * @param plantDto растение, к которому приписываются действия
+     * @param plantCareDtoList список действий
+     * @return Dto полученного растения
+     */
     @Transactional
     public PlantDto addCaresWithObjects(PlantDto plantDto, List<PlantCareDto> plantCareDtoList) {
         //сделала код более читаемым
@@ -163,6 +178,8 @@ public class PlantService {
                 careService.createPlantCareWithObjects(plantDto, plantCareDto);
             }
             plantDto.setStandardCarePlan(careService.findAllPlantDtoCaresByPlantId(plantDto.getId()));
+        } else {
+            throw new IllegalArgumentException("Списка нет");
         }
         return plantDto;
     }
