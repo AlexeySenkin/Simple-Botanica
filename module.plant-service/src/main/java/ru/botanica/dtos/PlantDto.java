@@ -22,7 +22,7 @@ public class PlantDto {
 
     private String filePath;
 
-    private List<PlantCareDto> cares;
+    private List<PlantCareDto> standardCarePlan;
 
     public PlantDto() {
     }
@@ -38,7 +38,7 @@ public class PlantDto {
                 ", shortDescription='" + shortDescription + '\'' +
                 ", isActive=" + isActive + '\'' +
                 ", filePath=" + filePath +
-                ", cares=" + (cares == null ? null : cares.toString()) +
+                ", cares=" + (standardCarePlan == null ? null : standardCarePlan.toString()) +
                 '}';
     }
 }

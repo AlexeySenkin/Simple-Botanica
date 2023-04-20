@@ -83,7 +83,7 @@ public class PlantController {
                             "Сервер не смог обновить фото для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
                 }
                 try {
-                    plantService.addCaresWithObjects(saveResult, plantDto.getCares());
+                    plantService.addCaresWithObjects(saveResult, plantDto.getStandardCarePlan());
                 } catch (Exception e) {
                     log.error("Сервер не смог обновить действия для растения с id {}", id);
                     return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
@@ -140,7 +140,7 @@ public class PlantController {
                             "Сервер не смог сохранить фото для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
                 }
                 try {
-                    plantService.addCaresWithObjects(saveResult, plantDto.getCares());
+                    plantService.addCaresWithObjects(saveResult, plantDto.getStandardCarePlan());
                 } catch (Exception e) {
                     /**
                      * Сохранить процедуры для растения не вышло

@@ -123,7 +123,7 @@ public class PlantService {
                     .build();
             plantRepository.saveAndFlush(plant);
             return PlantDtoMapper.mapToDto(plant);
-        } else if (existsByName && isOverwriting) {
+        } else if (isOverwriting) {
             Plant plant = plantBuilder
                     .withId(findByName(plantDto.getName()).orElseThrow().getId())
                     .withName(plantDto.getName())
@@ -166,9 +166,8 @@ public class PlantService {
      */
     @Transactional
     public PlantDto addCaresWithObjects(PlantDto plantDto, List<PlantCareDto> plantCareDtoList) {
-        if (plantCareDtoList.isEmpty() || plantCareDtoList == null) {
-            throw new IllegalArgumentException("Списка нет");
-        } else {
+        //сделала код более читаемым
+        if (plantCareDtoList != null && !plantCareDtoList.isEmpty()) {
 //            Т.к. мы используем транзакцию, удаление действий для конкретного растения на самом деле не происходит,
 //            если проваливается запись новых... Но на всякий метод удаления всегда предоставляет список удаленных
 //            действий
@@ -176,7 +175,9 @@ public class PlantService {
             for (PlantCareDto plantCareDto : plantCareDtoList) {
                 careService.createPlantCareWithObjects(plantDto, plantCareDto);
             }
-            plantDto.setCares(careService.findAllPlantDtoCaresByPlantId(plantDto.getId()));
+            plantDto.setStandardCarePlan(careService.findAllPlantDtoCaresByPlantId(plantDto.getId()));
+        } else {
+            throw new IllegalArgumentException("Списка нет");
         }
         return plantDto;
     }
