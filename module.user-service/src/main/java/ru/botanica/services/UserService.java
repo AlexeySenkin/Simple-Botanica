@@ -5,7 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.botanica.dto.UserDto;
 import ru.botanica.dto.UserDtoMapper;
+import ru.botanica.entities.User;
 import ru.botanica.repositories.UserRepository;
+
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -34,5 +37,13 @@ public class UserService {
     }
 
 
-
+    public void registerNewUser(String userName, String email){
+        User user = new User();
+        user.setIsActive(true);
+        user.setIsBanned(false);
+        user.setUserName(userName);
+        user.setEmail(email);
+        user.setRegDate(new Date());
+        userRepository.save(user);
+    }
 }
