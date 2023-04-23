@@ -84,6 +84,7 @@ public class PlantServiceTests {
         plantCare.setCareVolume(BigDecimal.valueOf(10));
         plantCare.setPlant(plant);
         plantCare.setCare(care);
+        PlantCareDto plantCareDto = PlantCareDtoMapper.mapToDto(plantCare);
 
         cares.add(plantCare);
         plant.setCares(cares);
@@ -100,7 +101,8 @@ public class PlantServiceTests {
                 () -> assertEquals(plant.getFamily(), plantDto.getFamily()),
                 () -> assertEquals(plant.getDescription(), plantDto.getDescription()),
                 () -> assertEquals(plant.getShortDescription(), plantDto.getShortDescription()),
-                () -> assertEquals(plant.isActive(), plantDto.isActive())
+                () -> assertEquals(plant.isActive(), plantDto.isActive()),
+                () -> assertArrayEquals(new PlantCareDto[]{plantCareDto}, plantDto.getStandardCarePlan().toArray())
         );
     }
 
