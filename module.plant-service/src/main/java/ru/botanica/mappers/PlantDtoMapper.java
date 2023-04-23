@@ -4,12 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.botanica.dtos.PlantDto;
 import ru.botanica.dtos.PlantDtoShort;
 import ru.botanica.entities.PlantPhoto;
-import ru.botanica.entities.PlantCare;
-import ru.botanica.dtos.PlantCareDto;
 import ru.botanica.entities.Plant;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public final class PlantDtoMapper {
@@ -39,15 +34,19 @@ public final class PlantDtoMapper {
         plantDto.setShortDescription(plant.getShortDescription());
         plantDto.setActive(plant.isActive());
         plantDto.setFilePath(plant.getPhoto() == null ? null : plant.getPhoto().getFilePath());
-        if (plant.getCares() == null || plant.getCares().isEmpty()) {
-            plantDto.setCares(null);
-        } else {
-            List<PlantCareDto> careDtoList = new ArrayList<>();
-            for (PlantCare care : plant.getCares()) {
-                careDtoList.add(PlantCareDtoMapper.mapToDto(care));
-            }
-            plantDto.setCares(careDtoList);
-        }
+
+        plantDto.setStandardCarePlan(plant.getCares().stream().map(PlantCareDtoMapper::mapToDto).toList());
+        //TODO удалить код в комментарии после согласования с автором кода
+
+//        if (plant.getCares() == null || plant.getCares().isEmpty()) {
+//            plantDto.setCares(null);
+//        } else {
+//            List<PlantCareDto> careDtoList = new ArrayList<>();
+//            for (PlantCare care : plant.getCares()) {
+//                careDtoList.add(PlantCareDtoMapper.mapToDto(care));
+//            }
+//            plantDto.setCares(careDtoList);
+//        }
         return plantDto;
     }
 

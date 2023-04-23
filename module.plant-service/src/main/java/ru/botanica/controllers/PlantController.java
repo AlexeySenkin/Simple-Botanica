@@ -7,10 +7,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.botanica.dtos.CareDtoShort;
 import ru.botanica.dtos.PlantDto;
 import ru.botanica.dtos.PlantDtoShort;
 import ru.botanica.responses.AppResponse;
+import ru.botanica.services.CareService;
 import ru.botanica.services.PlantService;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*", allowCredentials = "false")
 @RestController
@@ -18,6 +22,7 @@ import ru.botanica.services.PlantService;
 @Slf4j
 public class PlantController {
     private final PlantService plantService;
+    private final CareService careService;
 
     /**
      * Возвращает список растений, учитывающий заданные для поиска параметры
@@ -66,15 +71,23 @@ public class PlantController {
                     "Растение не существует, id- " + id), HttpStatus.BAD_REQUEST);
         } else {
             try {
-                PlantDto result = plantService.updatePlant(plantDto);
+                PlantDto saveResult = plantService.updatePlant(plantDto);
                 /**
                  * Пытается записать действия для растения, если не выходит - уведомляет сервер
                  */
-//                TODO: определиться, как отсылать это на фронт
                 try {
-                    plantService.addCaresWithObjects(result, plantDto.getCares());
+                    plantService.addPhotoToPlant(saveResult, plantDto.getFilePath());
                 } catch (Exception e) {
-                    log.error("Сервер не смог записать действия для растения с id {}", id);
+                    log.error("Сервер не смог обновить фото для растения с id {}", id);
+                    return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                            "Сервер не смог обновить фото для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
+                }
+                try {
+                    plantService.addCaresWithObjects(saveResult, plantDto.getStandardCarePlan());
+                } catch (Exception e) {
+                    log.error("Сервер не смог обновить действия для растения с id {}", id);
+                    return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                            "Сервер не смог обновить процедуры для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
                 }
             } catch (Exception e) {
                 /**
@@ -112,16 +125,33 @@ public class PlantController {
             return new ResponseEntity<>(new AppResponse(HttpStatus.BAD_REQUEST.value(),
                     "Растение с таким именем существует"), HttpStatus.BAD_REQUEST);
         } else {
+//          TODO:  Пока нет обработчика ошибок, это самый короткий способ заставить бэк уведомлять фронт о
+//           ошибках на разных шагах сохранения. Монструозно. Сделать обработчик, затем избавиться от этого
             try {
-                PlantDto result = plantService.addNewPlant(plantDto, isOverwriting);
+                PlantDto saveResult = plantService.addNewPlant(plantDto, isOverwriting);
                 try {
-                    plantService.addCaresWithObjects(result, plantDto.getCares());
+                    plantService.addPhotoToPlant(saveResult, plantDto.getFilePath());
                 } catch (Exception e) {
-                    log.error("Сервер не смог записать действия для растения с id {}", result.getId());
+                    /**
+                     * Сохранить фото для растения не вышло
+                     */
+                    log.error("Сервер не смог сохранить фото для растения с id {}", saveResult.getId());
+                    return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                            "Сервер не смог сохранить фото для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
+                }
+                try {
+                    plantService.addCaresWithObjects(saveResult, plantDto.getStandardCarePlan());
+                } catch (Exception e) {
+                    /**
+                     * Сохранить процедуры для растения не вышло
+                     */
+                    log.error("Сервер не смог записать действия для растения с id {}", saveResult.getId());
+                    return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                            "Сервер не смог сохранить процедуры для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
                 }
             } catch (Exception e) {
                 /**
-                 * Неудачное сохранение
+                 * Неудачное сохранение растения
                  */
                 log.error("Сервер не смог сохранить растение с именем: {}", plantDto.getName());
                 log.error("{}", plantDto.toString());
@@ -172,5 +202,15 @@ public class PlantController {
             return new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
                     "Растение удалено, id: " + id), HttpStatus.OK);
         }
+    }
+
+    /**
+     * Возвращает список процедур, если они активны
+     *
+     * @return Список процедур
+     */
+    @GetMapping("/care_types")
+    public List<CareDtoShort> findAllActiveCares() {
+        return careService.findAllActive();
     }
 }

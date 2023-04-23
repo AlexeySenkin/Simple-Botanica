@@ -14,6 +14,8 @@ import ru.botanica.entities.PlantPhoto;
 import ru.botanica.repositories.CareRepository;
 import ru.botanica.repositories.PlantCareRepository;
 import ru.botanica.repositories.PlantPhotoRepository;
+import ru.botanica.entities.Plant;
+import ru.botanica.dtos.PlantDto;
 import ru.botanica.repositories.PlantRepository;
 
 import java.util.NoSuchElementException;
@@ -140,6 +142,7 @@ public class PlantServiceTests {
         savedPlant.setDescription("desc");
         savedPlant.setShortDescription("short_desc");
 
+        when(plantRepository.saveAndFlush(plant)).thenReturn(savedPlant);
         when(photoService.saveOrUpdate(plantPhoto)).thenReturn(plantPhoto);
         when(photoService.saveOrUpdate(plantPhoto.getId(), plantPhoto.getFilePath())).thenReturn(plantPhoto);
         PlantDto result = plantService.addNewPlant(plantDto, true);
