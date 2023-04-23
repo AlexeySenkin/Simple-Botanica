@@ -35,11 +35,11 @@ public class PlantCareDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PlantCareDto that = (PlantCareDto) o;
-        return careCount == that.careCount && Objects.equals(id, that.id) && Objects.equals(careVolume, that.careVolume);
+        return careCount == that.careCount && Objects.equals(id, that.id) && Objects.equals(careVolume, that.careVolume) && Objects.equals(careDto, that.careDto);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, careCount, careVolume);
+        return Objects.hash(id, careCount, careVolume, careDto);
     }
 }
