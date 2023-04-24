@@ -5,13 +5,17 @@ angular.module('Simple-Botanica-app')
         $scope.getPlants = function () {
             delete $localStorage.plantId;
             //TODO понять как передавать и разделять признак какой список растений загружать
-            let plantListCallMode = 0;
-            if ((userFactory.isAuthorized() && !userFactory.isAdmin()) || $localStorage.plantListCallPlace !== 0 ){
-                plantListCallMode = 1;
-            }
-            plantFactory.getAllPlants($localStorage.userId, $scope.plantNameFilter, $scope.currentPage, 8, plantListCallMode)
+            let plantListCallMode = $localStorage.plantListCallPlace;
+            // if ((userFactory.isAuthorized() && !userFactory.isAdmin()) || $localStorage.plantListCallPlace !== 0 ){
+            //     plantListCallMode = 1;
+            // }
+
+            console.log("$localStorage.plantListCallPlace = " + $localStorage.plantListCallPlace)
+
+            console.log("plantListCallMode from Plants.js = " + plantListCallMode);
+            plantFactory.getAllPlants($localStorage.botanicaWebUser.userId, $scope.plantNameFilter, $scope.currentPage, 8, plantListCallMode)
                 .then(function successCallback(response) {
-                        console.log("get all plants")
+                        // console.log("get all plants")
                         $scope.plantsPage = response.data.content;
                         $scope.imgPath = settings.IMG_DIRECTORY;
                         $scope.totalPages = response.data.totalPages + 1;

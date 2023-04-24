@@ -9,6 +9,7 @@
             .when('/plant-info', {templateUrl: 'PlantCard/PlantCard.html', controller: 'plant-card-controller'})
             .when('/user-profile', {templateUrl: 'User/UserProfile.html', controller: 'user-profile-controller'})
             .when('/plant-edit', {templateUrl: 'PlantCard/PlantCard.html', controller: 'plant-card-controller'})
+            .when('/user-plants', {templateUrl: 'Plants/Plants.html', controller: 'plants-controller'})
             .otherwise({redirectTo: '/'})
     }
 
@@ -280,7 +281,7 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
         }
         let defer = $q.defer();
         if (plant.id === null) {
-            console.log('Saving a new plant: ' + plant);
+            // console.log('Saving a new plant: ' + plant);
             $http.post(plantPath + '/plant', JSON.stringify(plant)).then(function successCallback(response) {
                 defer.resolve(response);
                 console.log('New plant saved, id=' + response.data);
@@ -289,7 +290,7 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
                 console.log('Error occurred while saving a new plant. error code:' + reason.data.status);
             })
         } else {
-            console.log('Saving changes into plant: ' + plant);
+            // console.log('Saving changes into plant: ' + plant);
             $http.put(plantPath + '/plant', JSON.stringify(plant))
                 .then(function successCallback(response) {
                     defer.resolve(response);
@@ -379,7 +380,9 @@ botanicaApp
 
         $scope.showMyPlantList = function () {
             $localStorage.plantListCallPlace = 1;
-            location.assign("#!/");
+             location.assign("#!/user-plants");
+            // location.replace("#!/")
+            // location.reload();
         }
 
         $scope.home = function () {

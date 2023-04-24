@@ -59,6 +59,7 @@ angular.module('Simple-Botanica-app')
             let plantId = $localStorage.plantId;
             // признак откуда была открыта карточка растения
             $scope.callPlace = $localStorage.plantListCallPlace;
+            console.log("plantListCall_place = " + $localStorage.plantListCallPlace);
 
             plantFactory.getPlant(plantId).then(function successCallback(response) {
                 $scope.plant = response.data;
@@ -140,9 +141,9 @@ angular.module('Simple-Botanica-app')
 
         $scope.savePlant = function () {
             let newPlantObject = assemblePlantObject($scope.plant, $scope.careDictionary);
-            console.log(newPlantObject);
+            // console.log(newPlantObject);
             plantFactory.saveOrUpdate(newPlantObject).then(function (response) {
-                console.log(response);
+                // console.log(response);
                 location.assign('#!/');
             }, function (reason) {
                 console.log(reason);
