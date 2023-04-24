@@ -1,9 +1,7 @@
 .plant__info__card__container {
     padding: 10px;
-    /*background: url(../img/plant_card_img.png) no-repeat right bottom;*/
     display: flex;
     justify-content: space-between;
-    /*height: 100vh;*/
 }
 
 .info__right__container {
@@ -13,7 +11,6 @@
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    /*height: 100vh;*/
 }
 
 .info__left__container {
@@ -21,12 +18,20 @@
     flex-direction: column;
 }
 
-.care__actions__container {
+.care__action__buttons__container {
     display: flex;
     flex-direction: row;
     justify-content: center;
     flex-wrap: wrap;
 }
+
+.care__actions__container {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+}
+
 
 .care__button {
     border-radius: 50%;
@@ -39,13 +44,14 @@
     border: none;
     background: var(--main-dark-color-opacity-40);
 }
-.bi__care__icon{
+
+.bi__care__icon {
     width: 30px;
     height: 30px;
     alignment: center;
 }
 
-.plant__card__photo{
+.plant__card__photo {
     width: auto;
 }
 
@@ -55,30 +61,30 @@
     justify-content: flex-end;
 }
 
-.plant__edit__info__row{
+.plant__edit__info__row {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
 
-.plant__edit__textarea{
+.plant__edit__textarea {
     padding: 10px;
     display: inline-block;
-    /*overflow: auto;*/
-    /*height: 100%;*/
 }
-.plant__textarea__container{
+
+.plant__textarea__container {
     display: flex;
     flex-direction: column;
     height: 100ch;
-
 }
-.plant__edit__textarea:focus{
+
+.plant__edit__textarea:focus {
     box-shadow: none;
     outline: none;
     background-color: var(--main-dark-color-opacity-40);
 }
-.plant__edit__control{
+
+.plant__edit__control {
     border: 1px solid var(--main-dark-color-opacity-40);
     background: var(--main-light-color);
     appearance: none;
@@ -86,20 +92,24 @@
     flex-grow: 1;
     box-sizing: border-box;
 }
-.plant__edit__input{
+
+.plant__edit__input {
     margin: 5px 5px 0 5px;
 }
+
 .plant__name__header:disabled,
 .plant__edit__textarea:disabled,
-input:disabled{
+input:disabled {
     border: none;
 }
-.plant__edit__input:focus{
+
+.plant__edit__input:focus {
     box-shadow: none;
     outline: none;
     background-color: var(--main-dark-color-opacity-40);
 }
-.plant__info__label{
+
+.plant__info__label {
     font-family: Roboto, sans-serif;
     color: var(--main-dark-color);
     font-style: normal;
@@ -107,5 +117,68 @@ input:disabled{
     line-height: 26px;
     letter-spacing: 0.02em;
     font-weight: 300;
-
 }
+
+.plant__care__header {
+    font-size: 20px;
+    color: rgb(197, 132, 53);
+    letter-spacing: 0.02em;
+    font-weight: 400;
+}
+
+.plant__care__checkbox {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+    background-color: #fff;
+
+    font: inherit;
+    color: currentColor;
+    width: 1.2em;
+    height: 1.2em;
+    border: 1px solid var(--main-dark-color);
+    border-radius: 0.25em;
+
+    transform: translateY(-0.075em);
+
+    display: grid;
+    place-content: center;
+    outline: none;
+}
+.plant__care__checkbox:focus,
+input[type=checkbox]:focus{
+    outline: none;
+}
+
+.plant__care__checkbox::before {
+    content: "";
+    width: 0.85em;
+    height: 0.85em;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em var(--main-dark-color);
+
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.plant__care__checkbox:checked::before {
+    transform: scale(1);
+}
+
+.plant__care__label {
+    display: grid;
+    grid-template-columns: 1em auto;
+    gap: 0.5em;
+}
+.grid__container{
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5em;
+}
+
+.plant__care__interval__input{
+    max-width: 40px;
+}
+/*.plant__care__checkbox + .plant__care__label{*/
+/*  margin-top: 1em;*/
+/*}*/

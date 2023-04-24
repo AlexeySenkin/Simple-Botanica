@@ -16,7 +16,7 @@ public class UserServiceIntegration {
                 .uri(uriBuilder -> uriBuilder
                                 .path("/user/register")
                                 .queryParam("username", userName)
-                                .queryParam("email", email)
+                                .queryParam("email", "email")
                                 .build()
                         )
                 .retrieve()
