@@ -3,13 +3,11 @@ package ru.botanica.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 @Getter
 @Setter
 @AllArgsConstructor
-@Component
 public class UserPlantsShortDto {
 
     private Long userPlantId;

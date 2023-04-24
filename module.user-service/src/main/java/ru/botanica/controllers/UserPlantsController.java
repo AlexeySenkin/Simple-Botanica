@@ -55,7 +55,9 @@ public class UserPlantsController {
         userPlantsShortDto.setPlantId(plantId);
         userPlantsService.createUserPlant(userPlantsShortDto);
 
-        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(), " Растение c id = " + userPlantsShortDto.getPlantId() + " добавлено пользователю с id = " +  userPlantsShortDto.getUserId()), HttpStatus.OK);
+        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(),
+                " Растение c id = " + userPlantsShortDto.getPlantId() +
+                        " добавлено пользователю с id = " +  userPlantsShortDto.getUserId()), HttpStatus.OK);
 
     }
     @PostMapping("/banned_user_plant")
@@ -66,7 +68,8 @@ public class UserPlantsController {
                     "Растение пользователя с указанным user_plant_id не существует"), HttpStatus.BAD_REQUEST);
         }
         UserPlantsDto userPlantsDto = userPlantsService.bannedUserPlant(userPlantId);
-        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(), "user_plant_id = " + userPlantsDto.getUserPlantId() +
+        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(),
+                "user_plant_id = " + userPlantsDto.getUserPlantId() +
                 " : is_banned инвертировано для растение c id = " + userPlantsDto.getPlantId() +
                 " пользователя с id = " + userPlantsDto.getUserId()), HttpStatus.OK);
 
@@ -80,7 +83,8 @@ public class UserPlantsController {
                     "Растение пользователя с указанным user_plant_ не существует"), HttpStatus.BAD_REQUEST);
         }
         UserPlantsDto userPlantsDto = userPlantsService.activeUserPlant(userPlantId);
-        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(), "user_plant_id = " + userPlantsDto.getUserPlantId() +
+        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(),
+                "user_plant_id = " + userPlantsDto.getUserPlantId() +
                 " : is_active инвертировано для растение c id = " + userPlantsDto.getPlantId() +
                 " пользователя с id = " +  userPlantsDto.getUserId()), HttpStatus.OK);
 
