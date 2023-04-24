@@ -54,16 +54,18 @@ public class UserPlantsService {
     }
 
     @Transactional
-    public void activeUserPlant(UserPlantsShortDto userPlantsShortDto){
-        UserPlant userPlant = userPlantsRepository.findByUserPlantId(userPlantsShortDto.getUserPlantId()).orElseThrow();
+    public UserPlantsDto activeUserPlant(long userPlantsId){
+        UserPlant userPlant = userPlantsRepository.findByUserPlantId(userPlantsId).orElseThrow();
         userPlant.setIsActive(!userPlant.getIsActive());
         userPlantsRepository.save(userPlant);
+        return UserPlantsDtoMapper.mapToDto(userPlant);
     }
 
     @Transactional
-    public void bannedUserPlant(UserPlantsShortDto userPlantsShortDto){
-        UserPlant userPlant = userPlantsRepository.findByUserPlantId(userPlantsShortDto.getUserPlantId()).orElseThrow();
+    public UserPlantsDto bannedUserPlant(long userPlantsId){
+        UserPlant userPlant = userPlantsRepository.findByUserPlantId(userPlantsId).orElseThrow();
         userPlant.setIsBanned(!userPlant.getIsBanned());
         userPlantsRepository.save(userPlant);
+        return UserPlantsDtoMapper.mapToDto(userPlant);
     }
 }

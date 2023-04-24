@@ -41,11 +41,13 @@ public class UserPlantsController {
                                           @RequestParam() long plantId)
     {
 
-        if (userService.findById(userId) == null) {
-            return new ResponseEntity<>(new AppStatus(HttpStatus.BAD_REQUEST.value(), "Пользователь с таким id не существует"), HttpStatus.BAD_REQUEST);
+        if (userService.findById(userId)==null) {
+            return new ResponseEntity<>(new AppStatus(HttpStatus.BAD_REQUEST.value(),
+                    "Пользователь с таким id не существует"), HttpStatus.BAD_REQUEST);
         }
         if (userPlantsService.findByPlantId(plantId).isEmpty()) {
-            return new ResponseEntity<>(new AppStatus(HttpStatus.BAD_REQUEST.value(), "Растение с таким id не существует"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new AppStatus(HttpStatus.BAD_REQUEST.value(),
+                    "Растение с таким id не существует"), HttpStatus.BAD_REQUEST);
         }
 
         UserPlantsShortDto userPlantsShortDto = new UserPlantsShortDto();
@@ -60,12 +62,13 @@ public class UserPlantsController {
     public ResponseEntity<?>  bannedUserPlant(@RequestParam() long userPlantId)
     {
         if (userPlantsService.findByUserPlantId(userPlantId).isEmpty()) {
-            return new ResponseEntity<>(new AppStatus(HttpStatus.BAD_REQUEST.value(), "Растение пользователя с указанным user_plant_id не существует"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new AppStatus(HttpStatus.BAD_REQUEST.value(),
+                    "Растение пользователя с указанным user_plant_id не существует"), HttpStatus.BAD_REQUEST);
         }
-        UserPlantsShortDto userPlantsShortDto = new UserPlantsShortDto();
-        userPlantsShortDto.setUserPlantId(userPlantId);
-        userPlantsService.bannedUserPlant(userPlantsShortDto);
-        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(), " is_banned инвертировано для растение c id = " + userPlantsShortDto.getPlantId() + " пользователя с id = " +  userPlantsShortDto.getUserId()), HttpStatus.OK);
+        UserPlantsDto userPlantsDto = userPlantsService.bannedUserPlant(userPlantId);
+        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(), "user_plant_id = " + userPlantsDto.getUserPlantId() +
+                " : is_banned инвертировано для растение c id = " + userPlantsDto.getPlantId() +
+                " пользователя с id = " + userPlantsDto.getUserId()), HttpStatus.OK);
 
     }
 
@@ -73,12 +76,13 @@ public class UserPlantsController {
     public ResponseEntity<?> activeUserPlant(@RequestParam() long userPlantId)
     {
         if (userPlantsService.findByUserPlantId(userPlantId).isEmpty()) {
-            return new ResponseEntity<>(new AppStatus(HttpStatus.BAD_REQUEST.value(), "Растение пользователя с указанным user_plant_ не существует"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new AppStatus(HttpStatus.BAD_REQUEST.value(),
+                    "Растение пользователя с указанным user_plant_ не существует"), HttpStatus.BAD_REQUEST);
         }
-        UserPlantsShortDto userPlantsShortDto = new UserPlantsShortDto();
-        userPlantsShortDto.setUserPlantId(userPlantId);
-        userPlantsService.activeUserPlant(userPlantsShortDto);
-        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(), "is_sctive инвертировано для растение c id = " + userPlantsShortDto.getPlantId() + " пользователя с id = " +  userPlantsShortDto.getUserId()), HttpStatus.OK);
+        UserPlantsDto userPlantsDto = userPlantsService.activeUserPlant(userPlantId);
+        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(), "user_plant_id = " + userPlantsDto.getUserPlantId() +
+                " : is_active инвертировано для растение c id = " + userPlantsDto.getPlantId() +
+                " пользователя с id = " +  userPlantsDto.getUserId()), HttpStatus.OK);
 
     }
 
