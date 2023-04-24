@@ -6,7 +6,7 @@
                 <img class="plant__photo plant__card__photo" ng-src="{{plantPhotoCurrent}}" alt="{{plant.name}}"
                      src="">
                 <button class="page__button mb-5 text text_center" ng-click="addPlantToUserList(plant.id)"
-                        ng-show="callPlace===1 && !isAdmin() && isAuthorized()">
+                        ng-show="callPlace===0 && !isAdmin() && isAuthorized()">
                     Добавить к себе
                 </button>
                 <!--                <label>-->

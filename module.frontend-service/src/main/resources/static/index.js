@@ -338,7 +338,22 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
     }
 
     plantFactoryObj.addPlantToUsersList = function (userId, plantId) {
-
+        let defer = $q.defer();
+        $http.post(settings.USER_SERVICE_PATH + '/add_user_plant',
+            {
+                params:
+                    {
+                        userId: userId,
+                        plantId: plantId
+                    }
+            }).then(
+            function successCallback(response) {
+                defer.resolve(response);
+            },
+            function errorCallback(reason) {
+                defer.reject(reason);
+            });
+        return defer.promise;
     }
 
     return plantFactoryObj;
@@ -380,14 +395,15 @@ botanicaApp
 
         $scope.showMyPlantList = function () {
             $localStorage.plantListCallPlace = 1;
-             location.assign("#!/user-plants");
-            // location.replace("#!/")
+            location.assign("#!/user-plants");
+            // location.replace("#!/user-plants")
             // location.reload();
         }
 
         $scope.home = function () {
             $localStorage.plantListCallPlace = 0;
-            location.assign("#!/");
+            location.replace("#!/");
+            location.reload();
         }
 
     })

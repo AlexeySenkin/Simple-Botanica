@@ -51,8 +51,15 @@ angular.module('Simple-Botanica-app')
         };
 
         $scope.addPlantToUserList = function (plantId) {
-
             console.log("Добавление растения " + plantId + "в список пользователя");
+            plantFactory.addPlantToUsersList($localStorage.botanicaWebUser.userId, plantId).then(
+                function successCallBack(response) {
+                    console.log(response);
+                    location.assign("#!/user-plants");
+                }, function errorCallback(reason){
+                    console.log(reason);
+                }
+            );
         };
 
         $scope.showPlantDetails = function () {
