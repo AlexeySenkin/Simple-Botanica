@@ -3,8 +3,8 @@ package ru.botanica.mappers;
 import org.springframework.stereotype.Component;
 import ru.botanica.dtos.PlantDto;
 import ru.botanica.dtos.PlantDtoShort;
-import ru.botanica.entities.PlantPhoto;
 import ru.botanica.entities.Plant;
+import ru.botanica.entities.PlantPhoto;
 
 @Component
 public final class PlantDtoMapper {
@@ -34,8 +34,9 @@ public final class PlantDtoMapper {
         plantDto.setShortDescription(plant.getShortDescription());
         plantDto.setActive(plant.isActive());
         plantDto.setFilePath(plant.getPhoto() == null ? null : plant.getPhoto().getFilePath());
-
-        plantDto.setStandardCarePlan(plant.getCares().stream().map(PlantCareDtoMapper::mapToDto).toList());
+        if (plant.getCares() != null) {
+            plantDto.setStandardCarePlan(plant.getCares().stream().map(PlantCareDtoMapper::mapToDto).toList());
+        }
         //TODO удалить код в комментарии после согласования с автором кода
 
 //        if (plant.getCares() == null || plant.getCares().isEmpty()) {
