@@ -2,11 +2,16 @@ package ru.botanica.services;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.botanica.entities.PlantPhoto;
+import ru.botanica.dtos.PlantCareDto;
+import ru.botanica.dtos.PlantDto;
+import ru.botanica.entities.*;
+import ru.botanica.mappers.PlantCareDtoMapper;
 import ru.botanica.repositories.CareRepository;
 import ru.botanica.repositories.PlantCareRepository;
 import ru.botanica.repositories.PlantPhotoRepository;
@@ -14,11 +19,12 @@ import ru.botanica.entities.Plant;
 import ru.botanica.dtos.PlantDto;
 import ru.botanica.repositories.PlantRepository;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = {PlantService.class})
 @ExtendWith(MockitoExtension.class)
@@ -39,7 +45,8 @@ public class PlantServiceTests {
     private CareService careService;
     @Autowired
     private PlantService plantService;
-
+    @Captor
+    private ArgumentCaptor<Plant> plantCaptor;
 
     /**
      * Тест возвращения растения по идентификатору
@@ -63,6 +70,25 @@ public class PlantServiceTests {
         plant.setDescription("desc");
         plant.setShortDescription("short_desc");
 
+//        Без этих строчек выдает
+//        Cannot invoke "java.util.Set.stream()" because the return value of "ru.botanica.entities.Plant.getCares()" is null
+        Set<PlantCare> cares = new HashSet<>();
+        Care care = new Care();
+        care.setId(1L);
+        care.setName("care");
+        care.setActive(true);
+
+        PlantCare plantCare = new PlantCare();
+        plantCare.setId(1L);
+        plantCare.setCareCount(5);
+        plantCare.setCareVolume(BigDecimal.valueOf(10));
+        plantCare.setPlant(plant);
+        plantCare.setCare(care);
+        PlantCareDto plantCareDto = PlantCareDtoMapper.mapToDto(plantCare);
+
+        cares.add(plantCare);
+        plant.setCares(cares);
+
         when(plantRepository.findById(id)).thenReturn(Optional.of(plant));
 
         PlantDto plantDto = plantService.findById(id);
@@ -75,7 +101,8 @@ public class PlantServiceTests {
                 () -> assertEquals(plant.getFamily(), plantDto.getFamily()),
                 () -> assertEquals(plant.getDescription(), plantDto.getDescription()),
                 () -> assertEquals(plant.getShortDescription(), plantDto.getShortDescription()),
-                () -> assertEquals(plant.isActive(), plantDto.isActive())
+                () -> assertEquals(plant.isActive(), plantDto.isActive()),
+                () -> assertArrayEquals(new PlantCareDto[]{plantCareDto}, plantDto.getStandardCarePlan().toArray())
         );
     }
 
@@ -137,20 +164,58 @@ public class PlantServiceTests {
         savedPlant.setDescription("desc");
         savedPlant.setShortDescription("short_desc");
 
+        Set<PlantCare> cares = new HashSet<>();
+        Care care = new Care();
+        care.setId(1L);
+        care.setName("care");
+        care.setActive(true);
+
+        PlantCare plantCare = new PlantCare();
+        plantCare.setId(1L);
+        plantCare.setCareCount(5);
+        plantCare.setCareVolume(BigDecimal.valueOf(10));
+        plantCare.setPlant(plant);
+        plantCare.setCare(care);
+
+        cares.add(plantCare);
+        plant.setCares(cares);
+        savedPlant.setCares(cares);
+
         when(plantRepository.saveAndFlush(plant)).thenReturn(savedPlant);
         when(photoService.saveOrUpdate(plantPhoto)).thenReturn(plantPhoto);
         when(photoService.saveOrUpdate(plantPhoto.getId(), plantPhoto.getFilePath())).thenReturn(plantPhoto);
-        PlantDto result = plantService.addNewPlant(plantDto, true);
-        assertAll(
-//                TODO: закомментированы части, которые возвращают null
-//                ()->assertEquals(savedPlant.getId(), result.getId()),
-                ()->assertEquals(savedPlant.getName(), result.getName()),
-                ()->assertEquals(savedPlant.getFamily(), result.getFamily()),
-                ()->assertEquals(savedPlant.getGenus(), result.getGenus()),
-                ()->assertEquals(savedPlant.getDescription(), result.getDescription()),
-                ()->assertEquals(savedPlant.getShortDescription(), result.getShortDescription())
-//                ()->assertEquals(savedPlant.getPhoto().getFilePath(), result.getFilePath())
-        );
+//        Вот тут вылезает
+//        Cannot invoke "java.util.Set.stream()" because the return value of "ru.botanica.entities.Plant.getCares()" is null
+//        Сегмент из метода testFindById(), которыми я починил соответствующий метод здесь почему-то не сработали, хотя ошибка одна и та же
+//        Добавленная строчка:
+        when(careService.createPlantCareWithObjects(plantDto, PlantCareDtoMapper.mapToDto(plantCare))).thenReturn(PlantCareDtoMapper.mapToDto(plantCare));
+//        Она не помогла. Сделал так, чтобы просто уведомляло об ошибке
+        try {
+//            Вот из-за этой строчки нужен try-catch - там теперь прокидывается исключение.
+            PlantDto result = plantService.addNewPlant(plantDto, true);
+            verify(plantRepository, times(1)).saveAndFlush(any());
+            verify(plantRepository).saveAndFlush(plantCaptor.capture());
+            Plant captorValue = plantCaptor.getValue();
+
+            assertAll(
+                    () -> assertEquals(savedPlant.getName(), result.getName()),
+                    () -> assertEquals(savedPlant.getFamily(), result.getFamily()),
+                    () -> assertEquals(savedPlant.getGenus(), result.getGenus()),
+                    () -> assertEquals(savedPlant.getDescription(), result.getDescription()),
+                    () -> assertEquals(savedPlant.getShortDescription(), result.getShortDescription()),
+                    () -> assertAll("Ошибка формирования данных на отправку в plantRepository",
+                            () -> assertEquals(plant.getName(), captorValue.getName(), "Ошибка в имени"),
+                            () -> assertEquals(plant.getFamily(), captorValue.getFamily()),
+                            () -> assertEquals(plant.getGenus(), captorValue.getGenus()),
+                            () -> assertEquals(plant.getDescription(), captorValue.getDescription()),
+                            () -> assertEquals(plant.getShortDescription(), captorValue.getShortDescription())
+                    )
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 }

@@ -41,8 +41,12 @@
         <!--        меню        -->
         <header class="main__menu">
             <div>
-                <a class="menu__item__button text" href="index.html">
+                <a class="menu__item__button text" ng-click="home()">
                     Главная
+                </a>
+                <a class="menu__item__button text" href="" ng-show="isUserLoggedIn() && !isAdmin()"
+                   ng-click="showMyPlantList()">
+                    Мои растения
                 </a>
             </div>
             <div>

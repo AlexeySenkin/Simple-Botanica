@@ -6,15 +6,56 @@
                 <img class="plant__photo plant__card__photo" ng-src="{{plantPhotoCurrent}}" alt="{{plant.name}}"
                      src="">
                 <button class="page__button mb-5 text text_center" ng-click="addPlantToUserList(plant.id)"
-                        ng-show="callPlace===1 && !isAdmin()">
+                        ng-show="callPlace===0 && !isAdmin() && isAuthorized()">
                     Добавить к себе
                 </button>
-                <button class="page__button mb-5 text text_center" ng-click="addPlantPhoto()"
-                        ng-show="isAdmin()">
-                    Загрузить фото
-                </button>
-<!--                callPlace===2-->
-                <div class="care__actions__container" ng-show="true">
+                <!--                <label>-->
+                <input class="page__button mb-5 text text_center" type="file"
+                       ng-click="addPlantPhoto()" ng-show="isAdmin()">
+                <!--                    интервал: </label>-->
+                <!--                <button class="page__button mb-5 text text_center" ng-click="addPlantPhoto()"-->
+                <!--                        ng-show="isAdmin()">-->
+                <!--                    Загрузить фото-->
+                <!--                </button>-->
+                <!--перечень ухода за растением, если карточка открыта не администратором из базы знаний о растениях-->
+                <div class="care__actions__container" ng-show="callPlace===0 && !isAdmin()">
+                    <div ng-repeat="care in actualCare">
+                        <div class="plant__edit__info__row">
+                            <p class="text plant__info__label plant__care__header">
+                                {{care.careDto.name}}:</p>
+                            <p class="text mr-5"> 1 раз в {{care.careCount}} дней</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!--элементы управления для внесения ухода растению администратором-->
+                <div class="care__actions__container" ng-show="isAdmin()">
+                    <div class="grid__container" ng-repeat="care in careDictionary">
+                        <label class="text plant__info__label plant__care__label">
+                            <input class="plant__care__checkbox" type="checkbox" name="carePlan"
+                                   value="{{care.id}}"
+                                   id="careAction-{{care.id}}"
+                                   ng-click="careSelect(care.id)"
+                                   ng-checked="toCheck(care.id)" onchange=""> {{care.name}}
+                        </label>
+<!--                        value="{{care.interval}}"-->
+                        <label class="text plant__info__label">
+                            интервал:
+                            <input class="page__input plant__care__interval__input" type="number"
+                                   name="careInterval" id="careInterval-{{care.id}}"
+
+                                   ng-model="care.interval"
+                                   ng-disabled="!enableCareIntervalInput(care.id)"> дней </label>
+                    </div>
+<!--                    <button class="page__button mb-5 text text_center" ng-click="showInterval()">-->
+<!--                        test-->
+<!--                    </button>-->
+
+                </div>
+
+                <!--кнопки ухода за растением показываются только если карточка открыта авторизованным пользователем
+                    из списка растений пользователя-->
+                <div class="care__action__buttons__container" ng-show="callPlace===1 && !isAdmin() && isAuthorized()">
                     <div ng-repeat="bt in actionButtons">
                         <button class="care__button text">
                             <img class="bi__care__icon" ng-src="{{bt.img}}" ng-click="careAction(bt.id)" alt="2"

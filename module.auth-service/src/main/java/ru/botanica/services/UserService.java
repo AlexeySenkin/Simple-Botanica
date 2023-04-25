@@ -1,6 +1,8 @@
 package ru.botanica.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.botanica.dto.UserDto;
 import ru.botanica.entities.Role;
 import ru.botanica.entities.User;
+import ru.botanica.integrations.UserServiceIntegration;
 import ru.botanica.repositories.UserRepository;
 import java.util.Collection;
 import java.util.List;
@@ -20,10 +23,12 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
+    private final UserServiceIntegration userService;
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
@@ -53,6 +58,12 @@ public class UserService implements UserDetailsService {
         user.setIsActive(true);
         user.setRoles(List.of(role));
         userRepository.save(user);
+
+        ResponseEntity<?> response = userService.registerUser(userDto.getUsername(), null);
+        log.debug(response.toString());
+        if (response.getStatusCode().is2xxSuccessful()) {
+            log.debug("response status: OK");
+        }
     }
     @Transactional
     public void activeUser(UserDto userDto){
@@ -73,6 +84,8 @@ public class UserService implements UserDetailsService {
         User user = findByUsername(userDto.getUsername()).orElseThrow(() -> new UsernameNotFoundException(String.format("User '%s' not found", userDto.getUsername())));
         userRepository.delete(user);
     }
+
+
 
 
 

@@ -42,8 +42,8 @@ public class UserServiceTests {
         user.setPhoneNumber("phone");
         user.setAddress("address");
         user.setRegDate(Date.valueOf(LocalDate.of(2020, Month.JANUARY, 1)));
-        user.setIsBanned(0);
-        user.setIsActive(1);
+        user.setIsBanned(false);
+        user.setIsActive(true);
         user.setUserName("user_name");
     }
 

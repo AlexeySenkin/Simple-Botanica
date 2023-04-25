@@ -34,6 +34,10 @@ public class Plant {
     @Column(nullable = false, name = "is_active")
     private boolean isActive;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @PrimaryKeyJoinColumn
+    private PlantPhoto photo;
+
     @Override
     public String toString() {
         return "Plant{" +

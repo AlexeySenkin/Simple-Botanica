@@ -14,17 +14,19 @@ public class UserPlantsDtoMapper {
 
         dto.setUserPlantId(userPlant.getUserPlantId());
 
-        dto.setUserId(userPlant.getUserId());
-
         dto.setPlantId(userPlant.getPlantId());
 
-        dto.setIsBanned(userPlant.getIsBanned());
+        dto.setName(userPlant.getPlant().getName());
 
-        dto.setIsActive(userPlant.getIsActive());
+        dto.setFamily(userPlant.getPlant().getFamily());
 
-        dto.setPlant(userPlant.getPlant());
+        dto.setGenus(userPlant.getPlant().getGenus());
 
-        dto.setUserCare(userPlant.getUserCare());
+        dto.setDescription(userPlant.getPlant().getDescription());
+
+        dto.setShortDescription(userPlant.getPlant().getShortDescription());
+
+        dto.setFilePath(userPlant.getPlant().getPhoto().getFilePath());
 
         dto.setUserCareCustom(userPlant.getUserCareCustom());
 

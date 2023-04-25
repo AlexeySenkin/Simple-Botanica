@@ -15,7 +15,10 @@ angular.module('Simple-Botanica-app')
             }
         }
 
-
+        $scope.showMyPlants = function(){
+            $localStorage.plantListCallPlace = 2;
+            location.assign("#!/");
+        }
         $scope.getUserData();
 
     })
