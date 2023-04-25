@@ -67,7 +67,7 @@ public class PlantController {
              * Если растение не существует
              */
             log.error("Растения не существует, id: {}", id);
-            log.error("{}", plantDto.toString());
+            log.error(plantDto.toString());
             return new ResponseEntity<>(new AppResponse(HttpStatus.BAD_REQUEST.value(),
                     "Растение не существует, id- " + id), HttpStatus.BAD_REQUEST);
         } else {
