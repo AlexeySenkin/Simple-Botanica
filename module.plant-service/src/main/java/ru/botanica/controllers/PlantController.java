@@ -74,7 +74,7 @@ public class PlantController {
             } catch (Exception e) {
 //                Неудачное обновление
                 log.error("Сервер не смог обновить растение с id {}", id);
-                log.error("{}", plantDto.toString());
+                log.error(plantDto.toString());
                 return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
                         "Сервер не смог обновить растение с id " + id), HttpStatus.UNPROCESSABLE_ENTITY);
             }
