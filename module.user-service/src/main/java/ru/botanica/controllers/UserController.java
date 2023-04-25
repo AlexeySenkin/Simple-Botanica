@@ -2,7 +2,6 @@ package ru.botanica.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +44,22 @@ public class UserController {
             return ResponseEntity.ok().body(userService.findIdByUserName(userName));
         } catch (Exception e) {
             log.error("Ошибка идентификатора пользователя по имени: {}", userName);
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    /**
+     * Возвращает список всех пользователей
+     *
+     * @return Список пользователей
+     */
+    @GetMapping("/users")
+    public ResponseEntity<?> findAll() {
+        try {
+            log.debug("Получение всех пользователей");
+            return ResponseEntity.ok().body(userService.findAll());
+        } catch (Exception e) {
+            log.error("Ошибка получения всех пользователей");
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

@@ -9,6 +9,8 @@ import ru.botanica.entities.User;
 import ru.botanica.repositories.UserRepository;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +38,14 @@ public class UserService {
         return userRepository.findIdByUserName(userName);
     }
 
+    /**
+     * Возвращает список всех пользователей
+     *
+     * @return Список пользователей
+     */
+    public List<UserDto> findAll() {
+        return userRepository.findAll().stream().map(UserDtoMapper::mapToDto).collect(Collectors.toList());
+    }
 
     public void registerNewUser(String userName, String email){
         User user = new User();
