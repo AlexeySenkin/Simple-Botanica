@@ -74,7 +74,7 @@ public class PlantController {
             } catch (Exception e) {
 //                Неудачное обновление
                 log.error("Сервер не смог обновить растение с id {}", id);
-                log.error("{}", plantDto.toString());
+                log.error(plantDto.toString());
                 return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
                         "Сервер не смог обновить растение с id " + id), HttpStatus.UNPROCESSABLE_ENTITY);
             }
@@ -98,7 +98,7 @@ public class PlantController {
         if (plantService.findByName(plantDto.getName()).isPresent() && !isOverwriting) {
 //            Если растение существует и его нельзя перезаписывать
             log.warn("Растение с именем {} уже существует и его нельзя перезаписать", plantDto.getName());
-            log.error("{}", plantDto.toString());
+            log.error(plantDto.toString());
             return new ResponseEntity<>(new AppResponse(HttpStatus.BAD_REQUEST.value(),
                     "Растение с таким именем существует"), HttpStatus.BAD_REQUEST);
         } else {
@@ -107,7 +107,7 @@ public class PlantController {
             } catch (Exception e) {
 //                Неудачное сохранение растения
                 log.error("Сервер не смог сохранить растение с именем: {}", plantDto.getName());
-                log.error("{}", plantDto.toString());
+                log.error(plantDto.toString());
                 return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
                         "Сервер не смог добавить растение"), HttpStatus.UNPROCESSABLE_ENTITY);
             }
