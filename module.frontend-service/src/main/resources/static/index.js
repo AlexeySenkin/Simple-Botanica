@@ -327,6 +327,7 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
             let getPath = settings.USER_SERVICE_PATH + '/user_plants';
             $http.get(getPath, {params: {userId: userId, page: page, size: size}}).then(
                 function successCallback(response) {
+                    console.log(response);
                     defer.resolve(response);
                 },
                 function errorCallback(reason) {
@@ -339,14 +340,8 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
 
     plantFactoryObj.addPlantToUsersList = function (userId, plantId) {
         let defer = $q.defer();
-        $http.post(settings.USER_SERVICE_PATH + '/add_user_plant',
-            {
-                params:
-                    {
-                        userId: userId,
-                        plantId: plantId
-                    }
-            }).then(
+        $http.post(settings.USER_SERVICE_PATH + '/add_user_plant?userId='+userId+'&plantId='+plantId).then(
+        ).then(
             function successCallback(response) {
                 defer.resolve(response);
             },

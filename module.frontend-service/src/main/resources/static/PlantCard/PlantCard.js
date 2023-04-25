@@ -56,7 +56,7 @@ angular.module('Simple-Botanica-app')
                 function successCallBack(response) {
                     console.log(response);
                     location.assign("#!/user-plants");
-                }, function errorCallback(reason){
+                }, function errorCallback(reason) {
                     console.log(reason);
                 }
             );
@@ -84,14 +84,15 @@ angular.module('Simple-Botanica-app')
 
         let updateCareWithActualPlan = function (careDictionary, actualCarePlan) {
             let newCareDictionaryWithActualIntervals = [];
-
             for (let i = 0; i < careDictionary.length; i++) {
                 let interval = null;
                 let care = careDictionary[i];
-                for (let j = 0; j < actualCarePlan.length; j++) {
-                    if (careDictionary[i].id === actualCarePlan[j].careDto.id) {
-                        interval = actualCarePlan[j].careCount;
-                        break;
+                if (actualCarePlan) {
+                    for (let j = 0; j < actualCarePlan.length; j++) {
+                        if (careDictionary[i].id === actualCarePlan[j].careDto.id) {
+                            interval = actualCarePlan[j].careCount;
+                            break;
+                        }
                     }
                 }
                 care.interval = interval;
@@ -181,9 +182,11 @@ angular.module('Simple-Botanica-app')
 
         $scope.toCheck = function (careId) {
             let actualCare = $scope.actualCare
-            for (let i = 0; i < actualCare.length; i++) {
-                if (actualCare[i].careDto.id === careId) {
-                    return true;
+            if (actualCare) {
+                for (let i = 0; i < actualCare.length; i++) {
+                    if (actualCare[i].careDto.id === careId) {
+                        return true;
+                    }
                 }
             }
             return false;
