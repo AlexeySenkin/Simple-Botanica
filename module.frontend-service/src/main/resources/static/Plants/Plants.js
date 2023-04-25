@@ -10,10 +10,11 @@ angular.module('Simple-Botanica-app')
             //     plantListCallMode = 1;
             // }
 
-            console.log("$localStorage.plantListCallPlace = " + $localStorage.plantListCallPlace)
-
-            console.log("plantListCallMode from Plants.js = " + plantListCallMode);
-            plantFactory.getAllPlants($localStorage.botanicaWebUser.userId, $scope.plantNameFilter, $scope.currentPage, 8, plantListCallMode)
+            let userId = null;
+            if ($localStorage.botanicaWebUser) {
+                userId = $localStorage.botanicaWebUser.userId;
+            }
+            plantFactory.getAllPlants(userId, $scope.plantNameFilter, $scope.currentPage, 8, plantListCallMode)
                 .then(function successCallback(response) {
                         // console.log("get all plants")
                         $scope.plantsPage = response.data.content;
