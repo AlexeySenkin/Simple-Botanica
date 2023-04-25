@@ -1,8 +1,6 @@
 package ru.botanica.dto;
 
 import lombok.Data;
-import ru.botanica.entities.Plant;
-import ru.botanica.entities.UserCare;
 import ru.botanica.entities.UserCareCustom;
 
 import java.util.Collection;
@@ -12,18 +10,21 @@ public class UserPlantsDto {
 
     private Long userPlantId;
 
-    private Long userId;
-
     private Long plantId;
 
-    private Boolean isBanned;
+    private String name;
 
-    private Boolean isActive;
+    private String family;
 
-    private Plant plant;
+    private String genus;
+
+    private String description;
+
+    private String shortDescription;
+
+    private String filePath;
 
     private Collection<UserCareCustom> userCareCustom;
 
-    private Collection<UserCare> userCare;
 
 }

@@ -7,10 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.botanica.dto.UserPlantsDtoMapper;
-import ru.botanica.dto.UserPlantsDto;
+import ru.botanica.dto.*;
 
-import ru.botanica.dto.UserPlantsShortDto;
 import ru.botanica.entities.Plant;
 import ru.botanica.entities.UserPlant;
 import ru.botanica.repositories.PlantRepository;
@@ -27,7 +25,15 @@ public class UserPlantsService {
 
     private final PlantRepository plantRepository;
 
-    public Page<UserPlantsDto> findAllByUserId(long userId, Pageable pageable) {
+    public Page<UserPlantsFullDto> findFullByUserId(long userId, Pageable pageable) {
+        Specification<UserPlant> specification = Specification.where(null);
+        specification = specification
+                .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("userId"), userId))
+                .and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("isActive"), 1));
+        return userPlantsRepository.findAll(specification, pageable).map(UserPlantsFullDtoMapper::mapToDto);
+    }
+
+    public Page<UserPlantsDto> findByUserId(long userId, Pageable pageable) {
         Specification<UserPlant> specification = Specification.where(null);
         specification = specification
                 .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("userId"), userId))
@@ -54,18 +60,18 @@ public class UserPlantsService {
     }
 
     @Transactional
-    public UserPlantsDto activeUserPlant(long userPlantsId){
+    public UserPlantsFullDto activeUserPlant(long userPlantsId){
         UserPlant userPlant = userPlantsRepository.findByUserPlantId(userPlantsId).orElseThrow();
         userPlant.setIsActive(!userPlant.getIsActive());
         userPlantsRepository.save(userPlant);
-        return UserPlantsDtoMapper.mapToDto(userPlant);
+        return UserPlantsFullDtoMapper.mapToDto(userPlant);
     }
 
     @Transactional
-    public UserPlantsDto bannedUserPlant(long userPlantsId){
+    public UserPlantsFullDto bannedUserPlant(long userPlantsId){
         UserPlant userPlant = userPlantsRepository.findByUserPlantId(userPlantsId).orElseThrow();
         userPlant.setIsBanned(!userPlant.getIsBanned());
         userPlantsRepository.save(userPlant);
-        return UserPlantsDtoMapper.mapToDto(userPlant);
+        return UserPlantsFullDtoMapper.mapToDto(userPlant);
     }
 }

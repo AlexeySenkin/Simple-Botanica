@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.botanica.dto.AppStatus;
 import ru.botanica.dto.UserPlantsDto;
+import ru.botanica.dto.UserPlantsFullDto;
 import ru.botanica.dto.UserPlantsShortDto;
 import ru.botanica.services.UserPlantsService;
 import ru.botanica.services.UserService;
@@ -25,16 +26,23 @@ public class UserPlantsController {
 
     private final UserService userService;
 
-    @GetMapping("/user_plants")
-    public Page<UserPlantsDto> findUserPlantsByUserId(@RequestParam() int userId,
-                                                      @RequestParam(required = false, defaultValue = "1") int page,
-                                                      @RequestParam(required = false, defaultValue = "8") int size
+    @GetMapping("/user_plants_full")
+    public Page<UserPlantsFullDto> findUserPlantsFullByUserId(@RequestParam() int userId,
+                                                          @RequestParam(required = false, defaultValue = "1") int page,
+                                                          @RequestParam(required = false, defaultValue = "8") int size
     )
-    // @PathVariable long id)
     {
-        return userPlantsService.findAllByUserId(userId, PageRequest.of(page - 1, size));
+        return userPlantsService.findFullByUserId(userId, PageRequest.of(page - 1, size));
     }
 
+    @GetMapping("/user_plants")
+    public Page<UserPlantsDto> findUserPlantsByUserId(@RequestParam() int userId,
+                                                              @RequestParam(required = false, defaultValue = "1") int page,
+                                                              @RequestParam(required = false, defaultValue = "8") int size
+    )
+    {
+        return userPlantsService.findByUserId(userId, PageRequest.of(page - 1, size));
+    }
 
     @PostMapping("/add_user_plant")
     public ResponseEntity<?> addUserPlant(@RequestParam() long userId,
@@ -65,10 +73,10 @@ public class UserPlantsController {
             return new ResponseEntity<>(new AppStatus(HttpStatus.BAD_REQUEST.value(),
                     "Растение пользователя с указанным user_plant_id не существует"), HttpStatus.BAD_REQUEST);
         }
-        UserPlantsDto userPlantsDto = userPlantsService.bannedUserPlant(userPlantId);
-        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(), "user_plant_id = " + userPlantsDto.getUserPlantId() +
-                " : is_banned инвертировано для растение c id = " + userPlantsDto.getPlantId() +
-                " пользователя с id = " + userPlantsDto.getUserId()), HttpStatus.OK);
+        UserPlantsFullDto userPlantsFullDto = userPlantsService.bannedUserPlant(userPlantId);
+        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(), "user_plant_id = " + userPlantsFullDto.getUserPlantId() +
+                " : is_banned инвертировано для растение c id = " + userPlantsFullDto.getPlantId() +
+                " пользователя с id = " + userPlantsFullDto.getUserId()), HttpStatus.OK);
 
     }
 
@@ -79,10 +87,10 @@ public class UserPlantsController {
             return new ResponseEntity<>(new AppStatus(HttpStatus.BAD_REQUEST.value(),
                     "Растение пользователя с указанным user_plant_ не существует"), HttpStatus.BAD_REQUEST);
         }
-        UserPlantsDto userPlantsDto = userPlantsService.activeUserPlant(userPlantId);
-        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(), "user_plant_id = " + userPlantsDto.getUserPlantId() +
-                " : is_active инвертировано для растение c id = " + userPlantsDto.getPlantId() +
-                " пользователя с id = " +  userPlantsDto.getUserId()), HttpStatus.OK);
+        UserPlantsFullDto userPlantsFullDto = userPlantsService.activeUserPlant(userPlantId);
+        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(), "user_plant_id = " + userPlantsFullDto.getUserPlantId() +
+                " : is_active инвертировано для растение c id = " + userPlantsFullDto.getPlantId() +
+                " пользователя с id = " +  userPlantsFullDto.getUserId()), HttpStatus.OK);
 
     }
 
