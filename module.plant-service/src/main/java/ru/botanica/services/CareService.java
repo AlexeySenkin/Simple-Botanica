@@ -13,10 +13,13 @@ import ru.botanica.entities.PlantCare;
 import ru.botanica.dtos.PlantCareDto;
 import ru.botanica.mappers.PlantCareDtoMapper;
 import ru.botanica.dtos.PlantDto;
+import ru.botanica.mappers.PlantDtoMapper;
 import ru.botanica.repositories.CareRepository;
 import ru.botanica.repositories.PlantCareRepository;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Service
@@ -62,16 +65,33 @@ public class CareService {
     }
 
     /**
-     * Создает процедуру ухода, привязанную к конкретному растению
+     * Создает список ухода для добавления Entity растения
      *
-     * @param plantDto     Дто растения, к которому привязывается процедура ухода
-     * @param plantCareDto Дто, уточняющее детали процедуры(количество, объем)
-     * @return Дто процедуры, записанной в БД
+     * @param standardCarePlan Список Dto-процедур для конвертации
+     * @param plantDto         Растение
+     * @return Список ухода для Entity
      */
-    public PlantCareDto createPlantCareWithObjects(PlantDto plantDto, PlantCareDto plantCareDto) {
-        PlantCare plantCare = PlantCareDtoMapper.mapToEntity(plantCareDto, plantDto);
-        PlantCare result = plantCareRepository.saveAndFlush(plantCare);
-        return PlantCareDtoMapper.mapToDto(result);
+    public Set<PlantCare> addAllCaresToPlant(List<PlantCareDto> standardCarePlan, PlantDto plantDto) {
+        Set<PlantCare> resultCarePlan = new HashSet<>();
+        for (PlantCareDto plantCareDto : standardCarePlan) {
+            PlantCare plantCare = new PlantCare();
+            plantCare.setCare(CareDtoMapper.mapToEntity(plantCareDto.getCareDto()));
+            plantCare.setCareCount(plantCareDto.getCareCount());
+            plantCare.setCareVolume(plantCareDto.getCareVolume());
+            plantCare.setPlant(PlantDtoMapper.mapToEntity(plantDto));
+            resultCarePlan.add(createPlantCare(plantCare));
+        }
+        return resultCarePlan;
+    }
+
+    /**
+     * Создает процедуру ухода, привязанную к растению
+     *
+     * @param plantCare процедура для добавления
+     * @return Созданную процедуру
+     */
+    private PlantCare createPlantCare(PlantCare plantCare) {
+        return plantCareRepository.saveAndFlush(plantCare);
     }
 
     /**

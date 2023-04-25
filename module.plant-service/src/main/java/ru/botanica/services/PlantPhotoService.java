@@ -28,7 +28,7 @@ public class PlantPhotoService {
     /**
      * Сохраняет фото в БД
      *
-     * @param plantId идентификатор растения
+     * @param plantId  идентификатор растения
      * @param filePath путь к фото
      * @return фото из БД
      */
@@ -36,7 +36,7 @@ public class PlantPhotoService {
         PlantPhoto plantPhoto = new PlantPhoto();
         plantPhoto.setId(plantId);
         Optional<PlantPhoto> photoById = getByPlantId(plantId);
-        if (photoById.isPresent() && photoById.get().getFilePath().equals(filePath)){
+        if (photoById.isPresent() && photoById.get().getFilePath().equals(filePath)) {
             /**
              * Возвращает уже существующее фото при существовании такой же фотографии для растения в БД
              */
@@ -67,6 +67,17 @@ public class PlantPhotoService {
         }
         log.error("Неожиданная необработанная ошибка, filePath= {}, id= {}", filePath, plantId);
         plantPhoto.setFilePath(filePath);
+        return null;
+    }
+
+    public PlantPhoto createPhoto(String filePath, Long id) {
+        if (isPathAvailable(id, filePath)) {
+            return new PlantPhoto(filePath, id);
+        }
+        Optional<PlantPhoto> byPlantId = getByPlantId(id);
+        if (byPlantId.isPresent()) {
+            return byPlantId.get();
+        }
         return null;
     }
 

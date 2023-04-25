@@ -16,12 +16,10 @@ import ru.botanica.repositories.CareRepository;
 import ru.botanica.repositories.PlantCareRepository;
 import ru.botanica.repositories.PlantPhotoRepository;
 import ru.botanica.entities.Plant;
-import ru.botanica.dtos.PlantDto;
 import ru.botanica.repositories.PlantRepository;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -183,12 +181,12 @@ public class PlantServiceTests {
 
         when(plantRepository.saveAndFlush(plant)).thenReturn(savedPlant);
         when(photoService.saveOrUpdate(plantPhoto)).thenReturn(plantPhoto);
-        when(photoService.saveOrUpdate(plantPhoto.getId(), plantPhoto.getFilePath())).thenReturn(plantPhoto);
+        when(photoService.createPhoto(plantDto.getFilePath(), plantDto.getId())).thenReturn(plantPhoto);
 //        Вот тут вылезает
 //        Cannot invoke "java.util.Set.stream()" because the return value of "ru.botanica.entities.Plant.getCares()" is null
 //        Сегмент из метода testFindById(), которыми я починил соответствующий метод здесь почему-то не сработали, хотя ошибка одна и та же
 //        Добавленная строчка:
-        when(careService.createPlantCareWithObjects(plantDto, PlantCareDtoMapper.mapToDto(plantCare))).thenReturn(PlantCareDtoMapper.mapToDto(plantCare));
+        when(careService.addAllCaresToPlant(plantDto.getStandardCarePlan(), plantDto)).thenReturn(cares);
 //        Она не помогла. Сделал так, чтобы просто уведомляло об ошибке
         try {
 //            Вот из-за этой строчки нужен try-catch - там теперь прокидывается исключение.

@@ -67,33 +67,18 @@ public class PlantController {
              * Если растение не существует
              */
             log.error("Растения не существует, id: {}", id);
+            log.error("{}", plantDto.toString());
             return new ResponseEntity<>(new AppResponse(HttpStatus.BAD_REQUEST.value(),
                     "Растение не существует, id- " + id), HttpStatus.BAD_REQUEST);
         } else {
             try {
-                PlantDto saveResult = plantService.updatePlant(plantDto);
-                /**
-                 * Пытается записать действия для растения, если не выходит - уведомляет сервер
-                 */
-                try {
-                    plantService.addPhotoToPlant(saveResult, plantDto.getFilePath());
-                } catch (Exception e) {
-                    log.error("Сервер не смог обновить фото для растения с id {}", id);
-                    return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                            "Сервер не смог обновить фото для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
-                }
-                try {
-                    plantService.addCaresWithObjects(saveResult, plantDto.getStandardCarePlan());
-                } catch (Exception e) {
-                    log.error("Сервер не смог обновить действия для растения с id {}", id);
-                    return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                            "Сервер не смог обновить процедуры для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
-                }
+                plantService.updatePlant(plantDto);
             } catch (Exception e) {
                 /**
                  * Неудачное обновление
                  */
                 log.error("Сервер не смог обновить растение с id {}", id);
+                log.error("{}", plantDto.toString());
                 return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
                         "Сервер не смог обновить растение с id " + id), HttpStatus.UNPROCESSABLE_ENTITY);
             }
@@ -128,27 +113,7 @@ public class PlantController {
 //          TODO:  Пока нет обработчика ошибок, это самый короткий способ заставить бэк уведомлять фронт о
 //           ошибках на разных шагах сохранения. Монструозно. Сделать обработчик, затем избавиться от этого
             try {
-                PlantDto saveResult = plantService.addNewPlant(plantDto, isOverwriting);
-                try {
-                    plantService.addPhotoToPlant(saveResult, plantDto.getFilePath());
-                } catch (Exception e) {
-                    /**
-                     * Сохранить фото для растения не вышло
-                     */
-                    log.error("Сервер не смог сохранить фото для растения с id {}", saveResult.getId());
-                    return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                            "Сервер не смог сохранить фото для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
-                }
-                try {
-                    plantService.addCaresWithObjects(saveResult, plantDto.getStandardCarePlan());
-                } catch (Exception e) {
-                    /**
-                     * Сохранить процедуры для растения не вышло
-                     */
-                    log.error("Сервер не смог записать действия для растения с id {}", saveResult.getId());
-                    return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                            "Сервер не смог сохранить процедуры для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
-                }
+                plantService.addNewPlant(plantDto, isOverwriting);
             } catch (Exception e) {
                 /**
                  * Неудачное сохранение растения
@@ -161,9 +126,7 @@ public class PlantController {
             /**
              * Удачное сохранение
              */
-            log.debug("Растение сохранено, имя: {}", plantDto.getName());
-            log.debug("{}", new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
-                    "Растение создано, имя: " + plantDto.getName()), HttpStatus.OK));
+            log.debug("Растение создано, имя: {}", plantDto.getName());
             return new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
                     "Растение создано, имя: " + plantDto.getName()), HttpStatus.OK);
         }
