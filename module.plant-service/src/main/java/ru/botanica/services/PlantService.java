@@ -17,8 +17,7 @@ import ru.botanica.entities.PlantSpecifications;
 import ru.botanica.mappers.PlantDtoMapper;
 import ru.botanica.repositories.PlantRepository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -98,7 +97,7 @@ public class PlantService {
                 .withIsActive(plantDto.isActive())
                 .build();
         plantRepository.saveAndFlush(plant);
-        return PlantDtoMapper.mapToDto(plant);
+        return PlantDtoMapper.mapToDto(addAllOptionsToPlant(plantDto, plant));
     }
 
     /**
@@ -112,8 +111,9 @@ public class PlantService {
     @Transactional
     public PlantDto addNewPlant(PlantDto plantDto, boolean isOverwriting) throws Exception {
         boolean existsByName = plantRepository.existsByName(plantDto.getName());
+        Plant plant;
         if (!existsByName) {
-            Plant plant = plantBuilder
+            plant = plantBuilder
                     .withName(plantDto.getName())
                     .withFamily(plantDto.getFamily())
                     .withGenus(plantDto.getGenus())
@@ -122,9 +122,8 @@ public class PlantService {
                     .withIsActive(true)
                     .build();
             plantRepository.saveAndFlush(plant);
-            return PlantDtoMapper.mapToDto(plant);
         } else if (isOverwriting) {
-            Plant plant = plantBuilder
+            plant = plantBuilder
                     .withId(findByName(plantDto.getName()).orElseThrow().getId())
                     .withName(plantDto.getName())
                     .withFamily(plantDto.getFamily())
@@ -134,54 +133,36 @@ public class PlantService {
                     .withIsActive(true)
                     .build();
             plantRepository.saveAndFlush(plant);
-            return PlantDtoMapper.mapToDto(plant);
         } else {
-            throw new Exception();
+            throw new Exception("Не удалось сохранить растение: " + plantDto.toString());
         }
+
+        return PlantDtoMapper.mapToDto(addAllOptionsToPlant(plantDto, plant));
     }
 
     /**
-     * Добавляет указанный путь к указанному растению в БД
+     * Добавляет фото и план ухода к растению, если соответствующие данные присутствуют
      *
-     * @param plantDto растение, к которому приписывается путь
-     * @param filePath путь к фото
-     * @return Dto полученного растения
+     * @param plantDto Переданная Dto
+     * @param plant    Сохраненная Entity
+     * @return Растение с новыми данными
      */
-    @Transactional
-    public PlantDto addPhotoToPlant(PlantDto plantDto, String filePath) {
-        if (isPhotoPathAvailable(filePath)) {
-            plantDto.setFilePath(plantPhotoService.saveOrUpdate(plantDto.getId(), filePath).getFilePath());
-            return plantDto;
+    private Plant addAllOptionsToPlant(PlantDto plantDto, Plant plant) {
+        if (isPhotoPathAvailable(plantDto.getFilePath())) {
+            plant.setPhoto(plantPhotoService.createPhoto(plantDto.getFilePath(), plant.getId()));
         } else {
-            throw new IllegalStateException("Пути для сохранения нет");
+            log.warn("Сохранить фото для растения с id= {} не вышло", plant.getId());
         }
-    }
-
-    /**
-     * Добавляет список действий к растению в БД
-     *
-     * @param plantDto растение, к которому приписываются действия
-     * @param plantCareDtoList список действий
-     * @return Dto полученного растения
-     */
-    @Transactional
-    public PlantDto addCaresWithObjects(PlantDto plantDto, List<PlantCareDto> plantCareDtoList) {
-        //сделала код более читаемым
-        if (plantCareDtoList != null && !plantCareDtoList.isEmpty()) {
-//            Т.к. мы используем транзакцию, удаление действий для конкретного растения на самом деле не происходит,
-//            если проваливается запись новых... Но на всякий метод удаления всегда предоставляет список удаленных
-//            действий
-            careService.deletePlantCaresByPlantId(plantDto.getId());
-            for (PlantCareDto plantCareDto : plantCareDtoList) {
-                careService.createPlantCareWithObjects(plantDto, plantCareDto);
-            }
-            plantDto.setStandardCarePlan(careService.findAllPlantDtoCaresByPlantId(plantDto.getId()));
+        if (plantDto.getStandardCarePlan() != null && !plantDto.getStandardCarePlan().isEmpty()) {
+            List<PlantCareDto> standardCarePlan = plantDto.getStandardCarePlan();
+            plant.setCares(careService.addAllCaresToPlant(standardCarePlan, PlantDtoMapper.mapToDto(plant)));
         } else {
-            throw new IllegalArgumentException("Списка нет");
+            log.warn("Сохранить план ухода для растения с id= {} не вышло", plant.getId());
         }
-        return plantDto;
-    }
+        plant = plantRepository.saveAndFlush(plant);
 
+        return plant;
+    }
 
     /**
      * Проверяет доступен ли путь к фотографии
