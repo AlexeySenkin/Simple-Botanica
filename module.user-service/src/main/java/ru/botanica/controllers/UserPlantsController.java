@@ -15,6 +15,8 @@ import ru.botanica.dto.UserPlantsShortDto;
 import ru.botanica.services.UserPlantsService;
 import ru.botanica.services.UserService;
 
+import java.util.Optional;
+
 
 @CrossOrigin(origins = "*", allowCredentials = "false")
 @RestController
@@ -27,7 +29,7 @@ public class UserPlantsController {
     private final UserService userService;
 
     @GetMapping("/user_plants_full")
-    public Page<UserPlantsFullDto> findUserPlantsFullByUserId(@RequestParam() int userId,
+    public Page<UserPlantsFullDto> findUserPlantsFullByUserId(@RequestParam() long userId,
                                                           @RequestParam(required = false, defaultValue = "1") int page,
                                                           @RequestParam(required = false, defaultValue = "8") int size
     )
@@ -36,12 +38,19 @@ public class UserPlantsController {
     }
 
     @GetMapping("/user_plants")
-    public Page<UserPlantsDto> findUserPlantsByUserId(@RequestParam() int userId,
+    public Page<UserPlantsDto> findUserPlantsByUserId(@RequestParam() long userId,
                                                               @RequestParam(required = false, defaultValue = "1") int page,
                                                               @RequestParam(required = false, defaultValue = "8") int size
     )
     {
         return userPlantsService.findByUserId(userId, PageRequest.of(page - 1, size));
+    }
+
+
+    @GetMapping("/user_plant")
+    public Optional<UserPlantsDto> findUserPlantByUserPlantId(@RequestParam() long userPlantId)
+    {
+        return userPlantsService.findPlantByUserPlantId(userPlantId);
     }
 
     @PostMapping("/add_user_plant")
