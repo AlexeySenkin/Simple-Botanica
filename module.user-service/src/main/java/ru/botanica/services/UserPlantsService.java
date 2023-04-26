@@ -41,6 +41,10 @@ public class UserPlantsService {
         return userPlantsRepository.findAll(specification, pageable).map(UserPlantsDtoMapper::mapToDto);
     }
 
+    public Optional<UserPlantsDto> findPlantByUserPlantId(long userPlantId) {
+        return Optional.of(UserPlantsDtoMapper.mapToDto(userPlantsRepository.findByUserPlantId(userPlantId).orElseThrow()));
+    }
+
     public Optional<Plant> findByPlantId(long plantId) {
         return plantRepository.findById(plantId);
     }
