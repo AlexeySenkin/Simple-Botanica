@@ -42,7 +42,7 @@ public class UserPlantsService {
     }
 
     public Optional<UserPlantsDto> findPlantByUserPlantId(long userPlantId) {
-        return Optional.of(UserPlantsDtoMapper.mapToDto(userPlantsRepository.findByUserPlantId(userPlantId).orElseThrow()));
+        return Optional.ofNullable(UserPlantsDtoMapper.mapToDto(userPlantsRepository.findByUserPlantId(userPlantId).orElseThrow()));
     }
 
     public Optional<Plant> findByPlantId(long plantId) {
