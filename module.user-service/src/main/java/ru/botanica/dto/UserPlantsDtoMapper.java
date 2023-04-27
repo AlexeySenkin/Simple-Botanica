@@ -12,9 +12,9 @@ public class UserPlantsDtoMapper {
     public static UserPlantsDto mapToDto(UserPlant userPlant) {
         UserPlantsDto dto = new UserPlantsDto();
 
-        dto.setUserPlantId(userPlant.getUserPlantId());
+        dto.setId(userPlant.getUserPlantId());
 
-        dto.setPlantId(userPlant.getPlantId());
+        dto.setPlantId(userPlant.getPlant().getId());
 
         dto.setName(userPlant.getPlant().getName());
 

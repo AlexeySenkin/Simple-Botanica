@@ -12,11 +12,11 @@ public class UserPlantsFullDtoMapper {
     public static UserPlantsFullDto mapToDto(UserPlant userPlant) {
         UserPlantsFullDto dto = new UserPlantsFullDto();
 
-        dto.setUserPlantId(userPlant.getUserPlantId());
+        dto.setId(userPlant.getUserPlantId());
 
         dto.setUserId(userPlant.getUserId());
 
-        dto.setPlantId(userPlant.getPlantId());
+        dto.setPlantId(userPlant.getPlant().getId());
 
         dto.setIsBanned(userPlant.getIsBanned());
 
