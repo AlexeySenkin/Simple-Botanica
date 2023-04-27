@@ -8,10 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ru.botanica.dto.AppStatus;
-import ru.botanica.dto.UserPlantsDto;
-import ru.botanica.dto.UserPlantsFullDto;
-import ru.botanica.dto.UserPlantsShortDto;
+import ru.botanica.dto.*;
 import ru.botanica.services.UserPlantsService;
 import ru.botanica.services.UserService;
 
@@ -27,6 +24,8 @@ public class UserPlantsController {
     private final UserPlantsService userPlantsService;
 
     private final UserService userService;
+
+
 
     @GetMapping("/user_plants_full")
     public Page<UserPlantsFullDto> findUserPlantsFullByUserId(@RequestParam() long userId,
@@ -67,12 +66,11 @@ public class UserPlantsController {
                     "Растение с таким id не существует"), HttpStatus.BAD_REQUEST);
         }
 
-        UserPlantsShortDto userPlantsShortDto = new UserPlantsShortDto();
-        userPlantsShortDto.setUserId(userId);
-        userPlantsShortDto.setPlantId(plantId);
-        userPlantsService.createUserPlant(userPlantsShortDto);
+        userPlantsService.createUserPlant(userId, plantId);
 
-        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(), " Растение c id = " + userPlantsShortDto.getPlantId() + " добавлено пользователю с id = " +  userPlantsShortDto.getUserId()), HttpStatus.OK);
+        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(),
+                " Растение c id = " + plantId +
+                        " добавлено пользователю с id = " +  userId), HttpStatus.OK);
 
     }
     @PostMapping("/banned_user_plant")
@@ -83,7 +81,8 @@ public class UserPlantsController {
                     "Растение пользователя с указанным user_plant_id не существует"), HttpStatus.BAD_REQUEST);
         }
         UserPlantsFullDto userPlantsFullDto = userPlantsService.bannedUserPlant(userPlantId);
-        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(), "user_plant_id = " + userPlantsFullDto.getUserPlantId() +
+        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(),
+                "user_plant_id = " + userPlantsFullDto.getId() +
                 " : is_banned инвертировано для растение c id = " + userPlantsFullDto.getPlantId() +
                 " пользователя с id = " + userPlantsFullDto.getUserId()), HttpStatus.OK);
 
@@ -97,11 +96,35 @@ public class UserPlantsController {
                     "Растение пользователя с указанным user_plant_ не существует"), HttpStatus.BAD_REQUEST);
         }
         UserPlantsFullDto userPlantsFullDto = userPlantsService.activeUserPlant(userPlantId);
-        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(), "user_plant_id = " + userPlantsFullDto.getUserPlantId() +
+        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(),
+                "user_plant_id = " + userPlantsFullDto.getId() +
                 " : is_active инвертировано для растение c id = " + userPlantsFullDto.getPlantId() +
                 " пользователя с id = " +  userPlantsFullDto.getUserId()), HttpStatus.OK);
 
     }
 
+    @PostMapping("/add_custom_care")
+    public ResponseEntity<?> editCustomCare(@RequestBody UserCareCustomDto userCareCustomDto) {
+        userPlantsService.addUserCareCustom(userCareCustomDto);
+        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(),
+                "user_plant_id = " + userCareCustomDto.getUserPlantId() +
+                " : данные обновлены"), HttpStatus.OK);
+    }
 
+    @GetMapping("/user_care")
+    public Page<UserCareDto> findUserCareByUserPlantId(@RequestParam() long userPlantId,
+                                                       @RequestParam(required = false, defaultValue = "1") int page,
+                                                       @RequestParam(required = false, defaultValue = "8") int size)
+    {
+        return userPlantsService.findUserCareByUserPlantId(userPlantId, PageRequest.of(page - 1, size));
+    }
+
+
+    @PostMapping("/add_user_care")
+    public ResponseEntity<?> editCustomCare(@RequestBody UserCareDto userCareDto) {
+        userPlantsService.addUserCare(userCareDto);
+        return new ResponseEntity<>(new AppStatus(HttpStatus.OK.value(),
+                "user_plant_id = " + userCareDto.getUserPlantId() +
+                        " : данные обновлены"), HttpStatus.OK);
+    }
 }

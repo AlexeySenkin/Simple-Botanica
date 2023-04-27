@@ -15,7 +15,7 @@ public class UserPlantsShortDtoMapper {
 
         dto.setUserId(userPlant.getUserId());
 
-        dto.setPlantId(userPlant.getPlantId());
+        dto.setPlantId(userPlant.getPlant().getId());
 
         dto.setIsBanned(userPlant.getIsBanned());
 
