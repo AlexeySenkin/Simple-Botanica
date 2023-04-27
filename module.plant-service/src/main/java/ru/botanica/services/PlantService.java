@@ -163,17 +163,25 @@ public class PlantService {
      * @param plant    Сохраненная Entity
      * @return Растение с новыми данными
      */
-    private Plant addAllOptionsToPlant(PlantDto plantDto, Plant plant) {
+    private Plant addAllOptionsToPlant(PlantDto plantDto, Plant plant) throws ServerHandleException {
         if (isPhotoPathAvailable(plantDto.getFilePath())) {
-            plant.setPhoto(plantPhotoService.createPhoto(plantDto.getFilePath(), plant.getId()));
+            try {
+                plant.setPhoto(plantPhotoService.createPhoto(plantDto.getFilePath(), plant.getId()));
+            } catch (Exception e) {
+                throw new ServerHandleException("Серверу не удалось сохранить путь к фото");
+            }
         } else {
-            log.warn("Сохранить фото для растения с id= {} не вышло", plant.getId());
+            log.warn("Фото для растения с id= {} отсутствует", plant.getId());
         }
         if (plantDto.getStandardCarePlan() != null && !plantDto.getStandardCarePlan().isEmpty()) {
-            List<PlantCareDto> standardCarePlan = plantDto.getStandardCarePlan();
-            plant.setCares(careService.addAllCaresToPlant(standardCarePlan, PlantDtoMapper.mapToDto(plant)));
+            try {
+                List<PlantCareDto> standardCarePlan = plantDto.getStandardCarePlan();
+                plant.setCares(careService.addAllCaresToPlant(standardCarePlan, PlantDtoMapper.mapToDto(plant)));
+            } catch (Exception e) {
+                throw new ServerHandleException("Серверу не удалось сохранить план ухода для растения");
+            }
         } else {
-            log.warn("Сохранить план ухода для растения с id= {} не вышло", plant.getId());
+            log.warn("План ухода для растения с id= {} отсутствует", plant.getId());
         }
         plant = plantRepository.saveAndFlush(plant);
 
