@@ -8,6 +8,7 @@ import ru.botanica.dtos.CareDto;
 import ru.botanica.dtos.CareDtoShort;
 import ru.botanica.entities.Care;
 import ru.botanica.entities.CareSpecifications;
+import ru.botanica.exceptions.ServerHandleException;
 import ru.botanica.mappers.CareDtoMapper;
 import ru.botanica.entities.PlantCare;
 import ru.botanica.dtos.PlantCareDto;
@@ -34,10 +35,14 @@ public class CareService {
      *
      * @return Список процедур
      */
-    public List<CareDtoShort> findAllActive() {
+    public List<CareDtoShort> findAllActive() throws ServerHandleException {
         Specification<Care> specification = createSpecificationsWithFilter(true);
-        return careRepository.findAll(specification).stream()
-                .map(CareDtoMapper::matToDtoShort).toList();
+        try {
+            return careRepository.findAll(specification).stream()
+                    .map(CareDtoMapper::matToDtoShort).toList();
+        } catch (Exception e) {
+            throw new ServerHandleException("Сервер не смог загрузить список процедур из БД");
+        }
     }
 
     /**
