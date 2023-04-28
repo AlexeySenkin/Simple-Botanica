@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.botanica.dto.*;
 
-import ru.botanica.entities.Plant;
-import ru.botanica.entities.UserCare;
-import ru.botanica.entities.UserPlant;
+import ru.botanica.entities.*;
 import ru.botanica.repositories.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
@@ -31,6 +31,8 @@ public class UserPlantsService {
     private final CareRepository careRepository;
 
     private final UserCareRepository userCareRepository;
+
+    private final PlantCareRepository plantCareRepository;
 
     public Page<UserPlantsFullDto> findFullByUserId(long userId, Pageable pageable) {
         Specification<UserPlant> specification = Specification.where(null);
@@ -71,6 +73,24 @@ public class UserPlantsService {
         userPlant.setIsBanned(false);
         userPlant.setIsActive(true);
         userPlantsRepository.save(userPlant);
+
+        Collection<PlantCare>  plantCares = plantCareRepository.findAllByPlantId(plantId);
+
+        Collection<UserCareCustom> userCareCustoms = new ArrayList<>();
+
+        for (PlantCare plantCare : plantCares) {
+            UserCareCustom userCareCustom = new UserCareCustom();
+            userCareCustom.setUserPlantId(userPlant.getUserPlantId());
+            userCareCustom.setUserCareCount(plantCare.getCareCount());
+            userCareCustom.setUserCareVolume(plantCare.getCareVolume());
+            userCareCustom.setCare(plantCare.getCare());
+            userCareCustoms.add(userCareCustom);
+        }
+
+        userPlant.setUserCareCustom(userCareCustoms);
+        userPlantsRepository.saveAndFlush(userPlant);
+
+
     }
 
     @Transactional
