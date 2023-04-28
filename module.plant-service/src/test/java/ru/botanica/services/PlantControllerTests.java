@@ -8,13 +8,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.botanica.controllers.PlantController;
+import ru.botanica.entities.Care;
+import ru.botanica.entities.PlantCare;
 import ru.botanica.entities.PlantPhoto;
 import ru.botanica.entities.Plant;
 import ru.botanica.repositories.PlantRepository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -45,6 +50,7 @@ public class PlantControllerTests {
 
     @Test
     void testGetPlantById() throws Exception {
+
        assertThat(plantController).isNotNull();
        assertThat(plantRepository).isNotNull();
         Long id = 1L;
