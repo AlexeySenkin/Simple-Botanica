@@ -14,7 +14,9 @@
     }
 
     function run($localStorage, $rootScope, $http, careFactory) {
-        $localStorage.plantListCallPlace = 0;
+        if (!$localStorage.plantListCallPlace) {
+            $localStorage.plantListCallPlace = 0;
+        }
         if ($localStorage.botanicaWebUser) {
             let jwt = $localStorage.botanicaWebUser.token;
             let payload = JSON.parse(atob(jwt.split('.')[1]));
@@ -103,7 +105,8 @@ botanicaApp.factory('userFactory', function ($localStorage, $http, $q, settings)
     userFactoryObj.logOut = function () {
         if ($localStorage.botanicaWebUser && confirm('Выйти?')) {
             delete $localStorage.botanicaWebUser;
-            location.assign('#!/')
+            $localStorage.plantListCallPlace = 0;
+            location.replace('#!/');
         }
     }
 
@@ -236,9 +239,9 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
                     defer.reject(reason);
                 });
             } else { // если растение было вызвано из списка растений пользователя
-                $http.get(settings.USER_SERVICE_PATH + '/user_plant/' + plantId).then(function successCallback(response) {
+                $http.get(settings.USER_SERVICE_PATH + '/user_plant?userPlantId=' + plantId).then(function successCallback(response) {
                     responseEntity.data = response.data;
-                    responseEntity.actualCareButtons = formCareButtonsObj(response.data.standardCarePlan);
+                    responseEntity.actualCareButtons = formCareButtonsObj(response.data.userCareCustom);
                     responseEntity.photoPath = plantFactoryObj.getPlantPhoto(responseEntity.data.filePath);
                     defer.resolve(responseEntity);
                 }, function errorCallback(reason) {
@@ -281,7 +284,6 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
         }
         let defer = $q.defer();
         if (plant.id === null) {
-            // console.log('Saving a new plant: ' + plant);
             $http.post(plantPath + '/plant', JSON.stringify(plant)).then(function successCallback(response) {
                 defer.resolve(response);
                 console.log('New plant saved, id=' + response.data);
@@ -290,7 +292,6 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
                 console.log('Error occurred while saving a new plant. error code:' + reason.data.status);
             })
         } else {
-            // console.log('Saving changes into plant: ' + plant);
             $http.put(plantPath + '/plant', JSON.stringify(plant))
                 .then(function successCallback(response) {
                     defer.resolve(response);
@@ -327,7 +328,6 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
             let getPath = settings.USER_SERVICE_PATH + '/user_plants';
             $http.get(getPath, {params: {userId: userId, page: page, size: size}}).then(
                 function successCallback(response) {
-                    console.log(response);
                     defer.resolve(response);
                 },
                 function errorCallback(reason) {

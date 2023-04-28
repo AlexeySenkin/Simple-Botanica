@@ -55,6 +55,7 @@ angular.module('Simple-Botanica-app')
             plantFactory.addPlantToUsersList($localStorage.botanicaWebUser.userId, plantId).then(
                 function successCallBack(response) {
                     console.log(response);
+                    $localStorage.plantListCallPlace = 1;
                     location.assign("#!/user-plants");
                 }, function errorCallback(reason) {
                     console.log(reason);
@@ -66,7 +67,6 @@ angular.module('Simple-Botanica-app')
             let plantId = $localStorage.plantId;
             // признак откуда была открыта карточка растения
             $scope.callPlace = $localStorage.plantListCallPlace;
-            console.log("plantListCall_place = " + $localStorage.plantListCallPlace);
 
             plantFactory.getPlant(plantId).then(function successCallback(response) {
                 $scope.plant = response.data;
