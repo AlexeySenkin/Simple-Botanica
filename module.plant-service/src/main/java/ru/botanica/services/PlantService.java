@@ -14,6 +14,8 @@ import ru.botanica.dtos.PlantDto;
 import ru.botanica.dtos.PlantDtoShort;
 import ru.botanica.entities.Plant;
 import ru.botanica.entities.PlantSpecifications;
+import ru.botanica.exceptions.PlantExistsException;
+import ru.botanica.exceptions.ServerHandleException;
 import ru.botanica.mappers.PlantDtoMapper;
 import ru.botanica.repositories.PlantRepository;
 
@@ -46,10 +48,14 @@ public class PlantService {
      * @param pageable Страница(номер страницы, размер страницы)
      * @return Список растений
      */
-    public Page<PlantDtoShort> findAll(String title, Pageable pageable) {
+    public Page<PlantDtoShort> findAll(String title, Pageable pageable) throws ServerHandleException {
         Specification<Plant> specification = createSpecificationsWithFilter(title, true);
-        return plantRepository.findAll(specification, pageable)
-                .map(PlantDtoMapper::mapToDtoShort);
+        try {
+            return plantRepository.findAll(specification, pageable)
+                    .map(PlantDtoMapper::mapToDtoShort);
+        } catch (Exception e) {
+            throw new ServerHandleException("Не удалось загрузить растения из БД");
+        }
     }
 
     /**
@@ -75,8 +81,8 @@ public class PlantService {
      * @param id Идентификатор
      * @return Растение
      */
-    public PlantDto findById(long id) {
-        return PlantDtoMapper.mapToDto(plantRepository.findById(id).orElseThrow());
+    public PlantDto findById(long id) throws PlantExistsException {
+        return PlantDtoMapper.mapToDto(plantRepository.findById(id).orElseThrow(() -> new PlantExistsException("Растения с id " + id + " не существует")));
     }
 
     /**
@@ -86,7 +92,10 @@ public class PlantService {
      * @return Dto растения
      */
     @Transactional
-    public PlantDto updatePlant(PlantDto plantDto) {
+    public PlantDto updatePlant(PlantDto plantDto) throws Exception {
+        if (!isIdExist(plantDto.getId())) {
+            throw new PlantExistsException("Растения c id " + plantDto.getId() + " не существует");
+        }
         Plant plant = plantBuilder
                 .withId(plantDto.getId())
                 .withName(plantDto.getName())
@@ -96,7 +105,12 @@ public class PlantService {
                 .withDescription(plantDto.getDescription())
                 .withIsActive(plantDto.isActive())
                 .build();
-        plantRepository.saveAndFlush(plant);
+        try {
+            plantRepository.saveAndFlush(plant);
+        } catch (Exception e) {
+            throw new ServerHandleException("Не удалось обновить растение. DTO растения: " + plantDto.toString());
+        }
+
         return PlantDtoMapper.mapToDto(addAllOptionsToPlant(plantDto, plant));
     }
 
@@ -110,6 +124,9 @@ public class PlantService {
 
     @Transactional
     public PlantDto addNewPlant(PlantDto plantDto, boolean isOverwriting) throws Exception {
+        if (findByName(plantDto.getName()).isPresent() && !isOverwriting) {
+            throw new PlantExistsException("Растение с именем " + plantDto.getName() + " уже существует");
+        }
         boolean existsByName = plantRepository.existsByName(plantDto.getName());
         Plant plant;
         if (!existsByName) {
@@ -134,9 +151,8 @@ public class PlantService {
                     .build();
             plantRepository.saveAndFlush(plant);
         } else {
-            throw new Exception("Не удалось сохранить растение: " + plantDto.toString());
+            throw new ServerHandleException("Не удалось сохранить растение. DTO растения: " + plantDto);
         }
-
         return PlantDtoMapper.mapToDto(addAllOptionsToPlant(plantDto, plant));
     }
 
@@ -147,17 +163,25 @@ public class PlantService {
      * @param plant    Сохраненная Entity
      * @return Растение с новыми данными
      */
-    private Plant addAllOptionsToPlant(PlantDto plantDto, Plant plant) {
+    private Plant addAllOptionsToPlant(PlantDto plantDto, Plant plant) throws ServerHandleException {
         if (isPhotoPathAvailable(plantDto.getFilePath())) {
-            plant.setPhoto(plantPhotoService.createPhoto(plantDto.getFilePath(), plant.getId()));
+            try {
+                plant.setPhoto(plantPhotoService.createPhoto(plantDto.getFilePath(), plant.getId()));
+            } catch (Exception e) {
+                throw new ServerHandleException("Серверу не удалось сохранить путь к фото");
+            }
         } else {
-            log.warn("Сохранить фото для растения с id= {} не вышло", plant.getId());
+            log.warn("Фото для растения с id= {} отсутствует", plant.getId());
         }
         if (plantDto.getStandardCarePlan() != null && !plantDto.getStandardCarePlan().isEmpty()) {
-            List<PlantCareDto> standardCarePlan = plantDto.getStandardCarePlan();
-            plant.setCares(careService.addAllCaresToPlant(standardCarePlan, PlantDtoMapper.mapToDto(plant)));
+            try {
+                List<PlantCareDto> standardCarePlan = plantDto.getStandardCarePlan();
+                plant.setCares(careService.addAllCaresToPlant(standardCarePlan, PlantDtoMapper.mapToDto(plant)));
+            } catch (Exception e) {
+                throw new ServerHandleException("Серверу не удалось сохранить план ухода для растения");
+            }
         } else {
-            log.warn("Сохранить план ухода для растения с id= {} не вышло", plant.getId());
+            log.warn("План ухода для растения с id= {} отсутствует", plant.getId());
         }
         plant = plantRepository.saveAndFlush(plant);
 
@@ -179,10 +203,14 @@ public class PlantService {
      *
      * @param id Идентификатор
      */
-    public PlantDto deletePlantById(long id) {
+    public PlantDto deletePlantById(long id) throws Exception {
         PlantDto plantDto = findById(id);
         plantDto.setActive(false);
-        plantRepository.saveAndFlush(PlantDtoMapper.mapToEntity(plantDto));
+        try {
+            plantRepository.saveAndFlush(PlantDtoMapper.mapToEntity(plantDto));
+        } catch (Exception e) {
+            throw new ServerHandleException("Не удалось удалить растение. Dto растения: " + plantDto.toString());
+        }
         return plantDto;
     }
 
@@ -190,7 +218,11 @@ public class PlantService {
         return plantRepository.findByName(name).map(PlantDtoMapper::mapToDto);
     }
 
-    public boolean isIdExist(Long id) {
-        return plantRepository.existsById(id);
+    public boolean isIdExist(Long id) throws ServerHandleException {
+        try {
+            return plantRepository.existsById(id);
+        } catch (Exception e) {
+            throw new ServerHandleException("Не удалось загрузить список активных действий");
+        }
     }
 }
