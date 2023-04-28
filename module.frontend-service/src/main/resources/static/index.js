@@ -204,7 +204,6 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
                 }
             }
         }
-
         actualCareButtons.sort((a, b) => {
             if (a.id < b.id) {
                 return -1;
@@ -222,6 +221,13 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
        if (userPlantId) {
             $http.get(settings.USER_SERVICE_PATH + '/user_care?userPlantId=' + userPlantId).then(
                 function successCallback(response) {
+                    let logContent = response.data.content;
+                    for (let i = 0; i < logContent.length; i++) {
+                        let careDate = logContent[i].eventDate.slice(0, 10);
+                         logContent[i].eventDate = careDate.slice(8, 10) + '.' + careDate.slice(5, 7) + '.' +
+                             careDate.slice(0, 4);
+                    }
+                    response.data.content = logContent;
                     defer.resolve(response);
                 }, function errorCallback(reason) {
                     defer.reject(reason);
