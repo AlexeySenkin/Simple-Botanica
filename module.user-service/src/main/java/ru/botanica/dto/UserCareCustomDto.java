@@ -12,7 +12,7 @@ public class UserCareCustomDto
 
         private Long careId;
 
-        private Integer userCareCount;
+        private Long userCareCount;
 
         private Double userCareVolume;
 

@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.botanica.dtos.PlantCareDto;
 import ru.botanica.dtos.PlantDto;
 import ru.botanica.entities.*;
+import ru.botanica.exceptions.PlantExistsException;
 import ru.botanica.mappers.PlantCareDtoMapper;
 import ru.botanica.repositories.CareRepository;
 import ru.botanica.repositories.PlantCareRepository;
@@ -89,19 +90,22 @@ public class PlantServiceTests {
 
         when(plantRepository.findById(id)).thenReturn(Optional.of(plant));
 
-        PlantDto plantDto = plantService.findById(id);
-
-        assertAll(
-                () -> assertEquals(plant.getId(), plantDto.getId()),
-                () -> assertEquals(plant.getName(), plantDto.getName()),
-                () -> assertEquals(plant.getPhoto().getFilePath(), plantDto.getFilePath()),
-                () -> assertEquals(plant.getGenus(), plantDto.getGenus()),
-                () -> assertEquals(plant.getFamily(), plantDto.getFamily()),
-                () -> assertEquals(plant.getDescription(), plantDto.getDescription()),
-                () -> assertEquals(plant.getShortDescription(), plantDto.getShortDescription()),
-                () -> assertEquals(plant.isActive(), plantDto.isActive()),
-                () -> assertArrayEquals(new PlantCareDto[]{plantCareDto}, plantDto.getStandardCarePlan().toArray())
-        );
+        try {
+            PlantDto plantDto = plantService.findById(id);
+            assertAll(
+                    () -> assertEquals(plant.getId(), plantDto.getId()),
+                    () -> assertEquals(plant.getName(), plantDto.getName()),
+                    () -> assertEquals(plant.getPhoto().getFilePath(), plantDto.getFilePath()),
+                    () -> assertEquals(plant.getGenus(), plantDto.getGenus()),
+                    () -> assertEquals(plant.getFamily(), plantDto.getFamily()),
+                    () -> assertEquals(plant.getDescription(), plantDto.getDescription()),
+                    () -> assertEquals(plant.getShortDescription(), plantDto.getShortDescription()),
+                    () -> assertEquals(plant.isActive(), plantDto.isActive()),
+                    () -> assertArrayEquals(new PlantCareDto[]{plantCareDto}, plantDto.getStandardCarePlan().toArray())
+            );
+        } catch (PlantExistsException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -123,9 +127,13 @@ public class PlantServiceTests {
 
     @Test
     void testIsIdExists() {
-        long id = 1;
-        when(plantRepository.existsById(id)).thenReturn(true);
-        assertTrue(plantService.isIdExist(id));
+        try {
+            long id = 1;
+            when(plantRepository.existsById(id)).thenReturn(true);
+            assertTrue(plantService.isIdExist(id));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

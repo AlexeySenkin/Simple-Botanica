@@ -9,11 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.botanica.dto.*;
 
-import ru.botanica.entities.Plant;
-import ru.botanica.entities.UserCare;
-import ru.botanica.entities.UserPlant;
+import ru.botanica.entities.*;
 import ru.botanica.repositories.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.Optional;
 
 
@@ -31,20 +32,18 @@ public class UserPlantsService {
 
     private final UserCareRepository userCareRepository;
 
+    private final PlantCareRepository plantCareRepository;
+
     public Page<UserPlantsFullDto> findFullByUserId(long userId, Pageable pageable) {
         Specification<UserPlant> specification = Specification.where(null);
-        specification = specification
-                .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("userId"), userId))
-                .and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("isActive"), 1));
+        specification = specification.and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("userId"), userId)).and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("isActive"), 1));
 
         return userPlantsRepository.findAll(specification, pageable).map(UserPlantsFullDtoMapper::mapToDto);
     }
 
     public Page<UserPlantsDto> findByUserId(long userId, Pageable pageable) {
         Specification<UserPlant> specification = Specification.where(null);
-        specification = specification
-                .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("userId"), userId))
-                .and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("isActive"), 1));
+        specification = specification.and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("userId"), userId)).and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("isActive"), 1));
         return userPlantsRepository.findAll(specification, pageable).map(UserPlantsDtoMapper::mapToDto);
     }
 
@@ -54,8 +53,7 @@ public class UserPlantsService {
 
     public Page<UserCareDto> findUserCareByUserPlantId(long userPlantId, Pageable pageable) {
         Specification<UserCare> specification = Specification.where(null);
-        specification = specification
-                .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("userPlantId"), userPlantId));
+        specification = specification.and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("userPlantId"), userPlantId));
         return userCareRepository.findAll(specification, pageable).map(UserCareDtoMapper::mapToDto);
     }
 
@@ -68,17 +66,35 @@ public class UserPlantsService {
     }
 
     @Transactional
-    public void createUserPlant(long userId, long plantId){
+    public void createUserPlant(long userId, long plantId) {
         UserPlant userPlant = new UserPlant();
         userPlant.setUserId(userId);
         userPlant.setPlant(findByPlantId(plantId).orElseThrow());
         userPlant.setIsBanned(false);
         userPlant.setIsActive(true);
         userPlantsRepository.save(userPlant);
+
+        Collection<PlantCare>  plantCares = plantCareRepository.findAllByPlantId(plantId);
+
+        Collection<UserCareCustom> userCareCustoms = new ArrayList<>();
+
+        for (PlantCare plantCare : plantCares) {
+            UserCareCustom userCareCustom = new UserCareCustom();
+            userCareCustom.setUserPlantId(userPlant.getUserPlantId());
+            userCareCustom.setUserCareCount(plantCare.getCareCount());
+            userCareCustom.setUserCareVolume(plantCare.getCareVolume());
+            userCareCustom.setCare(plantCare.getCare());
+            userCareCustoms.add(userCareCustom);
+        }
+
+        userPlant.setUserCareCustom(userCareCustoms);
+        userPlantsRepository.saveAndFlush(userPlant);
+
+
     }
 
     @Transactional
-    public UserPlantsFullDto activeUserPlant(long userPlantsId){
+    public UserPlantsFullDto activeUserPlant(long userPlantsId) {
         UserPlant userPlant = userPlantsRepository.findByUserPlantId(userPlantsId).orElseThrow();
         userPlant.setIsActive(!userPlant.getIsActive());
         userPlantsRepository.save(userPlant);
@@ -86,7 +102,7 @@ public class UserPlantsService {
     }
 
     @Transactional
-    public UserPlantsFullDto bannedUserPlant(long userPlantsId){
+    public UserPlantsFullDto bannedUserPlant(long userPlantsId) {
         UserPlant userPlant = userPlantsRepository.findByUserPlantId(userPlantsId).orElseThrow();
         userPlant.setIsBanned(!userPlant.getIsBanned());
         userPlantsRepository.save(userPlant);
@@ -98,12 +114,24 @@ public class UserPlantsService {
     }
 
     @Transactional
-    public void addUserCareCustom(UserCareCustomDto userCareCustomDto){
+    public void addUserCareCustom(UserCareCustomDto userCareCustomDto) {
         userCareCustomRepository.save(UserCareCustomDtoMapper.mapToEntity(userCareCustomDto));
     }
 
     @Transactional
-    public void addUserCare(UserCareDto userCareDto){
+    public void addUserCare(Long userPlantId, Long careId) {
+        UserCareDto userCareDto = new UserCareDto();
+        userCareDto.setUserPlantId(userPlantId);
+        userCareDto.setEventDate(new Date());
+        userCareDto.setCareVolume(100.0);
+        userCareDto.setPrims(0);
+        userCareDto.setCare(careRepository.findByCareId(careId).orElseThrow());
+
+        userCareRepository.saveAndFlush(UserCareDtoMapper.mapToEntity(userCareDto));
+    }
+
+    @Transactional
+    public void editUserCare(UserCareDto userCareDto) {
         userCareRepository.saveAndFlush(UserCareDtoMapper.mapToEntity(userCareDto));
     }
 }

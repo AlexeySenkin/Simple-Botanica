@@ -24,7 +24,7 @@ public class UserCareCustom {
 //    private Long careId;
 
     @Column(name = "user_care_count")
-    private Integer userCareCount;
+    private Long userCareCount;
 
     @Column(name = "user_care_volume")
     private Double userCareVolume;
