@@ -198,12 +198,13 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
         let actualCareButtons = [];
         for (let i = 0; i < actualCareList.length; i++) {
             for (let j = 0; j < plantInfo.actions.length; j++) {
-                if (actualCareList[i].careDto.id === plantInfo.actions[j].id && actualCareList[i].careDto.active) {
+                if (actualCareList[i].care.careId === plantInfo.actions[j].id && actualCareList[i].care.isActive) {
                     actualCareButtons.push(plantInfo.actions[j]);
                     break;
                 }
             }
         }
+
         actualCareButtons.sort((a, b) => {
             if (a.id < b.id) {
                 return -1;
@@ -216,11 +217,27 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
         return actualCareButtons;
     }
 
+    plantFactoryObj.getPlantCareLog = function (userPlantId){
+       let defer = $q.defer();
+       if (userPlantId) {
+            $http.get(settings.USER_SERVICE_PATH + '/user_care?userPlantId=' + userPlantId).then(
+                function successCallback(response) {
+                    defer.resolve(response);
+                }, function errorCallback(reason) {
+                    defer.reject(reason);
+                }
+            );
+            return defer.promise;
+       }
+       return null;
+    }
+
     //метод получения информации о растении
     //$localStorage.plantListCallPlace-признак какой список растений был открыт,
     //          и из какого списка смотрим карточку растения
     //0-при просмотре карточки из базы знаний о растениях
     //1-при просмотре карточки растения из списка растений пользователя
+
     plantFactoryObj.getPlant = function (plantId) {
         let defer = $q.defer();
         let responseEntity = {data: {}, photoPath: ""};
@@ -230,9 +247,7 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
                 $http.get(plantPath + '/plant/' + plantId).then(function successCallback(response) {
                     responseEntity.data = response.data;
                     //кнопки тут не нужны
-                    // responseEntity.careDictionary =
                     responseEntity.actualCare = response.data.standardCarePlan;
-                    // responseEntity.actualCareButtons = formCareButtonsObj(response.data.standardCarePlan);
                     responseEntity.photoPath = plantFactoryObj.getPlantPhoto(responseEntity.data.filePath);
                     defer.resolve(responseEntity);
                 }, function errorCallback(reason) {
@@ -243,6 +258,14 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
                     responseEntity.data = response.data;
                     responseEntity.actualCareButtons = formCareButtonsObj(response.data.userCareCustom);
                     responseEntity.photoPath = plantFactoryObj.getPlantPhoto(responseEntity.data.filePath);
+                   //журнал ухода
+                    plantFactoryObj.getPlantCareLog(plantId).then(
+                        function successCallback(response) {
+                            responseEntity.careLog = response.data;
+                        }, function errorCallback(reason) {
+                            responseEntity.careLog = reason.data.status;
+                        }
+                    )
                     defer.resolve(responseEntity);
                 }, function errorCallback(reason) {
                     defer.reject(reason);

@@ -76,6 +76,8 @@ angular.module('Simple-Botanica-app')
                 } else {
                     $scope.actualCare = response.actualCare;
                     $scope.careDictionary = updateCareWithActualPlan(plantInfo.actions, $scope.actualCare);
+                    $scope.careLogEntries = response.data.content;
+                    $scope.careLog = response.data;
                 }
             }, function errorCallback(reason) {
                 console.log('error occurred while fetching a plant info:' + reason);
@@ -134,11 +136,9 @@ angular.module('Simple-Botanica-app')
                         let updCarePlan = currentCarePlan[j];
                         updCarePlan.careCount = newCarePlan[i].interval;
                         carePlan.push(updCarePlan);
-                        // break;
                     } else {
                         let updCarePlan = newCareFromPlan(newCarePlan[i])
                         carePlan.push(updCarePlan);
-                        // break;
                     }
                 }
             }
@@ -167,7 +167,6 @@ angular.module('Simple-Botanica-app')
             alert("Извините, мы пока не умеем загружать фото!");
         }
 
-        $scope.showPlantDetails();
 
         $scope.careSelect = function (careId) {
             let careAction = document.getElementById("careAction-" + careId.toString());
@@ -225,4 +224,22 @@ angular.module('Simple-Botanica-app')
                 console.log(interval.value);
             }
         }
+
+        $scope.changeOnDescription = function (toShowDescription){
+            $scope.showDescription = toShowDescription;
+            if (!toShowDescription) {
+                plantFactory.getPlantCareLog($localStorage.plantId).then(
+                    function successCallback(response) {
+                        $scope.careLogEntries = response.data.content;
+                        $scope.careLog = response.data;
+                    }, function errorCallback(reason) {
+                        console.log('error ocurred while fetching plant care log data:' + reason.data.status);
+                    }
+                )
+            }
+        }
+
+        $scope.changeOnDescription(true);
+        $scope.showPlantDetails();
+
     })
