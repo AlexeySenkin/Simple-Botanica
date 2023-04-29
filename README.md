@@ -70,7 +70,7 @@
 ### Возможности всех пользователей
 ![Просмотр всех растений](/ExampleMedia/SimpleBotanicaPlantsViewSample.gif)
 ![Просмотр конкретного растения](/ExampleMedia/SimpleBotanicaPlantViewSample.gif)
-##### Регистрация
+![Регистрация на сайте](/ExampleMedia/SimpleBotanicaRegistrationSample.gif)
 ##### Вход в аккаунт
 ### Возможности модератора
 ##### Выход из аккаунта
