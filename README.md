@@ -66,19 +66,17 @@
 >
 > SimpleBotanica -> module.frontend-service -> src -> main -> java -> FrontendServiceApplication
 ## Возможности проекта
-Видео и фото материалы будут добавлены позднее
 ### Возможности всех пользователей
-##### Просмотр всех растений
-##### Просмотр конкретного растения
-##### Регистрация
-##### Вход в аккаунт
+![Просмотр всех растений](/ExampleMedia/SimpleBotanicaPlantsViewSample.gif)
+![Просмотр конкретного растения](/ExampleMedia/SimpleBotanicaPlantViewSample.gif)
+![Регистрация на сайте](/ExampleMedia/SimpleBotanicaRegistrationSample.gif)
+![Вход в аккаунт на сайте](/ExampleMedia/SimpleBotanicaLogInSample.gif)
 ### Возможности модератора
-##### Выход из аккаунта
-##### Добавление растения
-##### Изменение растения
-##### Удаление растения (изменение метки активного растения на неактивное растение)
+![Добавление растения](/ExampleMedia/SimpleBotanicaAddingPlantSample.gif)
+![Изменение растения](/ExampleMedia/SimpleBotanicaRedactingPlantSample.gif)
+![Удаление растения из общего списка](/ExampleMedia/SimpleBotanicaDeletingPlantSample.gif)
 ### Возможности зарегистрированного пользователя
-##### Выход из аккаунта
-##### Добавление растения в список своих растений
-##### Просмотр своего личного кабинета
-##### Просмотр своего списка растений
+![Добавление растения в список своих растений](/ExampleMedia/SimpleBotanicaAddingPlantToUserSample.gif)
+![Просмотр своего списка растений](/ExampleMedia/SimpleBotanicaUserPlantsViewSample.gif)
+![Выход из аккаунта на сайте](/ExampleMedia/SimpleBotanicaLogOutSample.gif)
+![Просмотр своего личного кабинета](/ExampleMedia/SimpleBotanicaUserProfileViewSample.gif)
