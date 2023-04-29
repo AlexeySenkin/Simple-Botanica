@@ -53,7 +53,7 @@ public class UserServiceTests {
      * Кейс в случае существования пользователя с таким идентификатором.
      */
     @Test
-    void testFindById() {
+    void testFindById() throws Exception {
         when(userRepository.findById(ID)).thenReturn(Optional.of(user));
 
         UserDto userDto = userService.findById(ID);
