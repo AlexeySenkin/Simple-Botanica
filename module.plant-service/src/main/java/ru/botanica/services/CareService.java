@@ -20,6 +20,7 @@ import ru.botanica.repositories.PlantCareRepository;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -79,7 +80,11 @@ public class CareService {
     public Set<PlantCare> addAllCaresToPlant(List<PlantCareDto> standardCarePlan, PlantDto plantDto) {
         Set<PlantCare> resultCarePlan = new HashSet<>();
         for (PlantCareDto plantCareDto : standardCarePlan) {
+            Optional<PlantCare> existingPlantCare = findPlantCareByCareIdAndPlantId(plantCareDto.getCareDto().getId(), plantDto.getId());
             PlantCare plantCare = new PlantCare();
+            if (existingPlantCare.isPresent()) {
+                plantCare.setId(existingPlantCare.get().getId());
+            }
             plantCare.setCare(CareDtoMapper.mapToEntity(plantCareDto.getCareDto()));
             plantCare.setCareCount(plantCareDto.getCareCount());
             plantCare.setCareVolume(plantCareDto.getCareVolume());
@@ -110,13 +115,17 @@ public class CareService {
                 .map(PlantCareDtoMapper::mapToDto).toList();
     }
 
+    private Optional<PlantCare> findPlantCareByCareIdAndPlantId(Long careId, Long plantId) {
+        return plantCareRepository.findByCareIdAndPlantId(careId, plantId);
+    }
+
     /**
      * Удаляет все процедуры по id растения
      *
      * @param plantId идентификатор растения
      * @return Список удаленных процедур
      */
-    public List<PlantCare> deletePlantCaresByPlantId(Long plantId) {
+    private List<PlantCare> deletePlantCaresByPlantId(Long plantId) {
         return plantCareRepository.deleteByPlantId(plantId);
     }
 }
