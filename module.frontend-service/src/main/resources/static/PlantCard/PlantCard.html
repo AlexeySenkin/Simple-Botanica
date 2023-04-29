@@ -1,4 +1,4 @@
-<div>
+<div ng-controller = "plant-card-controller as card">
     <div class="top__container">
         <div class="plant__info__card__container">
             <!--            ng-src="{{imgPath}}{{plant.filePath}}"-->
@@ -9,14 +9,14 @@
                         ng-show="callPlace===0 && !isAdmin() && isAuthorized()">
                     Добавить к себе
                 </button>
+                <button class="page__button mb-5 text text_center" ng-click="card.deletePlantFromUserList(plant.id)"
+                        ng-show="callPlace===1 && !isAdmin() && isAuthorized()">
+                    Удалить растение
+                </button>
+
                 <!--                <label>-->
                 <input class="page__button mb-5 text text_center" type="file"
                        ng-click="addPlantPhoto()" ng-show="isAdmin()">
-                <!--                    интервал: </label>-->
-                <!--                <button class="page__button mb-5 text text_center" ng-click="addPlantPhoto()"-->
-                <!--                        ng-show="isAdmin()">-->
-                <!--                    Загрузить фото-->
-                <!--                </button>-->
                 <!--перечень ухода за растением, если карточка открыта не администратором из базы знаний о растениях-->
                 <div class="care__actions__container" ng-show="callPlace===0 && !isAdmin()">
                     <div ng-repeat="care in actualCare">
@@ -38,7 +38,6 @@
                                    ng-click="careSelect(care.id)"
                                    ng-checked="toCheck(care.id)" onchange=""> {{care.name}}
                         </label>
-<!--                        value="{{care.interval}}"-->
                         <label class="text plant__info__label">
                             интервал:
                             <input class="page__input plant__care__interval__input" type="number"
@@ -47,9 +46,9 @@
                                    ng-model="care.interval"
                                    ng-disabled="!enableCareIntervalInput(care.id)"> дней </label>
                     </div>
-<!--                    <button class="page__button mb-5 text text_center" ng-click="showInterval()">-->
-<!--                        test-->
-<!--                    </button>-->
+                    <!--                    <button class="page__button mb-5 text text_center" ng-click="showInterval()">-->
+                    <!--                        test-->
+                    <!--                    </button>-->
 
                 </div>
 
@@ -64,42 +63,65 @@
                     </div>
                 </div>
             </div>
+            <!--            контейнер с информацией о растении или журнал ухода-->
             <div class="info__right__container">
-                <label class="plant__info__label plant__edit__info__row" for="plantName">
-                    <span ng-show="isAdmin()"> Название: </span>
-                    <input id="plantName"
-                           ng-class="{'text plant__edit__control plant__edit__input':isAdmin(), 'plant__name__header':!isAdmin()}"
-                           ng-model="plant.name" ng-disabled="!isAdmin()">
-                </label>
-                <label class="plant__info__label plant__edit__info__row" for="plantFamily"> Семейство:
-                    <input id="plantFamily"
-                           ng-class="{'text plant__edit__control plant__edit__input':isAdmin(), 'text':!isAdmin()}"
-                           ng-model="plant.family" ng-disabled="!isAdmin()">
-                </label>
-                <label class="plant__info__label plant__edit__info__row" for="plantGenus"> Род:
-                    <input id="plantGenus"
-                           ng-class="{'text plant__edit__control plant__edit__input':isAdmin(), 'text':!isAdmin()}"
-                           ng-model="plant.genus" ng-disabled="!isAdmin()">
-                </label>
-                <div class="" ng-show="!isAdmin()">
-                    <div class="plant__info__label">Краткое описание:</div>
-                    <div class="text mb-5">{{plant.shortDescription}}</div>
-                    <div class="plant__info__label">Полное описание:</div>
-                    <div class="text mb-5">{{plant.description}}</div>
+                <div class="plant__card__row" ng-show="callPlace===1 && !isAdmin() && isAuthorized()">
+                    <button ng-class="{'page__button' : !showDescription, 'page__button selected__tab__indication' : showDescription}"
+                            ng-click="changeOnDescription(true)">описание
+                    </button>
+                    <button ng-class="{'page__button' : showDescription, 'page__button selected__tab__indication' : !showDescription}"
+                            ng-click="changeOnDescription(false)">журнал
+                    </button>
                 </div>
-                <div class="plant__textarea__container" ng-show="isAdmin()">
-                    <label class="plant__info__label plant__edit__info__row" for="plantShort"> Краткое описание:</label>
-                    <textarea id="plantShort"
-                              class="text plant__edit__control plant__edit__textarea"
-                              ng-model="plant.shortDescription" ng-disabled="!isAdmin()"></textarea>
+                <div ng-show="showDescription">
+                    <label class="plant__info__label plant__edit__info__row" for="plantName">
+                        <span ng-show="isAdmin()"> Название: </span>
+                        <input id="plantName"
+                               ng-class="{'text plant__edit__control plant__edit__input':isAdmin(), 'plant__name__header':!isAdmin()}"
+                               ng-model="plant.name" ng-disabled="!isAdmin()">
+                    </label>
+                    <label class="plant__info__label plant__edit__info__row" for="plantFamily"> Семейство:
+                        <input id="plantFamily"
+                               ng-class="{'text plant__edit__control plant__edit__input':isAdmin(), 'text':!isAdmin()}"
+                               ng-model="plant.family" ng-disabled="!isAdmin()">
+                    </label>
+                    <label class="plant__info__label plant__edit__info__row" for="plantGenus"> Род:
+                        <input id="plantGenus"
+                               ng-class="{'text plant__edit__control plant__edit__input':isAdmin(), 'text':!isAdmin()}"
+                               ng-model="plant.genus" ng-disabled="!isAdmin()">
+                    </label>
+                    <div class="" ng-show="!isAdmin()">
+                        <div class="plant__info__label">Краткое описание:</div>
+                        <div class="text mb-5">{{plant.shortDescription}}</div>
+                        <div class="plant__info__label">Полное описание:</div>
+                        <div class="text mb-5">{{plant.description}}</div>
+                    </div>
+                    <div class="plant__textarea__container" ng-show="isAdmin()">
+                        <label class="plant__info__label plant__edit__info__row" for="plantShort"> Краткое
+                            описание:</label>
+                        <textarea id="plantShort"
+                                  class="text plant__edit__control plant__edit__textarea"
+                                  ng-model="plant.shortDescription" ng-disabled="!isAdmin()"></textarea>
 
-                    <label class="plant__info__label plant__edit__info__row" for="plantDescription">Описание:</label>
-                    <textarea id="plantDescription"
-                              class="text plant__edit__control plant__edit__textarea"
-                              ng-model="plant.description" ng-disabled="!isAdmin()"></textarea>
+                        <label class="plant__info__label plant__edit__info__row"
+                               for="plantDescription">Описание:</label>
+                        <textarea id="plantDescription"
+                                  class="text plant__edit__control plant__edit__textarea"
+                                  ng-model="plant.description" ng-disabled="!isAdmin()"></textarea>
+                    </div>
+                </div>
+                <!--                     careLogEntries-->
+                <div ng-show="!showDescription && callPlace===1 && !isAdmin() && isAuthorized()"
+                     ng-repeat="entry in card.careLogEntries">
+                    <div class="plant__card__row">
+                        <p class="plant__care__header"> {{entry.care.careName}}: </p>
+                        <p class="text"> {{entry.eventDate}}</p>
+                    </div>
+
                 </div>
             </div>
         </div>
+
         <div class="plant__edit__buttons_container" ng-show="isAdmin()">
             <button class="page__button ok__cancel__button text" ng-click="home()">Отмена</button>
             <button class="page__button ok__cancel__button text" ng-click="savePlant()">Сохранить</button>

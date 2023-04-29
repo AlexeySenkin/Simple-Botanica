@@ -16,6 +16,8 @@ angular.module('Simple-Botanica-app')
             filePath: ""
         }
 
+        let card = this;
+
         $scope.isAdmin = function () {
             return userFactory.isAdmin();
         }
@@ -24,30 +26,19 @@ angular.module('Simple-Botanica-app')
             return userFactory.isAuthorized();
         }
 
+        card.careLogEntries = {};
+
         $scope.careAction = function (careId) {
-            switch (careId) {
-                case 1: {
-                    console.log(plantInfo.plantObject);
-                    console.log("полить");
-                    break;
+            plantFactory.careAction($localStorage.plantId, careId, 1, 20).then(
+                function successCallback(response) {
+                    $scope.careLog = response;
+                    card.careLogEntries = response.content;
+                    $scope.showDescription = false;
+                    console.log('выполнен уход: ' + careId);
+                }, function errorCallback(reason) {
+                    console.log(reason.data)
                 }
-                case 3: {
-                    console.log("опрыскать");
-                    break;
-                }
-                case 2: {
-                    console.log("удобрить");
-                    break
-                }
-                case 4: {
-                    console.log("обрезать");
-                    break;
-                }
-                case 5: {
-                    console.log("пересадить");
-                    break;
-                }
-            }
+            );
         };
 
         $scope.addPlantToUserList = function (plantId) {
@@ -55,31 +46,50 @@ angular.module('Simple-Botanica-app')
             plantFactory.addPlantToUsersList($localStorage.botanicaWebUser.userId, plantId).then(
                 function successCallBack(response) {
                     console.log(response);
-                    location.assign("#!/user-plants");
+                    $localStorage.plantListCallPlace = 1;
+                    location.replace("#!/user-plants");
                 }, function errorCallback(reason) {
                     console.log(reason);
                 }
             );
         };
 
+        card.deletePlantFromUserList = function (userPlantId) {
+            console.log("Удаление растения: " + userPlantId);
+            plantFactory.deletePlantFromUserList(userPlantId);
+            location.replace("#!/user-plants");
+        }
+
         $scope.showPlantDetails = function () {
             let plantId = $localStorage.plantId;
             // признак откуда была открыта карточка растения
             $scope.callPlace = $localStorage.plantListCallPlace;
-            console.log("plantListCall_place = " + $localStorage.plantListCallPlace);
 
             plantFactory.getPlant(plantId).then(function successCallback(response) {
-                $scope.plant = response.data;
-                $scope.plantPhotoCurrent = response.photoPath;
-                if ($localStorage.plantListCallPlace === 1) {
-                    $scope.actionButtons = response.actualCareButtons;
-                } else {
-                    $scope.actualCare = response.actualCare;
-                    $scope.careDictionary = updateCareWithActualPlan(plantInfo.actions, $scope.actualCare);
+                    $scope.plant = response.data;
+                    $scope.plantPhotoCurrent = response.photoPath;
+                    if ($localStorage.plantListCallPlace === 1) {
+                        $scope.actionButtons = response.actualCareButtons;
+                        //журнал ухода
+                        plantFactory.getPlantCareLog(plantId, 1, 20).then(
+                            function successCallback(response) {
+                                console.log('получен журнал ухода');
+                                card.careLogEntries = response.data.content;
+                                $scope.careLog = response.data;
+                                $scope.showDescription = false;
+                            }, function errorCallback(reason) {
+                                console.log('ошибка при получении журнала ухода: ' + reason.data.status);
+                            });
+                    } else {
+                        $scope.actualCare = response.actualCare;
+                        $scope.careDictionary = updateCareWithActualPlan(plantInfo.actions, $scope.actualCare);
+                        $scope.showDescription = true;
+                    }
+                }, function errorCallback(reason) {
+                    console.log('ошибка при получении информации о растении:' + reason.data.status);
                 }
-            }, function errorCallback(reason) {
-                console.log('error occurred while fetching a plant info:' + reason);
-            });
+            )
+            ;
         }
 
         let updateCareWithActualPlan = function (careDictionary, actualCarePlan) {
@@ -134,11 +144,9 @@ angular.module('Simple-Botanica-app')
                         let updCarePlan = currentCarePlan[j];
                         updCarePlan.careCount = newCarePlan[i].interval;
                         carePlan.push(updCarePlan);
-                        // break;
                     } else {
                         let updCarePlan = newCareFromPlan(newCarePlan[i])
                         carePlan.push(updCarePlan);
-                        // break;
                     }
                 }
             }
@@ -167,7 +175,6 @@ angular.module('Simple-Botanica-app')
             alert("Извините, мы пока не умеем загружать фото!");
         }
 
-        $scope.showPlantDetails();
 
         $scope.careSelect = function (careId) {
             let careAction = document.getElementById("careAction-" + careId.toString());
@@ -218,11 +225,28 @@ angular.module('Simple-Botanica-app')
             return true;
         }
 
-
         $scope.showInterval = function () {
             let intervals = document.getElementsByName("careInterval");
             for (const interval of intervals) {
                 console.log(interval.value);
             }
         }
+
+        $scope.changeOnDescription = function (toShowDescription) {
+            $scope.showDescription = toShowDescription;
+            if (!toShowDescription) {
+                plantFactory.getPlantCareLog($localStorage.plantId, 1, 20).then(
+                    function successCallback(response) {
+                        // $scope.careLogEntries = response.data.content;
+                        $scope.careLog = response.data;
+                        card.careLogEntries = response.data.content;
+                    }, function errorCallback(reason) {
+                        console.log('error ocurred while fetching plant care log data:' + reason.data.status);
+                    }
+                )
+            }
+        }
+
+        $scope.showPlantDetails();
+
     })

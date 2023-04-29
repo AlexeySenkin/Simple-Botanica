@@ -14,7 +14,9 @@
     }
 
     function run($localStorage, $rootScope, $http, careFactory) {
-        $localStorage.plantListCallPlace = 0;
+        if (!$localStorage.plantListCallPlace) {
+            $localStorage.plantListCallPlace = 0;
+        }
         if ($localStorage.botanicaWebUser) {
             let jwt = $localStorage.botanicaWebUser.token;
             let payload = JSON.parse(atob(jwt.split('.')[1]));
@@ -103,7 +105,8 @@ botanicaApp.factory('userFactory', function ($localStorage, $http, $q, settings)
     userFactoryObj.logOut = function () {
         if ($localStorage.botanicaWebUser && confirm('Выйти?')) {
             delete $localStorage.botanicaWebUser;
-            location.assign('#!/')
+            $localStorage.plantListCallPlace = 0;
+            location.replace('#!/');
         }
     }
 
@@ -195,7 +198,7 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
         let actualCareButtons = [];
         for (let i = 0; i < actualCareList.length; i++) {
             for (let j = 0; j < plantInfo.actions.length; j++) {
-                if (actualCareList[i].careDto.id === plantInfo.actions[j].id && actualCareList[i].careDto.active) {
+                if (actualCareList[i].care.careId === plantInfo.actions[j].id && actualCareList[i].care.isActive) {
                     actualCareButtons.push(plantInfo.actions[j]);
                     break;
                 }
@@ -213,11 +216,35 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
         return actualCareButtons;
     }
 
+    plantFactoryObj.getPlantCareLog = function (userPlantId, pageNum, pageSize) {
+        let defer = $q.defer();
+        if (userPlantId) {
+            let httpQueryString = '?userPlantId=' + userPlantId + '&page=' + pageNum + '&size=' + pageSize;
+            $http.get(settings.USER_SERVICE_PATH + '/user_care' + httpQueryString).then(
+                function successCallback(response) {
+                    let logContent = response.data.content;
+                    for (let i = 0; i < logContent.length; i++) {
+                        let careDate = logContent[i].eventDate.slice(0, 10);
+                        logContent[i].eventDate = careDate.slice(8, 10) + '.' + careDate.slice(5, 7) + '.' +
+                            careDate.slice(0, 4);
+                    }
+                    response.data.content = logContent;
+                    defer.resolve(response);
+                }, function errorCallback(reason) {
+                    defer.reject(reason);
+                }
+            );
+            return defer.promise;
+        }
+        return null;
+    }
+
     //метод получения информации о растении
     //$localStorage.plantListCallPlace-признак какой список растений был открыт,
     //          и из какого списка смотрим карточку растения
     //0-при просмотре карточки из базы знаний о растениях
     //1-при просмотре карточки растения из списка растений пользователя
+
     plantFactoryObj.getPlant = function (plantId) {
         let defer = $q.defer();
         let responseEntity = {data: {}, photoPath: ""};
@@ -227,18 +254,16 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
                 $http.get(plantPath + '/plant/' + plantId).then(function successCallback(response) {
                     responseEntity.data = response.data;
                     //кнопки тут не нужны
-                    // responseEntity.careDictionary =
                     responseEntity.actualCare = response.data.standardCarePlan;
-                    // responseEntity.actualCareButtons = formCareButtonsObj(response.data.standardCarePlan);
                     responseEntity.photoPath = plantFactoryObj.getPlantPhoto(responseEntity.data.filePath);
                     defer.resolve(responseEntity);
                 }, function errorCallback(reason) {
                     defer.reject(reason);
                 });
             } else { // если растение было вызвано из списка растений пользователя
-                $http.get(settings.USER_SERVICE_PATH + '/user_plant/' + plantId).then(function successCallback(response) {
+                $http.get(settings.USER_SERVICE_PATH + '/user_plant?userPlantId=' + plantId).then(function successCallback(response) {
                     responseEntity.data = response.data;
-                    responseEntity.actualCareButtons = formCareButtonsObj(response.data.standardCarePlan);
+                    responseEntity.actualCareButtons = formCareButtonsObj(response.data.userCareCustom);
                     responseEntity.photoPath = plantFactoryObj.getPlantPhoto(responseEntity.data.filePath);
                     defer.resolve(responseEntity);
                 }, function errorCallback(reason) {
@@ -274,6 +299,18 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
         return defer.promise;
     };
 
+    plantFactoryObj.deletePlantFromUserList = function (userPlantId) {
+        let defer = $q.defer();
+        $http.post(settings.USER_SERVICE_PATH + '/active_user_plant?userPlantId=' + userPlantId)
+            .then(function successCallback(response) {
+                defer.resolve(response);
+            }, function errorCallback(reason) {
+                defer.reject(reason);
+            });
+        return defer.promise;
+
+    }
+
     plantFactoryObj.saveOrUpdate = function (plantObject) {
         let plant = plantObject;
         if (!plant.isActive) {
@@ -281,7 +318,6 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
         }
         let defer = $q.defer();
         if (plant.id === null) {
-            // console.log('Saving a new plant: ' + plant);
             $http.post(plantPath + '/plant', JSON.stringify(plant)).then(function successCallback(response) {
                 defer.resolve(response);
                 console.log('New plant saved, id=' + response.data);
@@ -290,7 +326,6 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
                 console.log('Error occurred while saving a new plant. error code:' + reason.data.status);
             })
         } else {
-            // console.log('Saving changes into plant: ' + plant);
             $http.put(plantPath + '/plant', JSON.stringify(plant))
                 .then(function successCallback(response) {
                     defer.resolve(response);
@@ -327,7 +362,6 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
             let getPath = settings.USER_SERVICE_PATH + '/user_plants';
             $http.get(getPath, {params: {userId: userId, page: page, size: size}}).then(
                 function successCallback(response) {
-                    console.log(response);
                     defer.resolve(response);
                 },
                 function errorCallback(reason) {
@@ -340,12 +374,30 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
 
     plantFactoryObj.addPlantToUsersList = function (userId, plantId) {
         let defer = $q.defer();
-        $http.post(settings.USER_SERVICE_PATH + '/add_user_plant?userId='+userId+'&plantId='+plantId).then(
+        $http.post(settings.USER_SERVICE_PATH + '/add_user_plant?userId=' + userId + '&plantId=' + plantId).then(
         ).then(
             function successCallback(response) {
                 defer.resolve(response);
             },
             function errorCallback(reason) {
+                defer.reject(reason);
+            });
+        return defer.promise;
+    }
+
+    plantFactoryObj.careAction = function (userPlantId, careId, page, pageSize) {
+        let defer = $q.defer();
+        $http.post(settings.USER_SERVICE_PATH + '/add_user_care?userPlantId=' + userPlantId + '&careId=' + careId)
+            .then(function successCallback(response) {
+                plantFactoryObj.getPlantCareLog(userPlantId, page, pageSize).then(
+                    function successCallback(getResponse) {
+                        defer.resolve(getResponse.data);
+                    },
+                    function errorCallback(getReason) {
+                        defer.reject(getReason);
+                    }
+                )
+            }, function errorCallback(reason) {
                 defer.reject(reason);
             });
         return defer.promise;
