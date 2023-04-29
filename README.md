@@ -72,9 +72,9 @@
 ![Регистрация на сайте](/ExampleMedia/SimpleBotanicaRegistrationSample.gif)
 ![Вход в аккаунт на сайте](/ExampleMedia/SimpleBotanicaLogInSample.gif)
 ### Возможности модератора
-##### Добавление растения
-##### Изменение растения
-##### Удаление растения (изменение метки активного растения на неактивное растение)
+![Добавление растения](/ExampleMedia/SimpleBotanicaAddingPlantSample.gif)
+![Изменение растения](/ExampleMedia/SimpleBotanicaRedactingPlantSample.gif)
+![Удаление растения из общего списка](/ExampleMedia/SimpleBotanicaDeletingPlantSample.gif)
 ### Возможности зарегистрированного пользователя
 ![Добавление растения в список своих растений](/ExampleMedia/SimpleBotanicaAddingPlantToUserSample.gif)
 ![Просмотр своего списка растений](/ExampleMedia/SimpleBotanicaUserPlantsViewSample.gif)
