@@ -42,7 +42,7 @@
                             интервал:
                             <input class="page__input plant__care__interval__input" type="number"
                                    name="careInterval" id="careInterval-{{care.id}}"
-
+                                   ng-min="1"
                                    ng-model="care.interval"
                                    ng-disabled="!enableCareIntervalInput(care.id)"> дней </label>
                     </div>

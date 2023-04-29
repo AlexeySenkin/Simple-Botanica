@@ -49,7 +49,7 @@ angular.module('Simple-Botanica-app')
             plantFactory.deletePlant(plantId).then(
                 function successCallback(response) {
                     console.log("Растение с id=${} удалено успешно", plantId);
-                    $scope.getPlants();
+                    plantFactory.getAllPlants();
                 }, function errorCallback(reason) {
                     console.log("Ошибка при удалении растения id=${}", plantId);
 
