@@ -117,7 +117,7 @@ public class PlantServiceTests {
     void testFindByIdWhenIllegalId() {
         long id = 1;
 
-        assertThrows(NoSuchElementException.class, () -> plantService.findById(id));
+        assertThrows(PlantExistsException.class, () -> plantService.findById(id));
     }
 
 

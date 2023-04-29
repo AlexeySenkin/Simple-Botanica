@@ -29,7 +29,6 @@
 > docker version
 4) Установить Intellij Idea ( [Сайт для скачивания](https://www.jetbrains.com/ru-ru/idea/download/#section=windows) )
 ###### Далее необходим лишь один из пунктов, расположенных под п.5, в зависимости от Ваших препочтений
-5)
 * На главной странице проекта ( [Главная страница](https://github.com/AlexeySenkin/Simple-Botanica) ) нажать на зеленую кнопку 'Code' в правом верхнем углу и скопировать HTTPS-ссылку на проект, в открытом окне для выбора проекта Intellij Idea нажать на кнопку 'Get from VCS', в открывшееся окно вставить ссылку в поле 'URL' и выбрать место на локальной машине для установки в окне 'Directory'
 * На главной странице проекта ( [Главная страница](https://github.com/AlexeySenkin/Simple-Botanica) ) нажать на зеленую кнопку 'Code' в правом верхнем углу и нажать на кнопку 'Download ZIP', выбрать место для скачивания. Распокавать проект, затем в открытом окне для выбора проекта Intellij Idea нажать на кнопку 'Open' и выбрать распакованную папку проекта 
 5) В меню Gradle(правая полоска вкладок, кнопка 'Gradle') открыть и выполнить двойным нажатием
@@ -49,9 +48,23 @@
 > SimpleBotanica -> module.frontend-service -> src -> main -> java -> FrontendServiceApplication
 9) Теперь приложение доступно по [установленному адресу](http://localhost:3010/simplebotanica.ru/index.html#!/)
 ### Linux
-Описание запуска на данной системе отсутствует, но скоро будут добавлено
+Запустить сервисы (нажать на файл один раз и нажать Ctrl+Shift+F10 или правый клик и выбрать вариант 'Run 'название файла'') в следующем порядке:
+> SimpleBotanica -> module.plant-service -> src -> main -> java -> PlantServiceApplication
+>
+> SimpleBotanica -> module.auth-service -> src -> main -> java -> AuthServiceApplication
+>
+> SimpleBotanica -> module.user-service -> src -> main -> java -> UserServiceApplication
+>
+> SimpleBotanica -> module.frontend-service -> src -> main -> java -> FrontendServiceApplication
 ### IOS
-Описание запуска на данной системе отсутствует, но скоро будут добавлено
+Запустить сервисы (нажать на файл один раз и нажать Ctrl+Shift+F10 или правый клик и выбрать вариант 'Run 'название файла'') в следующем порядке:
+> SimpleBotanica -> module.plant-service -> src -> main -> java -> PlantServiceApplication
+>
+> SimpleBotanica -> module.auth-service -> src -> main -> java -> AuthServiceApplication
+>
+> SimpleBotanica -> module.user-service -> src -> main -> java -> UserServiceApplication
+>
+> SimpleBotanica -> module.frontend-service -> src -> main -> java -> FrontendServiceApplication
 ## Возможности проекта
 Видео и фото материалы будут добавлены позднее
 ### Возможности всех пользователей
