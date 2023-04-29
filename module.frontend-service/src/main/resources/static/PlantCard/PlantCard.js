@@ -112,6 +112,9 @@ angular.module('Simple-Botanica-app')
         }
 
         let findCareInPlanById = function (carePlan, id) {
+            if (!carePlan) {
+                return -1;
+            }
             for (let i = 0; i < carePlan.length; i++) {
                 if (carePlan[i].careDto.id === id) {
                     return i;
