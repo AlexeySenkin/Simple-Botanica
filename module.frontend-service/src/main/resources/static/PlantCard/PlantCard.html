@@ -1,4 +1,4 @@
-<div>
+<div ng-controller = "plant-card-controller as card">
     <div class="top__container">
         <div class="plant__info__card__container">
             <!--            ng-src="{{imgPath}}{{plant.filePath}}"-->
@@ -9,6 +9,11 @@
                         ng-show="callPlace===0 && !isAdmin() && isAuthorized()">
                     Добавить к себе
                 </button>
+                <button class="page__button mb-5 text text_center" ng-click="card.deletePlantFromUserList(plant.id)"
+                        ng-show="callPlace===1 && !isAdmin() && isAuthorized()">
+                    Удалить растение
+                </button>
+
                 <!--                <label>-->
                 <input class="page__button mb-5 text text_center" type="file"
                        ng-click="addPlantPhoto()" ng-show="isAdmin()">
@@ -105,8 +110,9 @@
                                   ng-model="plant.description" ng-disabled="!isAdmin()"></textarea>
                     </div>
                 </div>
+                <!--                     careLogEntries-->
                 <div ng-show="!showDescription && callPlace===1 && !isAdmin() && isAuthorized()"
-                     ng-repeat="entry in careLogEntries">
+                     ng-repeat="entry in card.careLogEntries">
                     <div class="plant__card__row">
                         <p class="plant__care__header"> {{entry.care.careName}}: </p>
                         <p class="text"> {{entry.eventDate}}</p>

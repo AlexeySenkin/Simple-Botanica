@@ -16,6 +16,8 @@ angular.module('Simple-Botanica-app')
             filePath: ""
         }
 
+        let card = this;
+
         $scope.isAdmin = function () {
             return userFactory.isAdmin();
         }
@@ -24,30 +26,19 @@ angular.module('Simple-Botanica-app')
             return userFactory.isAuthorized();
         }
 
+        card.careLogEntries = {};
+
         $scope.careAction = function (careId) {
-            switch (careId) {
-                case 1: {
-                    console.log(plantInfo.plantObject);
-                    console.log("полить");
-                    break;
+            plantFactory.careAction($localStorage.plantId, careId, 1, 20).then(
+                function successCallback(response) {
+                    $scope.careLog = response;
+                    card.careLogEntries = response.content;
+                    $scope.showDescription = false;
+                    console.log('выполнен уход: ' + careId);
+                }, function errorCallback(reason) {
+                    console.log(reason.data)
                 }
-                case 3: {
-                    console.log("опрыскать");
-                    break;
-                }
-                case 2: {
-                    console.log("удобрить");
-                    break
-                }
-                case 4: {
-                    console.log("обрезать");
-                    break;
-                }
-                case 5: {
-                    console.log("пересадить");
-                    break;
-                }
-            }
+            );
         };
 
         $scope.addPlantToUserList = function (plantId) {
@@ -56,12 +47,18 @@ angular.module('Simple-Botanica-app')
                 function successCallBack(response) {
                     console.log(response);
                     $localStorage.plantListCallPlace = 1;
-                    location.assign("#!/user-plants");
+                    location.replace("#!/user-plants");
                 }, function errorCallback(reason) {
                     console.log(reason);
                 }
             );
         };
+
+        card.deletePlantFromUserList = function (userPlantId) {
+            console.log("Удаление растения: " + userPlantId);
+            plantFactory.deletePlantFromUserList(userPlantId);
+            location.replace("#!/user-plants");
+        }
 
         $scope.showPlantDetails = function () {
             let plantId = $localStorage.plantId;
@@ -69,19 +66,30 @@ angular.module('Simple-Botanica-app')
             $scope.callPlace = $localStorage.plantListCallPlace;
 
             plantFactory.getPlant(plantId).then(function successCallback(response) {
-                $scope.plant = response.data;
-                $scope.plantPhotoCurrent = response.photoPath;
-                if ($localStorage.plantListCallPlace === 1) {
-                    $scope.actionButtons = response.actualCareButtons;
-                } else {
-                    $scope.actualCare = response.actualCare;
-                    $scope.careDictionary = updateCareWithActualPlan(plantInfo.actions, $scope.actualCare);
-                    $scope.careLogEntries = response.data.content;
-                    $scope.careLog = response.data;
+                    $scope.plant = response.data;
+                    $scope.plantPhotoCurrent = response.photoPath;
+                    if ($localStorage.plantListCallPlace === 1) {
+                        $scope.actionButtons = response.actualCareButtons;
+                        //журнал ухода
+                        plantFactory.getPlantCareLog(plantId, 1, 20).then(
+                            function successCallback(response) {
+                                console.log('получен журнал ухода');
+                                card.careLogEntries = response.data.content;
+                                $scope.careLog = response.data;
+                                $scope.showDescription = false;
+                            }, function errorCallback(reason) {
+                                console.log('ошибка при получении журнала ухода: ' + reason.data.status);
+                            });
+                    } else {
+                        $scope.actualCare = response.actualCare;
+                        $scope.careDictionary = updateCareWithActualPlan(plantInfo.actions, $scope.actualCare);
+                        $scope.showDescription = true;
+                    }
+                }, function errorCallback(reason) {
+                    console.log('ошибка при получении информации о растении:' + reason.data.status);
                 }
-            }, function errorCallback(reason) {
-                console.log('error occurred while fetching a plant info:' + reason);
-            });
+            )
+            ;
         }
 
         let updateCareWithActualPlan = function (careDictionary, actualCarePlan) {
@@ -217,7 +225,6 @@ angular.module('Simple-Botanica-app')
             return true;
         }
 
-
         $scope.showInterval = function () {
             let intervals = document.getElementsByName("careInterval");
             for (const interval of intervals) {
@@ -225,13 +232,14 @@ angular.module('Simple-Botanica-app')
             }
         }
 
-        $scope.changeOnDescription = function (toShowDescription){
+        $scope.changeOnDescription = function (toShowDescription) {
             $scope.showDescription = toShowDescription;
             if (!toShowDescription) {
-                plantFactory.getPlantCareLog($localStorage.plantId).then(
+                plantFactory.getPlantCareLog($localStorage.plantId, 1, 20).then(
                     function successCallback(response) {
-                        $scope.careLogEntries = response.data.content;
+                        // $scope.careLogEntries = response.data.content;
                         $scope.careLog = response.data;
+                        card.careLogEntries = response.data.content;
                     }, function errorCallback(reason) {
                         console.log('error ocurred while fetching plant care log data:' + reason.data.status);
                     }
@@ -239,7 +247,6 @@ angular.module('Simple-Botanica-app')
             }
         }
 
-        $scope.changeOnDescription(true);
         $scope.showPlantDetails();
 
     })

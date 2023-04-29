@@ -216,16 +216,17 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
         return actualCareButtons;
     }
 
-    plantFactoryObj.getPlantCareLog = function (userPlantId){
-       let defer = $q.defer();
-       if (userPlantId) {
-            $http.get(settings.USER_SERVICE_PATH + '/user_care?userPlantId=' + userPlantId).then(
+    plantFactoryObj.getPlantCareLog = function (userPlantId, pageNum, pageSize) {
+        let defer = $q.defer();
+        if (userPlantId) {
+            let httpQueryString = '?userPlantId=' + userPlantId + '&page=' + pageNum + '&size=' + pageSize;
+            $http.get(settings.USER_SERVICE_PATH + '/user_care' + httpQueryString).then(
                 function successCallback(response) {
                     let logContent = response.data.content;
                     for (let i = 0; i < logContent.length; i++) {
                         let careDate = logContent[i].eventDate.slice(0, 10);
-                         logContent[i].eventDate = careDate.slice(8, 10) + '.' + careDate.slice(5, 7) + '.' +
-                             careDate.slice(0, 4);
+                        logContent[i].eventDate = careDate.slice(8, 10) + '.' + careDate.slice(5, 7) + '.' +
+                            careDate.slice(0, 4);
                     }
                     response.data.content = logContent;
                     defer.resolve(response);
@@ -234,8 +235,8 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
                 }
             );
             return defer.promise;
-       }
-       return null;
+        }
+        return null;
     }
 
     //метод получения информации о растении
@@ -264,14 +265,6 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
                     responseEntity.data = response.data;
                     responseEntity.actualCareButtons = formCareButtonsObj(response.data.userCareCustom);
                     responseEntity.photoPath = plantFactoryObj.getPlantPhoto(responseEntity.data.filePath);
-                   //журнал ухода
-                    plantFactoryObj.getPlantCareLog(plantId).then(
-                        function successCallback(response) {
-                            responseEntity.careLog = response.data;
-                        }, function errorCallback(reason) {
-                            responseEntity.careLog = reason.data.status;
-                        }
-                    )
                     defer.resolve(responseEntity);
                 }, function errorCallback(reason) {
                     defer.reject(reason);
@@ -305,6 +298,18 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
         });
         return defer.promise;
     };
+
+    plantFactoryObj.deletePlantFromUserList = function (userPlantId) {
+        let defer = $q.defer();
+        $http.post(settings.USER_SERVICE_PATH + '/active_user_plant?userPlantId=' + userPlantId)
+            .then(function successCallback(response) {
+                defer.resolve(response);
+            }, function errorCallback(reason) {
+                defer.reject(reason);
+            });
+        return defer.promise;
+
+    }
 
     plantFactoryObj.saveOrUpdate = function (plantObject) {
         let plant = plantObject;
@@ -369,12 +374,30 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
 
     plantFactoryObj.addPlantToUsersList = function (userId, plantId) {
         let defer = $q.defer();
-        $http.post(settings.USER_SERVICE_PATH + '/add_user_plant?userId='+userId+'&plantId='+plantId).then(
+        $http.post(settings.USER_SERVICE_PATH + '/add_user_plant?userId=' + userId + '&plantId=' + plantId).then(
         ).then(
             function successCallback(response) {
                 defer.resolve(response);
             },
             function errorCallback(reason) {
+                defer.reject(reason);
+            });
+        return defer.promise;
+    }
+
+    plantFactoryObj.careAction = function (userPlantId, careId, page, pageSize) {
+        let defer = $q.defer();
+        $http.post(settings.USER_SERVICE_PATH + '/add_user_care?userPlantId=' + userPlantId + '&careId=' + careId)
+            .then(function successCallback(response) {
+                plantFactoryObj.getPlantCareLog(userPlantId, page, pageSize).then(
+                    function successCallback(getResponse) {
+                        defer.resolve(getResponse.data);
+                    },
+                    function errorCallback(getReason) {
+                        defer.reject(getReason);
+                    }
+                )
+            }, function errorCallback(reason) {
                 defer.reject(reason);
             });
         return defer.promise;
