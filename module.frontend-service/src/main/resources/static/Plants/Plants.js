@@ -14,7 +14,6 @@ angular.module('Simple-Botanica-app')
             if ($localStorage.botanicaWebUser) {
                 userId = $localStorage.botanicaWebUser.userId;
             }
-            // $scope.plantNameFilter = null;
             plantFactory.getAllPlants(userId, $scope.plantNameFilter, $scope.currentPage, 8, $localStorage.plantListCallPlace)
                 .then(function successCallback(response) {
                         plantListObj.plantsPage = response.data.content;

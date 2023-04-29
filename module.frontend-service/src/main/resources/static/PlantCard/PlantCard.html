@@ -1,4 +1,4 @@
-<div ng-controller = "plant-card-controller as card">
+<div ng-controller="plant-card-controller as card">
     <div class="top__container">
         <div class="plant__info__card__container">
             <div class="info__left__container">
@@ -29,14 +29,14 @@
                     </div>
                 </div>
 
-<!--                callPlace===0 &&-->
+                <!--                callPlace===0 &&-->
                 <!--перечень ухода за растением, если карточка открыта не администратором из базы знаний о растениях-->
                 <div class="care__actions__container" ng-show=" !isAdmin()">
                     <div ng-repeat="care in actualCare">
                         <div class="plant__edit__info__row">
                             <p class="text plant__info__label plant__care__header">
-                                {{care.careDto.name}}:</p>
-                            <p class="text mr-5"> 1 раз в {{care.careCount}} дней</p>
+                                {{callPlace===1 ? care.care.careName : care.careDto.name}}:</p>
+                            <p class="text mr-5"> 1 раз в {{callPlace===1 ? care.userCareCount :care.careCount}} дней</p>
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                             интервал:
                             <input class="page__input plant__care__interval__input" type="number"
                                    name="careInterval" id="careInterval-{{care.id}}"
-                                   ng-min="1"
+                                   min="1"
                                    ng-model="care.interval"
                                    ng-disabled="!enableCareIntervalInput(care.id)"> дней </label>
                     </div>
