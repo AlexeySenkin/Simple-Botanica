@@ -264,6 +264,7 @@ botanicaApp.factory('plantFactory', function ($http, $localStorage, settings, $q
                 $http.get(settings.USER_SERVICE_PATH + '/user_plant?userPlantId=' + plantId).then(function successCallback(response) {
                     responseEntity.data = response.data;
                     responseEntity.actualCareButtons = formCareButtonsObj(response.data.userCareCustom);
+                    responseEntity.actualCare = response.data.userCareCustom;
                     responseEntity.photoPath = plantFactoryObj.getPlantPhoto(responseEntity.data.filePath);
                     defer.resolve(responseEntity);
                 }, function errorCallback(reason) {

@@ -70,6 +70,7 @@ angular.module('Simple-Botanica-app')
                     $scope.plantPhotoCurrent = response.photoPath;
                     if ($localStorage.plantListCallPlace === 1) {
                         $scope.actionButtons = response.actualCareButtons;
+                        $scope.actualCare = response.actualCare;
                         //журнал ухода
                         plantFactory.getPlantCareLog(plantId, 1, 20).then(
                             function successCallback(response) {
@@ -77,10 +78,25 @@ angular.module('Simple-Botanica-app')
                                 card.careLogEntries = response.data.content;
                                 $scope.careLog = response.data;
                                 $scope.showDescription = false;
+                                // care:
+                                //     careId:1
+                                //     careName:"полив"
+                                //     isActive:true
+                                // userCareCount:7
+                                // userCareCustomId:9
+                                // userCareVolume:100
+                                // userPlantId:5
                             }, function errorCallback(reason) {
                                 console.log('ошибка при получении журнала ухода: ' + reason.data.status);
                             });
                     } else {
+                        // careCount:1
+                        // careDto:
+                        //     active:true
+                        //     id:1
+                        //     name:"полив"
+                        // careVolume:60
+                        // id:36
                         $scope.actualCare = response.actualCare;
                         $scope.careDictionary = updateCareWithActualPlan(plantInfo.actions, $scope.actualCare);
                         $scope.showDescription = true;

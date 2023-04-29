@@ -1,24 +1,37 @@
 <div ng-controller = "plant-card-controller as card">
     <div class="top__container">
         <div class="plant__info__card__container">
-            <!--            ng-src="{{imgPath}}{{plant.filePath}}"-->
             <div class="info__left__container">
+
                 <img class="plant__photo plant__card__photo" ng-src="{{plantPhotoCurrent}}" alt="{{plant.name}}"
                      src="">
+
                 <button class="page__button mb-5 text text_center" ng-click="addPlantToUserList(plant.id)"
                         ng-show="callPlace===0 && !isAdmin() && isAuthorized()">
                     Добавить к себе
                 </button>
+
                 <button class="page__button mb-5 text text_center" ng-click="card.deletePlantFromUserList(plant.id)"
                         ng-show="callPlace===1 && !isAdmin() && isAuthorized()">
                     Удалить растение
                 </button>
 
-                <!--                <label>-->
                 <input class="page__button mb-5 text text_center" type="file"
                        ng-click="addPlantPhoto()" ng-show="isAdmin()">
+                <!--кнопки ухода за растением показываются только если карточка открыта авторизованным пользователем
+                                из списка растений пользователя-->
+                <div class="care__action__buttons__container" ng-show="callPlace===1 && !isAdmin() && isAuthorized()">
+                    <div ng-repeat="bt in actionButtons">
+                        <button class="care__button text">
+                            <img class="bi__care__icon" ng-src="{{bt.img}}" ng-click="careAction(bt.id)" alt="2"
+                                 src=""/>
+                        </button>
+                    </div>
+                </div>
+
+<!--                callPlace===0 &&-->
                 <!--перечень ухода за растением, если карточка открыта не администратором из базы знаний о растениях-->
-                <div class="care__actions__container" ng-show="callPlace===0 && !isAdmin()">
+                <div class="care__actions__container" ng-show=" !isAdmin()">
                     <div ng-repeat="care in actualCare">
                         <div class="plant__edit__info__row">
                             <p class="text plant__info__label plant__care__header">
@@ -46,22 +59,9 @@
                                    ng-model="care.interval"
                                    ng-disabled="!enableCareIntervalInput(care.id)"> дней </label>
                     </div>
-                    <!--                    <button class="page__button mb-5 text text_center" ng-click="showInterval()">-->
-                    <!--                        test-->
-                    <!--                    </button>-->
 
                 </div>
 
-                <!--кнопки ухода за растением показываются только если карточка открыта авторизованным пользователем
-                    из списка растений пользователя-->
-                <div class="care__action__buttons__container" ng-show="callPlace===1 && !isAdmin() && isAuthorized()">
-                    <div ng-repeat="bt in actionButtons">
-                        <button class="care__button text">
-                            <img class="bi__care__icon" ng-src="{{bt.img}}" ng-click="careAction(bt.id)" alt="2"
-                                 src=""/>
-                        </button>
-                    </div>
-                </div>
             </div>
             <!--            контейнер с информацией о растении или журнал ухода-->
             <div class="info__right__container">
