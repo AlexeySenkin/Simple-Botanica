@@ -1,4 +1,4 @@
-<div>
+<div ng-controller="plants-controller as plants">
     <div class="top__container plantrepresentation__container">
         <form class="form__search">
             <div class="flex__container">
@@ -14,12 +14,12 @@
         </form>
 
         <div class="top__container plantcards__container">
-            <div class="plant__card" ng-repeat="plant in plantsPage">
+            <div class="plant__card" ng-repeat="plant in plants.plantsPage">
                 <div class="plant__card__body__container">
                     <img class="plant__photo" ng-src="{{getPlantImagePath(plant.filePath)}}" alt="{{plant.name}}" src=""
                     ng-click="showPlantDetails(plant.id)">
 
-                    <h4 class="plant__name__header">{{plant.name}}(id:{{plant.id}})</h4>
+                    <h4 class="plant__name__header">{{plant.name}}</h4>
                     <p class="text text_center">
                         {{plant.shortDescription}}
                     </p>
@@ -34,7 +34,7 @@
 
         <div class="pagination__container">
             <ul uib-pagination total-items="totalItems" ng-model="currentPage" max-size="maxPages"
-                class="" boundary-links="true" num-pages="numPages" ng-change="getPlants()"></ul>
+                class="" boundary-links="true" num-pages="numPages" ng-change="plants.getPlants()"></ul>
         </div>
     </div>
 </div>
