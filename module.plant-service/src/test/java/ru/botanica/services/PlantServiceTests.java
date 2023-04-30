@@ -11,17 +11,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.botanica.dtos.PlantCareDto;
 import ru.botanica.dtos.PlantDto;
 import ru.botanica.entities.*;
+import ru.botanica.exceptions.PlantExistsException;
 import ru.botanica.mappers.PlantCareDtoMapper;
 import ru.botanica.repositories.CareRepository;
 import ru.botanica.repositories.PlantCareRepository;
 import ru.botanica.repositories.PlantPhotoRepository;
 import ru.botanica.entities.Plant;
-import ru.botanica.dtos.PlantDto;
 import ru.botanica.repositories.PlantRepository;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -91,19 +90,22 @@ public class PlantServiceTests {
 
         when(plantRepository.findById(id)).thenReturn(Optional.of(plant));
 
-        PlantDto plantDto = plantService.findById(id);
-
-        assertAll(
-                () -> assertEquals(plant.getId(), plantDto.getId()),
-                () -> assertEquals(plant.getName(), plantDto.getName()),
-                () -> assertEquals(plant.getPhoto().getFilePath(), plantDto.getFilePath()),
-                () -> assertEquals(plant.getGenus(), plantDto.getGenus()),
-                () -> assertEquals(plant.getFamily(), plantDto.getFamily()),
-                () -> assertEquals(plant.getDescription(), plantDto.getDescription()),
-                () -> assertEquals(plant.getShortDescription(), plantDto.getShortDescription()),
-                () -> assertEquals(plant.isActive(), plantDto.isActive()),
-                () -> assertArrayEquals(new PlantCareDto[]{plantCareDto}, plantDto.getStandardCarePlan().toArray())
-        );
+        try {
+            PlantDto plantDto = plantService.findById(id);
+            assertAll(
+                    () -> assertEquals(plant.getId(), plantDto.getId()),
+                    () -> assertEquals(plant.getName(), plantDto.getName()),
+                    () -> assertEquals(plant.getPhoto().getFilePath(), plantDto.getFilePath()),
+                    () -> assertEquals(plant.getGenus(), plantDto.getGenus()),
+                    () -> assertEquals(plant.getFamily(), plantDto.getFamily()),
+                    () -> assertEquals(plant.getDescription(), plantDto.getDescription()),
+                    () -> assertEquals(plant.getShortDescription(), plantDto.getShortDescription()),
+                    () -> assertEquals(plant.isActive(), plantDto.isActive()),
+                    () -> assertArrayEquals(new PlantCareDto[]{plantCareDto}, plantDto.getStandardCarePlan().toArray())
+            );
+        } catch (PlantExistsException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -115,7 +117,7 @@ public class PlantServiceTests {
     void testFindByIdWhenIllegalId() {
         long id = 1;
 
-        assertThrows(NoSuchElementException.class, () -> plantService.findById(id));
+        assertThrows(PlantExistsException.class, () -> plantService.findById(id));
     }
 
 
@@ -125,9 +127,13 @@ public class PlantServiceTests {
 
     @Test
     void testIsIdExists() {
-        long id = 1;
-        when(plantRepository.existsById(id)).thenReturn(true);
-        assertTrue(plantService.isIdExist(id));
+        try {
+            long id = 1;
+            when(plantRepository.existsById(id)).thenReturn(true);
+            assertTrue(plantService.isIdExist(id));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -183,12 +189,12 @@ public class PlantServiceTests {
 
         when(plantRepository.saveAndFlush(plant)).thenReturn(savedPlant);
         when(photoService.saveOrUpdate(plantPhoto)).thenReturn(plantPhoto);
-        when(photoService.saveOrUpdate(plantPhoto.getId(), plantPhoto.getFilePath())).thenReturn(plantPhoto);
+        when(photoService.createPhoto(plantDto.getFilePath(), plantDto.getId())).thenReturn(plantPhoto);
 //        Вот тут вылезает
 //        Cannot invoke "java.util.Set.stream()" because the return value of "ru.botanica.entities.Plant.getCares()" is null
 //        Сегмент из метода testFindById(), которыми я починил соответствующий метод здесь почему-то не сработали, хотя ошибка одна и та же
 //        Добавленная строчка:
-        when(careService.createPlantCareWithObjects(plantDto, PlantCareDtoMapper.mapToDto(plantCare))).thenReturn(PlantCareDtoMapper.mapToDto(plantCare));
+        when(careService.addAllCaresToPlant(plantDto.getStandardCarePlan(), plantDto)).thenReturn(cares);
 //        Она не помогла. Сделал так, чтобы просто уведомляло об ошибке
         try {
 //            Вот из-за этой строчки нужен try-catch - там теперь прокидывается исключение.

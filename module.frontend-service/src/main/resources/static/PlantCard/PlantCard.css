@@ -67,6 +67,8 @@
     align-items: center;
 }
 
+
+
 .plant__edit__textarea {
     padding: 10px;
     display: inline-block;
@@ -179,6 +181,15 @@ input[type=checkbox]:focus{
 .plant__care__interval__input{
     max-width: 40px;
 }
-/*.plant__care__checkbox + .plant__care__label{*/
-/*  margin-top: 1em;*/
-/*}*/
+
+.plant__card__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5em;
+    align-items: center;
+}
+
+.selected__tab__indication{
+    background-color: var(--main-dark-color-opacity-80);
+    color: var(--main-light-color);
+}
