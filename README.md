@@ -29,9 +29,8 @@
 > docker version
 4) Установить Intellij Idea ( [Сайт для скачивания](https://www.jetbrains.com/ru-ru/idea/download/#section=windows) )
 ###### Далее необходим лишь один из пунктов, расположенных под п.5, в зависимости от Ваших препочтений
-5)
 * На главной странице проекта ( [Главная страница](https://github.com/AlexeySenkin/Simple-Botanica) ) нажать на зеленую кнопку 'Code' в правом верхнем углу и скопировать HTTPS-ссылку на проект, в открытом окне для выбора проекта Intellij Idea нажать на кнопку 'Get from VCS', в открывшееся окно вставить ссылку в поле 'URL' и выбрать место на локальной машине для установки в окне 'Directory'
-* На главной странице проекта ( [Главная страница](https://github.com/AlexeySenkin/Simple-Botanica) ) нажать на зеленую кнопку 'Code' в правом верхнем углу и нажать на кнопку 'Download ZIP', выбрать место для скачивания. Распокавать проект, затем в открытом окне для выбора проекта Intellij Idea нажать на кнопку 'Open' и выбрать распакованную папку проекта 
+* На главной странице проекта ( [Главная страница](https://github.com/AlexeySenkin/Simple-Botanica) ) нажать на зеленую кнопку 'Code' в правом верхнем углу и нажать на кнопку 'Download ZIP', выбрать место для скачивания. Распокавать проект, затем в открытом окне для выбора проекта Intellij Idea нажать на кнопку 'Open' и выбрать распакованную папку проекта
 5) В меню Gradle(правая полоска вкладок, кнопка 'Gradle') открыть и выполнить двойным нажатием
 > Simple-Botanica -> Tasks -> build -> build
 6) В меню навигации(левая полоса вкладок, кнопка 'Project') перейти по любому из указанных ниже адресов
@@ -49,23 +48,39 @@
 > SimpleBotanica -> module.frontend-service -> src -> main -> java -> FrontendServiceApplication
 9) Теперь приложение доступно по [установленному адресу](http://localhost:3010/simplebotanica.ru/index.html#!/)
 ### Linux
-Описание запуска на данной системе отсутствует, но скоро будут добавлено
+Запустить сервисы (нажать на файл один раз и нажать Ctrl+Shift+F10 или правый клик и выбрать вариант 'Run 'название файла'') в следующем порядке:
+> SimpleBotanica -> module.plant-service -> src -> main -> java -> PlantServiceApplication
+>
+> SimpleBotanica -> module.auth-service -> src -> main -> java -> AuthServiceApplication
+>
+> SimpleBotanica -> module.user-service -> src -> main -> java -> UserServiceApplication
+>
+> SimpleBotanica -> module.frontend-service -> src -> main -> java -> FrontendServiceApplication
 ### IOS
-Описание запуска на данной системе отсутствует, но скоро будут добавлено
+Запустить сервисы (нажать на файл один раз и нажать Ctrl+Shift+F10 или правый клик и выбрать вариант 'Run 'название файла'') в следующем порядке:
+> SimpleBotanica -> module.plant-service -> src -> main -> java -> PlantServiceApplication
+>
+> SimpleBotanica -> module.auth-service -> src -> main -> java -> AuthServiceApplication
+>
+> SimpleBotanica -> module.user-service -> src -> main -> java -> UserServiceApplication
+>
+> SimpleBotanica -> module.frontend-service -> src -> main -> java -> FrontendServiceApplication
 ## Возможности проекта
-Видео и фото материалы будут добавлены позднее
 ### Возможности всех пользователей
-##### Просмотр всех растений
-##### Просмотр конкретного растения
-##### Регистрация
-##### Вход в аккаунт
+![Просмотр всех растений](/ExampleMedia/SimpleBotanicaPlantsViewSample.gif)
+![Поиск нужных растений](/ExampleMedia/SimpleBotanicaSearchSample.gif)
+![Просмотр конкретного растения](/ExampleMedia/SimpleBotanicaPlantViewSample.gif)
+![Регистрация на сайте](/ExampleMedia/SimpleBotanicaRegistrationSample.gif)
+![Вход в аккаунт на сайте](/ExampleMedia/SimpleBotanicaLogInSample.gif)
 ### Возможности модератора
-##### Выход из аккаунта
-##### Добавление растения
-##### Изменение растения
-##### Удаление растения (изменение метки активного растения на неактивное растение)
+![Добавление растения](/ExampleMedia/SimpleBotanicaAddingPlantSample.gif)
+![Изменение растения](/ExampleMedia/SimpleBotanicaRedactingPlantSample.gif)
+![Удаление растения из общего списка](/ExampleMedia/SimpleBotanicaDeletingPlantSample.gif)
 ### Возможности зарегистрированного пользователя
-##### Выход из аккаунта
-##### Добавление растения в список своих растений
-##### Просмотр своего личного кабинета
-##### Просмотр своего списка растений
+![Добавление растения в список своих растений](/ExampleMedia/SimpleBotanicaAddingPlantToUserSample.gif)
+![Просмотр своего списка растений](/ExampleMedia/SimpleBotanicaUserPlantsViewSample.gif)
+![Просмотр конкретного растения в списке ухода](/ExampleMedia/SimpleBotanicaUserPlantViewSample.gif)
+![Добавление информации в журнал ухода](/ExampleMedia/SimpleBotanicaTakingCareViewSample.gif)
+![Удаление растения из списка ухода](/ExampleMedia/SimpleBotanicaDeletingFromCareViewSample.gif)
+![Выход из аккаунта на сайте](/ExampleMedia/SimpleBotanicaLogOutSample.gif)
+![Просмотр своего личного кабинета](/ExampleMedia/SimpleBotanicaUserProfileViewSample.gif)
