@@ -37,7 +37,7 @@ public class PlantController {
 //                                           Изначально помещается 10, но, чтобы при текущих данных в БД было
 //                                           две страницы, сместил значение по умолчанию до 8
                                                 @RequestParam(required = false, defaultValue = "8") int size,
-                                                @RequestParam(required = false) String title) {
+                                                @RequestParam(required = false) String title) throws Exception {
         int currentPage = page - 1;
         return plantService.findAll(title, PageRequest.of(currentPage, size));
     }
@@ -49,7 +49,7 @@ public class PlantController {
      * @return Растение
      */
     @GetMapping("/plant/{id}")
-    public PlantDto findById(@PathVariable long id) {
+    public PlantDto findById(@PathVariable long id) throws Exception {
         return plantService.findById(id);
     }
 
@@ -60,50 +60,12 @@ public class PlantController {
      * @return responseEntity с кодом и сообщением
      */
     @PutMapping("/plant")
-    public ResponseEntity<?> updateById(@RequestBody PlantDto plantDto) {
-        Long id = plantDto.getId();
-        if (!plantService.isIdExist(id)) {
-            /**
-             * Если растение не существует
-             */
-            log.error("Растения не существует, id: {}", id);
-            return new ResponseEntity<>(new AppResponse(HttpStatus.BAD_REQUEST.value(),
-                    "Растение не существует, id- " + id), HttpStatus.BAD_REQUEST);
-        } else {
-            try {
-                PlantDto saveResult = plantService.updatePlant(plantDto);
-                /**
-                 * Пытается записать действия для растения, если не выходит - уведомляет сервер
-                 */
-                try {
-                    plantService.addPhotoToPlant(saveResult, plantDto.getFilePath());
-                } catch (Exception e) {
-                    log.error("Сервер не смог обновить фото для растения с id {}", id);
-                    return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                            "Сервер не смог обновить фото для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
-                }
-                try {
-                    plantService.addCaresWithObjects(saveResult, plantDto.getStandardCarePlan());
-                } catch (Exception e) {
-                    log.error("Сервер не смог обновить действия для растения с id {}", id);
-                    return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                            "Сервер не смог обновить процедуры для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
-                }
-            } catch (Exception e) {
-                /**
-                 * Неудачное обновление
-                 */
-                log.error("Сервер не смог обновить растение с id {}", id);
-                return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                        "Сервер не смог обновить растение с id " + id), HttpStatus.UNPROCESSABLE_ENTITY);
-            }
-            /**
-             * Удачное обновление
-             */
-            log.debug("Растение обновлено, id {}", id);
-            return new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
-                    "Растение обновлено, id: " + id), HttpStatus.OK);
-        }
+    public ResponseEntity<?> updateById(@RequestBody PlantDto plantDto) throws Exception {
+        log.debug("Попытка обновления, входящие данные: {}", plantDto.toString());
+        plantService.updatePlant(plantDto);
+        log.debug("Растение обновлено, id {}", plantDto.getId());
+        return new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
+                "Растение обновлено, id: " + plantDto.getId()), HttpStatus.OK);
     }
 
     /**
@@ -115,58 +77,13 @@ public class PlantController {
      */
     @PostMapping("/plant")
     public ResponseEntity<?> addPlant(@RequestBody PlantDto plantDto,
-                                      @RequestParam(name = "isOverwriting", defaultValue = "false") boolean isOverwriting) {
-        if (plantService.findByName(plantDto.getName()).isPresent() && !isOverwriting) {
-            /**
-             * Если растение существует и его нельзя перезаписывать
-             */
-            log.warn("Растение с именем {} уже существует и его нельзя перезаписать", plantDto.getName());
-            log.error("{}", plantDto.toString());
-            return new ResponseEntity<>(new AppResponse(HttpStatus.BAD_REQUEST.value(),
-                    "Растение с таким именем существует"), HttpStatus.BAD_REQUEST);
-        } else {
-//          TODO:  Пока нет обработчика ошибок, это самый короткий способ заставить бэк уведомлять фронт о
-//           ошибках на разных шагах сохранения. Монструозно. Сделать обработчик, затем избавиться от этого
-            try {
-                PlantDto saveResult = plantService.addNewPlant(plantDto, isOverwriting);
-                try {
-                    plantService.addPhotoToPlant(saveResult, plantDto.getFilePath());
-                } catch (Exception e) {
-                    /**
-                     * Сохранить фото для растения не вышло
-                     */
-                    log.error("Сервер не смог сохранить фото для растения с id {}", saveResult.getId());
-                    return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                            "Сервер не смог сохранить фото для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
-                }
-                try {
-                    plantService.addCaresWithObjects(saveResult, plantDto.getStandardCarePlan());
-                } catch (Exception e) {
-                    /**
-                     * Сохранить процедуры для растения не вышло
-                     */
-                    log.error("Сервер не смог записать действия для растения с id {}", saveResult.getId());
-                    return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                            "Сервер не смог сохранить процедуры для растения"), HttpStatus.UNPROCESSABLE_ENTITY);
-                }
-            } catch (Exception e) {
-                /**
-                 * Неудачное сохранение растения
-                 */
-                log.error("Сервер не смог сохранить растение с именем: {}", plantDto.getName());
-                log.error("{}", plantDto.toString());
-                return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                        "Сервер не смог добавить растение"), HttpStatus.UNPROCESSABLE_ENTITY);
-            }
-            /**
-             * Удачное сохранение
-             */
-            log.debug("Растение сохранено, имя: {}", plantDto.getName());
-            log.debug("{}", new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
-                    "Растение создано, имя: " + plantDto.getName()), HttpStatus.OK));
-            return new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
-                    "Растение создано, имя: " + plantDto.getName()), HttpStatus.OK);
-        }
+                                      @RequestParam(name = "isOverwriting", defaultValue = "false") boolean isOverwriting) throws Exception {
+        log.debug("Попытка сохранения: {}", plantDto.toString());
+        plantService.addNewPlant(plantDto, isOverwriting);
+        log.debug("Растение создано, имя: {}", plantDto.getName());
+        return new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
+                "Растение создано, имя: " + plantDto.getName()), HttpStatus.OK);
+
     }
 
     /**
@@ -176,32 +93,12 @@ public class PlantController {
      * @return responseEntity с кодом и сообщением
      */
     @DeleteMapping("plant/{id}")
-    public ResponseEntity<?> deletePlant(@PathVariable long id) {
-        if (!plantService.isIdExist(id)) {
-            /**
-             * Если растение не существует
-             */
-            log.error("Растения с id {} не существует", id);
-            return new ResponseEntity<>(new AppResponse(HttpStatus.BAD_REQUEST.value(),
-                    "Растение не существует, id- " + id), HttpStatus.BAD_REQUEST);
-        } else {
-            try {
-                plantService.deletePlantById(id);
-            } catch (Exception e) {
-                /**
-                 * Неудачное удаление
-                 */
-                log.error("Проблема у сервера с удалением id: {}", id);
-                return new ResponseEntity<>(new AppResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                        "Сервер не смог удалить растение с id " + id), HttpStatus.UNPROCESSABLE_ENTITY);
-            }
-            /**
-             * Удачное удаление
-             */
-            log.debug("Удаление успешно, id: {}", id);
-            return new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
-                    "Растение удалено, id: " + id), HttpStatus.OK);
-        }
+    public ResponseEntity<?> deletePlant(@PathVariable long id) throws Exception {
+        log.debug("Попытка удаления по id: {}", id);
+        plantService.deletePlantById(id);
+        log.debug("Удаление успешно, id: {}", id);
+        return new ResponseEntity<>(new AppResponse(HttpStatus.OK.value(),
+                "Растение удалено, id: " + id), HttpStatus.OK);
     }
 
     /**
@@ -210,7 +107,7 @@ public class PlantController {
      * @return Список процедур
      */
     @GetMapping("/care_types")
-    public List<CareDtoShort> findAllActiveCares() {
+    public List<CareDtoShort> findAllActiveCares() throws Exception {
         return careService.findAllActive();
     }
 }

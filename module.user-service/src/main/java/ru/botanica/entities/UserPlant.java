@@ -21,8 +21,8 @@ public class UserPlant {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "plant_id")
-    private Long plantId;
+//    @Column(name = "plant_id")
+//    private Long plantId;
 
     @Column(nullable = false, name = "is_banned")
     private Boolean isBanned;
@@ -31,18 +31,17 @@ public class UserPlant {
     private Boolean isActive;
 
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_plant_id")
     private Collection<UserCare> userCare;
 
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_plant_id")
     private Collection<UserCareCustom> userCareCustom;
-//
-//
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @PrimaryKeyJoinColumn
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "plant_id")
     private Plant plant;
 
 
@@ -51,7 +50,6 @@ public class UserPlant {
         return "UserPlants{" +
                 "userPlantId=" + userPlantId +
                 ", userId='" + userId + '\'' +
-                ", plantId='" + plantId + '\'' +
                 ", isBanned=" + isBanned +
                 ", isActive=" + isActive +
                 ", userCareCustom=" + (userCareCustom == null ? null : userCareCustom) +

@@ -64,6 +64,13 @@ public class UserController {
         }
     }
 
+    /**
+     *  Регистрация нового пользователя
+     *
+     * @param userName Имя пользователя
+     * @param email email
+     * @return Список пользователей
+     */
     @PostMapping("/user/register")
     public ResponseEntity<?> registerNewUser(@RequestParam("username") String userName, @RequestParam(required = false, name = "email") String email){
         try {

@@ -20,17 +20,17 @@ public class UserCareCustom {
     private Long userPlantId;
 
 
-    @Column(name = "care_id")
-    private Long careId;
+//    @Column(name = "care_id")
+//    private Long careId;
 
     @Column(name = "user_care_count")
-    private Integer userCareCount;
+    private Long userCareCount;
 
     @Column(name = "user_care_volume")
     private Double userCareVolume;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @PrimaryKeyJoinColumn
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "care_id")
     private Care care;
 
     @Override
@@ -38,7 +38,6 @@ public class UserCareCustom {
         return "UserCareCustom{" +
                 "userCareCustomId=" + userCareCustomId +
                 ", userPlantId=" + userPlantId +
-                ", careId=" + careId +
                 ", userCareCount=" + userCareCount +
                 ", userCareVolume=" + userCareVolume +
                 ", care=" + (care == null ?  null : care) +

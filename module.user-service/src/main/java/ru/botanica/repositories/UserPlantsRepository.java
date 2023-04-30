@@ -11,4 +11,5 @@ import java.util.Optional;
 @Repository
 public interface UserPlantsRepository extends JpaRepository<UserPlant, Integer>, JpaSpecificationExecutor<UserPlant> {
     Optional<UserPlant> findByUserPlantId(Long id);
+
 }

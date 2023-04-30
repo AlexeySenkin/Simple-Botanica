@@ -8,7 +8,9 @@ import java.util.Collection;
 @Data
 public class UserPlantsDto {
 
-    private Long userPlantId;
+   // переименование на id по просьбе Маши
+   // private Long userPlantId;
+    private Long id;
 
     private Long plantId;
 

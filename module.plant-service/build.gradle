@@ -27,6 +27,7 @@ dependencies {
     implementation 'org.flywaydb:flyway-mysql'
     implementation 'com.h2database:h2'
     implementation 'org.projectlombok:lombok:1.18.24'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
     runtimeOnly 'com.mysql:mysql-connector-j'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:3.0.5'
     testImplementation 'junit:junit'

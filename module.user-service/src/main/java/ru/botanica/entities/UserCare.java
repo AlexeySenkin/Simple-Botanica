@@ -24,8 +24,8 @@ public class UserCare {
     @Column(nullable = false, name = "event_date")
     private Date eventDate;
 
-    @Column(name = "care_id")
-    private Long careId;
+//    @Column(name = "care_id")
+//    private Long careId;
 
     @Column(name = "care_volume")
     private Double careVolume;
@@ -33,8 +33,9 @@ public class UserCare {
     @Column(name = "prim")
     private Integer prims;
 
-//    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Care care;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "care_id")
+    private Care care;
 
 
     @Override
@@ -43,10 +44,10 @@ public class UserCare {
                 "userCareId=" + userCareId +
                 ", userPlantId=" + userPlantId +
                 ", eventDate=" + eventDate +
-                ", careId=" + careId +
+            //    ", careId=" + careId +
                 ", careVolume=" + careVolume +
                 ", prims=" + prims +
-            //    ", care=" + (care == null ? null : care) +
+                ", care=" + (care == null ? null : care) +
                 '}';
     }
 }
