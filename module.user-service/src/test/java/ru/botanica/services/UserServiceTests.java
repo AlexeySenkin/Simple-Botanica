@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.botanica.entities.User;
 import ru.botanica.dto.UserDto;
+import ru.botanica.exceptions.ServerHandleException;
 import ru.botanica.repositories.UserRepository;
 
 import java.sql.Date;
@@ -79,7 +80,7 @@ public class UserServiceTests {
      */
     @Test
     void testFindByIdWhenIllegalId() {
-        assertThrows(NoSuchElementException.class, () -> userService.findById(ID));
+        assertThrows(ServerHandleException.class, () -> userService.findById(ID));
     }
 
 }

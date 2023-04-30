@@ -68,6 +68,7 @@
 ## Возможности проекта
 ### Возможности всех пользователей
 ![Просмотр всех растений](/ExampleMedia/SimpleBotanicaPlantsViewSample.gif)
+![Поиск нужных растений](/ExampleMedia/SimpleBotanicaSearchSample.gif)
 ![Просмотр конкретного растения](/ExampleMedia/SimpleBotanicaPlantViewSample.gif)
 ![Регистрация на сайте](/ExampleMedia/SimpleBotanicaRegistrationSample.gif)
 ![Вход в аккаунт на сайте](/ExampleMedia/SimpleBotanicaLogInSample.gif)
@@ -78,5 +79,8 @@
 ### Возможности зарегистрированного пользователя
 ![Добавление растения в список своих растений](/ExampleMedia/SimpleBotanicaAddingPlantToUserSample.gif)
 ![Просмотр своего списка растений](/ExampleMedia/SimpleBotanicaUserPlantsViewSample.gif)
+![Просмотр конкретного растения в списке ухода](/ExampleMedia/SimpleBotanicaUserPlantViewSample.gif)
+![Добавление информации в журнал ухода](/ExampleMedia/SimpleBotanicaTakingCareViewSample.gif)
+![Удаление растения из списка ухода](/ExampleMedia/SimpleBotanicaDeletingFromCareViewSample.gif)
 ![Выход из аккаунта на сайте](/ExampleMedia/SimpleBotanicaLogOutSample.gif)
 ![Просмотр своего личного кабинета](/ExampleMedia/SimpleBotanicaUserProfileViewSample.gif)
