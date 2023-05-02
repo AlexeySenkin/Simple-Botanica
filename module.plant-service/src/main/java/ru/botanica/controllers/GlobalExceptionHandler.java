@@ -91,9 +91,9 @@ public class GlobalExceptionHandler {
      * @return Сообщение об ошибке
      */
     @ExceptionHandler
-    public ResponseEntity<?> catchNullPointerException(NullPointerException exception) {
+    public ResponseEntity<?> catchException(Exception exception) {
         log.error(exception.getMessage(), exception);
         return new ResponseEntity<>(new AppResponse(HttpStatus.BAD_REQUEST.value(),
-                "Среди обязательных параметров для эндпоинта был прислан null"), HttpStatus.BAD_REQUEST);
+                "Неизвестная ошибка"), HttpStatus.BAD_REQUEST);
     }
 }
